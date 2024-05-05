@@ -1,9 +1,9 @@
-package com.cervinschi.marin.javafx.briscola;
+package com.cervinschi.marin.javafx.briscola.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public class BriscolaController {
+public class GameController {
     @FXML
     private Label welcomeText;
 
