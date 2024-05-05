@@ -61,7 +61,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.cervinschi.marin.javafx.briscola/com.cervinschi.marin.javafx.briscola.BriscolaApp
+                                com.cervinschi.marin.javafx.briscola/com.cervinschi.marin.javafx.briscola.MainApp
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
