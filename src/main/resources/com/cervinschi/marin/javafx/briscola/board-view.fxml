@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<?import javafx.geometry.Insets?>
-<BorderPane prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cervinschi.marin.javafx.briscola.controllers.GameController">
+<BorderPane fx:id="boardPane" prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cervinschi.marin.javafx.briscola.controllers.GameController">
     <top>
         <ToolBar>
             <Button onAction="#newGame" text="New Game" />
@@ -19,11 +19,17 @@
         </ToolBar>
     </top>
    <center>
-       <AnchorPane fx:id="anchorPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-            </padding>
-            <Label style="-fx-font-size: 24px;" text="Briscola"/>
+       <AnchorPane fx:id="root" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+           <Text fx:id="botPoints" fill="WHITE" layoutX="750.0" layoutY="288.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+               <font>
+                   <Font name="Arial Bold" size="50.0" />
+               </font>
+           </Text>
+           <Text fx:id="playerPoints" fill="WHITE" layoutX="750.0" layoutY="420.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+               <font>
+                   <Font name="Arial Bold" size="50.0" />
+               </font>
+           </Text>
         </AnchorPane>
    </center>
 </BorderPane>

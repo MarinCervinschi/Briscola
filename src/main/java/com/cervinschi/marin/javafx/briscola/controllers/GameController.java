@@ -1,21 +1,33 @@
 package com.cervinschi.marin.javafx.briscola.controllers;
 
+import com.cervinschi.marin.javafx.briscola.models.Board;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 
 import java.util.Objects;
 
 
 public class GameController {
 
-    @FXML
-    private AnchorPane anchorPane;
+    @FXML private BorderPane boardPane;
+    @FXML private AnchorPane root;
+    @FXML private Text playerPoints;
+    @FXML private Text botPoints;
+
+    private Board board;
 
     @FXML
     public void initialize() {
         showBackground();
+    }
+
+    @FXML
+    protected void newGame() {
+        System.out.println("Game started");
+        initializePoints();
     }
 
     public void showBackground() {
@@ -24,12 +36,18 @@ public class GameController {
         BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, true);
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         Background background = new Background(backgroundImage);
-        anchorPane.setBackground(background);
+        boardPane.setBackground(background);
     }
 
-    @FXML
-    protected void newGame() {
-        System.out.println("Game started");
+    private void initializePoints() {
+        playerPoints.setText("0");
+        botPoints.setText("0");
+    }
+
+    private void updatePoints(Text player) {
+        int points = Integer.parseInt(player.getText());
+        points += board.getPoints();
+        player.setText(String.valueOf(points));
     }
 
     @FXML
