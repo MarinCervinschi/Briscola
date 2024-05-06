@@ -1,9 +1,31 @@
 package com.cervinschi.marin.javafx.briscola.controllers;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
+
+import java.util.Objects;
 
 
 public class GameController {
+
+    @FXML
+    private AnchorPane anchorPane;
+
+    @FXML
+    public void initialize() {
+        showBackground();
+    }
+
+    public void showBackground() {
+        String path = "/com/cervinschi/marin/javafx/briscola/media/background.png";
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
+        BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, true);
+        BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+        Background background = new Background(backgroundImage);
+        anchorPane.setBackground(background);
+    }
 
     @FXML
     protected void newGame() {
