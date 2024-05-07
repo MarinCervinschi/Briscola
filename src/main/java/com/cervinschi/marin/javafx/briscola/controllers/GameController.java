@@ -8,6 +8,9 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorInput;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
@@ -15,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Pair;
 
 import java.util.*;
 
@@ -28,6 +32,7 @@ public class GameController {
     @FXML private Text botPoints;
 
     private Board board;
+    private boolean gameStarted = false;
 
     @FXML
     public void initialize() {
@@ -37,7 +42,23 @@ public class GameController {
 
     @FXML
     protected void newGame() {
+        if (gameStarted) {
+            gameStarted = false;
+        } else {
+            return;
+        }
         System.out.println("Game started");
+        initializeGameObjects();
+        initializePoints();
+    }
+
+    @FXML
+    protected void startGame() {
+        if (gameStarted) {
+            return;
+        } else {
+            gameStarted = true;
+        }
         initializeGameObjects();
         initializePoints();
     }
@@ -57,18 +78,12 @@ public class GameController {
 
         board = new Board();
 
-        Deque<Rectangle> deckObject = new ArrayDeque<>(List.of(new Rectangle()));
+        Deque<Pair<Rectangle, Card>> deckObject = new ArrayDeque<>();
 
-        for (int i = 0; i < DECK; i++) {
-            Card card = board.getDeckCard(i);
-            Rectangle rectangle = createCardObject(card.getSeed(), String.valueOf((i + 1) % 10));
-            deckObject.add(rectangle);
+        for (Card card : board.getDeck()) {
+            Rectangle rectangle = createCardObject(card);
+            deckObject.add(new Pair<>(rectangle, card));
         }
-
-        deckObject = shuffleDeck(deckObject);
-
-        Hand playerHand = new Hand();
-        Hand botHand = new Hand();
 
         HBox playerHandBox = new HBox();
         HBox botHandBox = new HBox();
@@ -82,30 +97,19 @@ public class GameController {
 
         StackPane stack = new StackPane();
 
+        Pair<Rectangle, Card> firstCard = deckObject.poll();
+        board.setBriscola(Objects.requireNonNull(firstCard).getValue().getSeed());
 
+        Rectangle briscola = Objects.requireNonNull(firstCard).getKey();
+        Objects.requireNonNull(briscola).setTranslateY(-50);
+        Objects.requireNonNull(briscola).setTranslateX(25);
 
-        Rectangle briscola = deckObject.poll();
-        Objects.requireNonNull(briscola).setRotate(90.0);
-        Objects.requireNonNull(briscola).setTranslateX(50);
-
-        Rectangle backDeck = createCardObject("back", "1");
+        Rectangle backDeck = createCardObject(new Card("1", "back", 0, false));
+        Objects.requireNonNull(backDeck).setTranslateY(50);
 
         stack.getChildren().addAll(briscola, backDeck);
 
         deckBox.getChildren().add(stack);
-
-        for (int i = 0; i < 6; i++) {
-            Rectangle card = deckObject.poll();
-            if (i % 2 == 0) {
-                playerHand.addCard(card);
-                playerHandBox.getChildren().add(card);
-            } else {
-                botHand.addCard(card);
-                botHandBox.getChildren().add(card);
-            }
-        }
-        playerHandBox.setSpacing(10);
-        botHandBox.setSpacing(10);
 
         boardPaneHands.setBottom(playerHandBox);
         boardPaneHands.setTop(botHandBox);
@@ -115,20 +119,11 @@ public class GameController {
 
     }
 
-    private Deque<Rectangle> shuffleDeck(Deque<Rectangle> deck) {
-        List<Rectangle> deckList = new ArrayList<>(deck);
-        Collections.shuffle(deckList);
-        return new ArrayDeque<>(deckList);
-    }
-
-    private Rectangle createCardObject(String seed, String value) {
-        if (value.equals("0")) {
-            value = "10";
-        }
+    private Rectangle createCardObject(Card card) {
         Rectangle rectangle = new Rectangle(CWIDTH, CHEIGHT);
-        setStyle(rectangle);
+        setCardStyle(rectangle);
 
-        String path = "/com/cervinschi/marin/javafx/briscola/media/cards/" + seed + value + ".png";
+        String path = "/com/cervinschi/marin/javafx/briscola/media/cards/" + card.getSeed() + card.getName() + ".png";
         Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
 
         ImagePattern imagePattern = new ImagePattern(image);
@@ -136,7 +131,7 @@ public class GameController {
         return rectangle;
     }
 
-    private void setStyle(Rectangle rectangle) {
+    private void setCardStyle(Rectangle rectangle) {
         /* Set bord radius*/
         rectangle.setArcHeight(16);
         rectangle.setArcWidth(16);

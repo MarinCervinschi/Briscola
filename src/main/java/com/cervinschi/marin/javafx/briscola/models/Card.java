@@ -4,7 +4,7 @@ import static com.cervinschi.marin.javafx.briscola.utils.Const.*;
 public class Card {
     private final String name;
     private final String seed;
-    private final boolean isBriscola;
+    private boolean isBriscola;
     private final int value;
 
     public Card(String name, String seed, int value, boolean isBriscola) {
@@ -24,6 +24,10 @@ public class Card {
 
     public boolean isBriscola() {
         return isBriscola;
+    }
+
+    public void setBriscola(boolean isBriscola) {
+        this.isBriscola = isBriscola;
     }
 
     public int getValue() {
