@@ -8,6 +8,7 @@ public class Board {
     private final Hand[] hands = new Hand[2];
     private Deque<Card> deck = new ArrayDeque<>();
     private Card[] table = new Card[2];
+    private Card briscola;
 
     public Board() {
         createDeck();
@@ -50,12 +51,20 @@ public class Board {
         deck.poll();
     }
 
-    public void setBriscola(String seed) {
+    public void setBriscolaToCards(String seed) {
         for (Card card : deck) {
             if (card.getSeed().equals(seed) && !card.isBriscola()) {
                 card.setBriscola(true);
             }
         }
+    }
+
+    public Card getBriscola() {
+        return briscola;
+    }
+
+    public void setBriscola(Card briscola) {
+        this.briscola = briscola;
     }
 
     public int getPoints() {

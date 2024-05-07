@@ -26,7 +26,7 @@
                    <Font name="Arial Bold" size="50.0" />
                </font>
            </Text>
-           <Text fx:id="playerPoints" fill="WHITE" layoutX="758.0" layoutY="507.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+           <Text fx:id="playerPoints" fill="WHITE" layoutX="758.0" layoutY="607.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
                <font>
                    <Font name="Arial Bold" size="50.0" />
                </font>

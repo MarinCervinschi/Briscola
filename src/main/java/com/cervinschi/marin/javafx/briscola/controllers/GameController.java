@@ -33,11 +33,13 @@ public class GameController {
 
     private Board board;
     private boolean gameStarted = false;
+    private Deque<Rectangle> deckObject;
 
     @FXML
     public void initialize() {
         showBackground();
         initializeGameObjects();
+
     }
 
     @FXML
@@ -47,7 +49,6 @@ public class GameController {
         } else {
             return;
         }
-        System.out.println("Game started");
         initializeGameObjects();
         initializePoints();
     }
@@ -59,8 +60,7 @@ public class GameController {
         } else {
             gameStarted = true;
         }
-        initializeGameObjects();
-        initializePoints();
+        InitGame initGame = new InitGame(deckObject, board.getDeck(), boardPaneHands);
     }
 
     public void showBackground() {
@@ -74,33 +74,24 @@ public class GameController {
 
     private void initializeGameObjects() {
         // remove sprites from eventual former match
-        root.getChildren().removeAll();
+        boardPaneHands.getChildren().removeAll(boardPaneHands.getBottom(), boardPaneHands.getTop());
 
         board = new Board();
 
-        Deque<Pair<Rectangle, Card>> deckObject = new ArrayDeque<>();
+        deckObject = new ArrayDeque<>();
 
         for (Card card : board.getDeck()) {
             Rectangle rectangle = createCardObject(card);
-            deckObject.add(new Pair<>(rectangle, card));
+            deckObject.add(rectangle);
         }
 
-        HBox playerHandBox = new HBox();
-        HBox botHandBox = new HBox();
-        HBox tableBox = new HBox();
         HBox deckBox = new HBox();
 
-        playerHandBox.setAlignment(Pos.CENTER);
-        botHandBox.setAlignment(Pos.CENTER);
-        tableBox.setAlignment(Pos.CENTER);
         deckBox.setAlignment(Pos.CENTER);
 
         StackPane stack = new StackPane();
 
-        Pair<Rectangle, Card> firstCard = deckObject.poll();
-        board.setBriscola(Objects.requireNonNull(firstCard).getValue().getSeed());
-
-        Rectangle briscola = Objects.requireNonNull(firstCard).getKey();
+        Rectangle briscola = Objects.requireNonNull(deckObject.pollLast());
         Objects.requireNonNull(briscola).setTranslateY(-50);
         Objects.requireNonNull(briscola).setTranslateX(25);
 
@@ -111,9 +102,6 @@ public class GameController {
 
         deckBox.getChildren().add(stack);
 
-        boardPaneHands.setBottom(playerHandBox);
-        boardPaneHands.setTop(botHandBox);
-        boardPaneHands.setCenter(tableBox);
         boardPaneHands.setLeft(deckBox);
         boardPaneHands.setPadding(new Insets(5));
 
