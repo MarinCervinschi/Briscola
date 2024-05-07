@@ -105,13 +105,27 @@ public class GameController {
         if (value.equals("0")) {
             value = "10";
         }
-        Rectangle rectangle = new Rectangle(100, 150);
+        Rectangle rectangle = new Rectangle(CWIDTH, CHEIGHT);
+        setStyle(rectangle);
+
+        String path = "/com/cervinschi/marin/javafx/briscola/media/cards/" + card.getSeed() + value + ".png";
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
+
+        ImagePattern imagePattern = new ImagePattern(image);
+        rectangle.setFill(imagePattern);
+        return rectangle;
+    }
+
+    private void setStyle(Rectangle rectangle) {
+        /* Set bord radius*/
         rectangle.setArcHeight(16);
         rectangle.setArcWidth(16);
 
+        /* Set border */
         rectangle.setStroke(Color.BLACK);
         rectangle.setStrokeWidth(1);
 
+        /* Set shadow */
         DropShadow dropShadow1 = new DropShadow();
         dropShadow1.setRadius(12.0);
         dropShadow1.setOffsetX(0.0);
@@ -124,15 +138,9 @@ public class GameController {
         dropShadow2.setOffsetY(3.0);
         dropShadow2.setColor(Color.rgb(0, 0, 0, 0.3));
 
+        /* add shadow */
         rectangle.setEffect(dropShadow1);
         rectangle.setEffect(dropShadow2);
-
-        String path = "/com/cervinschi/marin/javafx/briscola/media/cards/" + card.getSeed() + value + ".png";
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
-
-        ImagePattern imagePattern = new ImagePattern(image);
-        rectangle.setFill(imagePattern);
-        return rectangle;
     }
 
     private void initializePoints() {
