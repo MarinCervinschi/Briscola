@@ -52,36 +52,41 @@ public class InitGame {
 
         if (!deckObject.isEmpty()) {
             fillHands();
-            Rectangle[] tableCards = new Rectangle[tableBox.getChildren().size()];
-            for (int i = 0; i < tableBox.getChildren().size(); i++) {
-                tableCards[i] = (Rectangle) tableBox.getChildren().get(i);
+            if (board.tableIsFull()) {
+                checkTable();
             }
-            board.setTable(tableCards);
         } else {
             endGame();
         }
     }
 
     public void fillHands() {
-        while (!playerHand.isFull()) {
+        while (!playerHand.isCardsObjectFull()) {
             Rectangle card = deckObject.poll();
-            playerHand.addCard(card);
-            playerHandBox.getChildren().add(card);
+            Card selectedCard = board.getDeck().poll();
+            playerHand.addCard(selectedCard);
+            playerHand.addCardObject(card);
+
+            PauseTransition pause = new PauseTransition(Duration.seconds(1));
+            pause.setOnFinished(e -> playerHandBox.getChildren().add(card));
+            pause.play();
+
             showHoverEffect(Objects.requireNonNull(card));
-            selectCard(Objects.requireNonNull(card));
+            selectCard(card, selectedCard);
         }
-        while (!botHand.isFull()) {
+        while (!botHand.isCardsObjectFull()) {
             Rectangle card = deckObject.poll();
-            botHand.addCard(card);
-            botHandBox.getChildren().add(card);
+            botHand.addCard(board.getDeck().poll());
+            botHand.addCardObject(card);
+            PauseTransition pause = new PauseTransition(Duration.seconds(1));
+            pause.setOnFinished(e -> botHandBox.getChildren().add(card));
+            pause.play();
         }
-        if (!board.handsAreFull()) {
-            board.setHand(playerHand);
-            board.setHand(botHand);
-        }
+        board.setHand(playerHand);
+        board.setHand(botHand);
     }
 
-    public void selectCard(Rectangle card) {
+    public void selectCard(Rectangle card, Card selectedCard) {
         card.setOnMouseClicked(e -> {
             playerHandBox.getChildren().remove(card);
 
@@ -90,10 +95,31 @@ public class InitGame {
 
             tableBox.getChildren().add(card);
 
+            board.removeCardFromHand(selectedCard, card);
+            board.addCardToTable(selectedCard);
+
             playerTurn = false;
 
             botMove();
         });
+    }
+
+    public void checkTable() {
+        if (board.tableIsFull()) {
+            if (board.getTable(0).getValue() > board.getTable(1).getValue()) {
+                tableBox.getChildren().getFirst().setTranslateX(-50);
+                board.setPlayerPoints(board.getTable(0).getValue() + board.getTable(1).getValue());
+            } else {
+                tableBox.getChildren().getFirst().setTranslateX(50);
+                board.setBotPoints(board.getTable(0).getValue() + board.getTable(1).getValue());
+            }
+            PauseTransition pause = new PauseTransition(Duration.seconds(2));
+            pause.setOnFinished(e -> {
+                tableBox.getChildren().clear();
+                board.clearTable();
+            });
+            pause.play();
+        }
     }
 
     public void showHoverEffect(Rectangle card) {
@@ -113,6 +139,9 @@ public class InitGame {
             Rectangle card = (Rectangle) botHandBox.getChildren().getFirst();
             botHandBox.getChildren().remove(card);
             tableBox.getChildren().add(card);
+            board.addCardToTable(botHand.getCards()[0]);
+
+            board.removeCardFromHand(botHand.getCards()[0], card);
 
             playerTurn = true;
         });

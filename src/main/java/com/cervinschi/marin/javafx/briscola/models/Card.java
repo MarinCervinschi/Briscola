@@ -39,4 +39,16 @@ public class Card {
         return name + " of " + seed + " (" + value + ")";
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Card card = (Card) obj;
+        return value == card.value && isBriscola == card.isBriscola && name.equals(card.name) && seed.equals(card.seed);
+    }
+
 }

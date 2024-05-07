@@ -91,7 +91,7 @@ public class GameController {
         StackPane stack = new StackPane();
 
         Rectangle briscola = Objects.requireNonNull(deckObject.pollLast());
-        board.setBriscola(board.popHead());
+        board.setBriscola(board.getDeck().poll());
         board.setBriscolaToCards(board.getBriscola().getSeed());
         Objects.requireNonNull(briscola).setTranslateY(-50);
         Objects.requireNonNull(briscola).setTranslateX(25);
@@ -116,10 +116,13 @@ public class GameController {
             @Override
             public void handle(long now) {
                 initGame.mainLoop();
+                updatePoints(playerPoints, board.getPlayerPoints());
+                updatePoints(botPoints, board.getBotPoints());
             }
         };
         timer.start();
     }
+
 
     private Rectangle createCardObject(Card card) {
         Rectangle rectangle = new Rectangle(CWIDTH, CHEIGHT);
@@ -165,9 +168,9 @@ public class GameController {
         botPoints.setText("0");
     }
 
-    private void updatePoints(Text player) {
+    private void updatePoints(Text player, int newPoints) {
         int points = Integer.parseInt(player.getText());
-        points += board.getPoints();
+        points += newPoints;
         player.setText(String.valueOf(points));
     }
 

@@ -9,12 +9,16 @@ import static com.cervinschi.marin.javafx.briscola.utils.Const.*;
 public class Board {
     private final Deque<Hand> hands = new ArrayDeque<>(2);
     private Deque<Card> deck = new ArrayDeque<>();
-    private Rectangle[] table = new Rectangle[2];
+    private final Card[] table = new Card[2];
     private Card briscola;
+    private int playerPoints;
+    private int botPoints;
 
     public Board() {
         createDeck();
         shuffleDeck();
+        playerPoints = 0;
+        botPoints = 0;
     }
 
     public Deque<Hand> getHands() {
@@ -54,10 +58,6 @@ public class Board {
         deck = new ArrayDeque<>(deckList);
     }
 
-    public Card popHead() {
-        return deck.poll();
-    }
-
     public void setBriscolaToCards(String seed) {
         for (Card card : deck) {
             if (card.getSeed().equals(seed) && !card.isBriscola()) {
@@ -73,12 +73,54 @@ public class Board {
     public void setBriscola(Card briscola) {
         this.briscola = briscola;
     }
-    public int getPoints() {
-        return 5;
+
+    public void setPlayerPoints(int points) {
+        playerPoints = points;
     }
 
-    public void setTable(Rectangle[] table) {
-        this.table = table;
+    public void setBotPoints(int points) {
+        botPoints = points;
+    }
+
+    public int getPlayerPoints() {
+        return playerPoints;
+    }
+
+    public int getBotPoints() {
+        return botPoints;
+    }
+
+    public void addCardToTable(Card card) {
+        if (table[0] == null) {
+            table[0] = card;
+        } else {
+            table[1] = card;
+        }
+    }
+
+    public void removeCardFromHand(Card card, Rectangle cardObject) {
+        for (Hand hand : hands) {
+            if (hand.containsCard(card) && hand.containsCardObject(cardObject)) {
+                hand.removeCard(card);
+                hand.removeCardObject(cardObject);
+            }
+
+        }
+    }
+
+
+
+    public boolean tableIsFull() {
+        return table[0] != null && table[1] != null;
+    }
+
+    public Card getTable(int index) {
+        return table[index];
+    }
+
+    public void clearTable() {
+        table[0] = null;
+        table[1] = null;
     }
 
 }
