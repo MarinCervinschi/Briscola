@@ -61,7 +61,7 @@ public class GameController {
 
         for (int i = 0; i < DECK; i++) {
             Card card = board.getDeckCard(i);
-            Rectangle rectangle = createCardObject(card, String.valueOf((i + 1) % 10));
+            Rectangle rectangle = createCardObject(card.getSeed(), String.valueOf((i + 1) % 10));
             deckObject.add(rectangle);
         }
 
@@ -72,9 +72,27 @@ public class GameController {
 
         HBox playerHandBox = new HBox();
         HBox botHandBox = new HBox();
+        HBox tableBox = new HBox();
+        HBox deckBox = new HBox();
 
         playerHandBox.setAlignment(Pos.CENTER);
         botHandBox.setAlignment(Pos.CENTER);
+        tableBox.setAlignment(Pos.CENTER);
+        deckBox.setAlignment(Pos.CENTER);
+
+        StackPane stack = new StackPane();
+
+
+
+        Rectangle briscola = deckObject.poll();
+        Objects.requireNonNull(briscola).setRotate(90.0);
+        Objects.requireNonNull(briscola).setTranslateX(50);
+
+        Rectangle backDeck = createCardObject("back", "1");
+
+        stack.getChildren().addAll(briscola, backDeck);
+
+        deckBox.getChildren().add(stack);
 
         for (int i = 0; i < 6; i++) {
             Rectangle card = deckObject.poll();
@@ -91,6 +109,8 @@ public class GameController {
 
         boardPaneHands.setBottom(playerHandBox);
         boardPaneHands.setTop(botHandBox);
+        boardPaneHands.setCenter(tableBox);
+        boardPaneHands.setLeft(deckBox);
         boardPaneHands.setPadding(new Insets(5));
 
     }
@@ -101,14 +121,14 @@ public class GameController {
         return new ArrayDeque<>(deckList);
     }
 
-    private Rectangle createCardObject(Card card, String value) {
+    private Rectangle createCardObject(String seed, String value) {
         if (value.equals("0")) {
             value = "10";
         }
         Rectangle rectangle = new Rectangle(CWIDTH, CHEIGHT);
         setStyle(rectangle);
 
-        String path = "/com/cervinschi/marin/javafx/briscola/media/cards/" + card.getSeed() + value + ".png";
+        String path = "/com/cervinschi/marin/javafx/briscola/media/cards/" + seed + value + ".png";
         Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
 
         ImagePattern imagePattern = new ImagePattern(image);
