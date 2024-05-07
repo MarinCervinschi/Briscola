@@ -24,6 +24,8 @@ public class InitGame {
     private final Hand playerHand = new Hand();
     private final Hand botHand = new Hand();
     private boolean playerTurn = true;
+    private boolean updatePoints = false;
+
 
 
     public InitGame(Deque<Rectangle> deckObject, Board board, BorderPane boardPaneHands) {
@@ -51,13 +53,21 @@ public class InitGame {
     public void mainLoop() {
 
         if (!deckObject.isEmpty()) {
+            updatePoints = false;
             fillHands();
             if (board.tableIsFull()) {
                 checkTable();
+            } else {
+                board.setPlayerPoints(0);
+                board.setBotPoints(0);
             }
         } else {
             endGame();
         }
+    }
+
+    public boolean updatePoints() {
+        return updatePoints;
     }
 
     public void fillHands() {
@@ -105,21 +115,22 @@ public class InitGame {
     }
 
     public void checkTable() {
-        if (board.tableIsFull()) {
-            if (board.getTable(0).getValue() > board.getTable(1).getValue()) {
-                tableBox.getChildren().getFirst().setTranslateX(-50);
-                board.setPlayerPoints(board.getTable(0).getValue() + board.getTable(1).getValue());
-            } else {
-                tableBox.getChildren().getFirst().setTranslateX(50);
-                board.setBotPoints(board.getTable(0).getValue() + board.getTable(1).getValue());
-            }
-            PauseTransition pause = new PauseTransition(Duration.seconds(2));
-            pause.setOnFinished(e -> {
-                tableBox.getChildren().clear();
-                board.clearTable();
-            });
-            pause.play();
+        if (board.getTable(0).getValue() > board.getTable(1).getValue()) {
+            tableBox.getChildren().getFirst().setTranslateX(-50);
+            board.setPlayerPoints(board.getTable(0).getValue() + board.getTable(1).getValue());
+            board.setBotPoints(0);
+        } else {
+            tableBox.getChildren().getFirst().setTranslateX(50);
+            board.setBotPoints(board.getTable(0).getValue() + board.getTable(1).getValue());
+            board.setPlayerPoints(0);
         }
+        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+        pause.setOnFinished(e -> {
+            tableBox.getChildren().clear();
+            board.clearTable();
+            updatePoints = true;
+        });
+        pause.play();
     }
 
     public void showHoverEffect(Rectangle card) {
@@ -150,9 +161,5 @@ public class InitGame {
 
     public void endGame() {
         // end game
-    }
-
-    public Board getBoard() {
-        return board;
     }
 }

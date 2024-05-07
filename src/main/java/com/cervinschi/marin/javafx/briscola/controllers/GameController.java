@@ -116,8 +116,10 @@ public class GameController {
             @Override
             public void handle(long now) {
                 initGame.mainLoop();
-                updatePoints(playerPoints, board.getPlayerPoints());
-                updatePoints(botPoints, board.getBotPoints());
+                if (initGame.updatePoints()) {
+                    updatePoints(playerPoints, board.getPlayerPoints());
+                    updatePoints(botPoints, board.getBotPoints());
+                }
             }
         };
         timer.start();
