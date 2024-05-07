@@ -2,8 +2,9 @@ package com.cervinschi.marin.javafx.briscola.controllers;
 
 import com.cervinschi.marin.javafx.briscola.models.Board;
 import com.cervinschi.marin.javafx.briscola.models.Card;
-import com.cervinschi.marin.javafx.briscola.models.Hand;
 import static com.cervinschi.marin.javafx.briscola.utils.Const.*;
+import javafx.animation.AnimationTimer;
+
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,10 +26,12 @@ public class GameController {
     @FXML private AnchorPane root;
     @FXML private Text playerPoints;
     @FXML private Text botPoints;
+    AnimationTimer timer;
 
     private Board board;
     private boolean gameStarted = false;
     private Deque<Rectangle> deckObject;
+    private InitGame initGame;
 
     @FXML
     public void initialize() {
@@ -55,7 +58,8 @@ public class GameController {
         } else {
             gameStarted = true;
         }
-        InitGame initGame = new InitGame(deckObject, board.getDeck(), boardPaneHands);
+        initGame = new InitGame(deckObject, board, boardPaneHands);
+        initializeTimer();
     }
 
     public void showBackground() {
@@ -69,7 +73,7 @@ public class GameController {
 
     private void initializeGameObjects() {
         // remove sprites from eventual former match
-        boardPaneHands.getChildren().removeAll(boardPaneHands.getBottom(), boardPaneHands.getTop());
+        boardPaneHands.getChildren().removeAll(boardPaneHands.getBottom(), boardPaneHands.getTop(), boardPaneHands.getCenter());
 
         board = new Board();
 
@@ -87,6 +91,8 @@ public class GameController {
         StackPane stack = new StackPane();
 
         Rectangle briscola = Objects.requireNonNull(deckObject.pollLast());
+        board.setBriscola(board.popHead());
+        board.setBriscolaToCards(board.getBriscola().getSeed());
         Objects.requireNonNull(briscola).setTranslateY(-50);
         Objects.requireNonNull(briscola).setTranslateX(25);
 
@@ -100,6 +106,19 @@ public class GameController {
         boardPaneHands.setLeft(deckBox);
         boardPaneHands.setPadding(new Insets(5));
 
+    }
+    void initializeTimer() {
+        if (timer != null) {
+            timer.stop();
+        }
+        timer = new AnimationTimer() {
+
+            @Override
+            public void handle(long now) {
+                initGame.mainLoop();
+            }
+        };
+        timer.start();
     }
 
     private Rectangle createCardObject(Card card) {

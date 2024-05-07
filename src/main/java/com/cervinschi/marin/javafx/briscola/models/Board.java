@@ -1,13 +1,15 @@
 package com.cervinschi.marin.javafx.briscola.models;
 
+import javafx.scene.shape.Rectangle;
+
 import java.util.*;
 
 import static com.cervinschi.marin.javafx.briscola.utils.Const.*;
 
 public class Board {
-    private final Hand[] hands = new Hand[2];
+    private final Deque<Hand> hands = new ArrayDeque<>(2);
     private Deque<Card> deck = new ArrayDeque<>();
-    private Card[] table = new Card[2];
+    private Rectangle[] table = new Rectangle[2];
     private Card briscola;
 
     public Board() {
@@ -15,19 +17,17 @@ public class Board {
         shuffleDeck();
     }
 
-    public Hand[] getHands() {
+    public Deque<Hand> getHands() {
         return hands;
     }
 
-    public Hand getHand(int index) {
-        return hands[index];
-    }
+
     public Deque<Card> getDeck() {
         return deck;
     }
 
-    public void setHand(int index, Hand hand) {
-        hands[index] = hand;
+    public void setHand(Hand hand) {
+        hands.add(hand);
     }
 
     public void createDeck() {
@@ -47,8 +47,8 @@ public class Board {
         deck = new ArrayDeque<>(deckList);
     }
 
-    public void popHead() {
-        deck.poll();
+    public Card popHead() {
+        return deck.poll();
     }
 
     public void setBriscolaToCards(String seed) {
@@ -66,16 +66,11 @@ public class Board {
     public void setBriscola(Card briscola) {
         this.briscola = briscola;
     }
-
     public int getPoints() {
-        return table[0].getValue() + table[1].getValue();
+        return 5;
     }
 
-    public Card[] getTable() {
-        return table;
-    }
-
-    public void setTable(Card[] table) {
+    public void setTable(Rectangle[] table) {
         this.table = table;
     }
 
