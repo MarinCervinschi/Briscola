@@ -20,7 +20,14 @@ public class Board {
     public Deque<Hand> getHands() {
         return hands;
     }
-
+    public boolean handsAreFull() {
+        for (Hand hand : hands) {
+            if (hand.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public Deque<Card> getDeck() {
         return deck;

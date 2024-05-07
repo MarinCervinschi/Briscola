@@ -57,6 +57,8 @@ public class InitGame {
                 tableCards[i] = (Rectangle) tableBox.getChildren().get(i);
             }
             board.setTable(tableCards);
+        } else {
+            endGame();
         }
     }
 
@@ -64,14 +66,19 @@ public class InitGame {
         while (!playerHand.isFull()) {
             Rectangle card = deckObject.poll();
             playerHand.addCard(card);
+            playerHandBox.getChildren().add(card);
             showHoverEffect(Objects.requireNonNull(card));
             selectCard(Objects.requireNonNull(card));
         }
         while (!botHand.isFull()) {
-            botHand.addCard(deckObject.poll());
+            Rectangle card = deckObject.poll();
+            botHand.addCard(card);
+            botHandBox.getChildren().add(card);
         }
-        board.setHand(playerHand);
-        board.setHand(botHand);
+        if (!board.handsAreFull()) {
+            board.setHand(playerHand);
+            board.setHand(botHand);
+        }
     }
 
     public void selectCard(Rectangle card) {
@@ -110,6 +117,10 @@ public class InitGame {
             playerTurn = true;
         });
         pause.play();
+    }
+
+    public void endGame() {
+        // end game
     }
 
     public Board getBoard() {
