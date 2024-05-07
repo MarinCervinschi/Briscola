@@ -5,8 +5,10 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.Cursor;
 
 import java.util.Deque;
+import java.util.Objects;
 
 public class InitGame {
     private final Deque<Rectangle> deckObject;
@@ -31,19 +33,31 @@ public class InitGame {
         playerHandBox.setAlignment(Pos.CENTER);
         botHandBox.setAlignment(Pos.CENTER);
 
-        boardPaneHands.setTop(playerHandBox);
-        boardPaneHands.setBottom(botHandBox);
+        boardPaneHands.setTop(botHandBox);
+        boardPaneHands.setBottom(playerHandBox);
     }
 
     public void distributeCards() {
         for (int i = 0; i < 3; i++) {
             Rectangle card = deckObject.poll();
+            showHoverEffect(Objects.requireNonNull(card));
             playerHandBox.getChildren().add(card);
         }
         for (int i = 0; i < 3; i++) {
             Rectangle card = deckObject.poll();
             botHandBox.getChildren().add(card);
         }
+    }
+
+    public void showHoverEffect(Rectangle card) {
+        card.setOnMouseEntered(e -> {
+            card.setTranslateY(-20);
+            card.setCursor(Cursor.HAND);
+        });
+        card.setOnMouseExited(e -> {
+            card.setTranslateY(0);
+            card.setCursor(Cursor.DEFAULT);
+        });
     }
 
 
