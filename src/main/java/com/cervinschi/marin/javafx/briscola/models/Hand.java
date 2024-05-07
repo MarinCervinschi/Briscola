@@ -1,21 +1,23 @@
 package com.cervinschi.marin.javafx.briscola.models;
 
-public class Hand {
-    private final Card[] cards;
+import javafx.scene.shape.Rectangle;
 
-    public Hand(Card[] cards) {
-        this.cards = cards;
+public class Hand {
+    private final Rectangle[] cards;
+
+    public Hand() {
+        cards = new Rectangle[3];
     }
 
-    public Card[] getCards() {
+    public Rectangle[] getCards() {
         return cards;
     }
 
-    public Card getCard(int index) {
+    public Rectangle getCard(int index) {
         return cards[index];
     }
 
-    public void setCard(int index, Card card) {
+    public void setCard(int index, Rectangle card) {
         cards[index] = card;
     }
 
@@ -23,12 +25,26 @@ public class Hand {
         cards[index] = null;
     }
 
-    public int size() {
-        return cards.length;
+    public void addCard(Rectangle card) {
+        for (int i = 0; i < cards.length; i++) {
+            if (cards[i] == null) {
+                cards[i] = card;
+                break;
+            }
+        }
+    }
+
+    public boolean isFull() {
+        for (Rectangle card : cards) {
+            if (card == null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean isEmpty() {
-        for (Card card : cards) {
+        for (Rectangle card : cards) {
             if (card != null) {
                 return false;
             }
@@ -36,12 +52,5 @@ public class Hand {
         return true;
     }
 
-    public boolean isFull() {
-        for (Card card : cards) {
-            if (card == null) {
-                return false;
-            }
-        }
-        return true;
-    }
+
 }

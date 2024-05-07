@@ -1,4 +1,5 @@
 package com.cervinschi.marin.javafx.briscola.models;
+import static com.cervinschi.marin.javafx.briscola.utils.Const.*;
 
 public class Card {
     private final String name;
@@ -6,7 +7,7 @@ public class Card {
     private final boolean isBriscola;
     private final int value;
 
-    public Card(String name, String seed, boolean isBriscola, int value) {
+    public Card(String name, String seed, int value, boolean isBriscola) {
         this.name = name;
         this.seed = seed;
         this.isBriscola = isBriscola;
