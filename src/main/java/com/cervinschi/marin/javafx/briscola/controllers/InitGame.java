@@ -4,9 +4,9 @@ import com.cervinschi.marin.javafx.briscola.models.Board;
 import com.cervinschi.marin.javafx.briscola.models.Card;
 import com.cervinschi.marin.javafx.briscola.models.Hand;
 import javafx.animation.PauseTransition;
+import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.Cursor;
 import javafx.scene.text.Font;
@@ -15,7 +15,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import javafx.scene.paint.Color;
-import java.awt.*;
 import java.util.Deque;
 import java.util.Objects;
 
@@ -28,7 +27,6 @@ public class InitGame {
     private final HBox tableBox = new HBox();
     private final Hand playerHand = new Hand();
     private final Hand botHand = new Hand();
-    private boolean playerTurn = true;
     private final Text playerPoints;
     private final Text botPoints;
     private final Text deckCards;
@@ -68,6 +66,7 @@ public class InitGame {
             fillHands();
             if (board.tableIsFull()) {
                 checkTable();
+                tableBox.setAlignment(Pos.CENTER);
             }
         } else {
             endGame();
@@ -81,9 +80,7 @@ public class InitGame {
             playerHand.addCard(selectedCard);
             playerHand.addCardObject(card);
 
-            PauseTransition pause = new PauseTransition(Duration.seconds(1));
-            pause.setOnFinished(e -> playerHandBox.getChildren().add(card));
-            pause.play();
+            playerHandBox.getChildren().add(card);
 
             showHoverEffect(Objects.requireNonNull(card));
             selectCard(card, selectedCard);
@@ -92,47 +89,81 @@ public class InitGame {
             Rectangle card = deckObject.poll();
             botHand.addCard(board.getDeck().poll());
             botHand.addCardObject(card);
-            PauseTransition pause = new PauseTransition(Duration.seconds(1));
-            pause.setOnFinished(e -> botHandBox.getChildren().add(card));
-            pause.play();
+            botHandBox.getChildren().add(card);
         }
         board.setHand(playerHand);
         board.setHand(botHand);
     }
+    private boolean isMoving = false;
 
     public void selectCard(Rectangle card, Card selectedCard) {
         card.setOnMouseClicked(e -> {
+            if (isMoving) {
+                return;
+            }
             playerHandBox.getChildren().remove(card);
 
             card.setOnMouseEntered(null);
             card.setOnMouseExited(null);
 
-            tableBox.getChildren().add(card);
+            tableBox.getChildren().addFirst(card);
 
             board.removeCardFromHand(selectedCard, card);
             board.addCardToTable(selectedCard);
-
-            playerTurn = false;
 
             botMove();
         });
     }
 
+    public void botMove() {
+        if (isMoving) {
+            return;
+        }
+        isMoving = true;
+        PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        pause.setOnFinished(e -> {
+            Rectangle card = (Rectangle) botHandBox.getChildren().getFirst();
+            botHandBox.getChildren().remove(card);
+            tableBox.getChildren().addLast(card);
+            board.addCardToTable(botHand.getCards()[0]);
+
+            board.removeCardFromHand(botHand.getCards()[0], card);
+
+            isMoving = false;
+        });
+        pause.play();
+    }
+
     public void checkTable() {
         int pointsFirst = board.getTable(0).getValue();
         int pointsSecond = board.getTable(1).getValue();
+
+        Rectangle firstCard = null;
+        Rectangle secondCard = null;
         if (pointsFirst > pointsSecond) {
-            //tableBox.getChildren().getFirst().setTranslateX(-50);
             updatePoints(playerPoints, pointsFirst + pointsSecond);
+            firstCard = (Rectangle) tableBox.getChildren().getFirst();
+            secondCard = (Rectangle) tableBox.getChildren().getLast();
         } else {
-            //tableBox.getChildren().getFirst().setTranslateX(50);
             updatePoints(botPoints, pointsFirst + pointsSecond);
+            firstCard = (Rectangle) tableBox.getChildren().getLast();
+            secondCard = (Rectangle) tableBox.getChildren().getFirst();
         }
-        PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
+
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), firstCard);
+
+        tt.setToX(secondCard.getLayoutX() - firstCard.getLayoutX());
+        tt.setToY(secondCard.getLayoutY() - firstCard.getLayoutY());
+
+        tt.play();
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.6));
         pause.setOnFinished(e -> {
-            tableBox.getChildren().clear();
-            board.clearTable();
-            update = true;
+            if (board.tableIsFull()) {
+                tableBox.getChildren().clear();
+                board.clearTable();
+                update = true;
+            }
         });
         pause.play();
     }
@@ -146,21 +177,6 @@ public class InitGame {
             card.setTranslateY(0);
             card.setCursor(Cursor.DEFAULT);
         });
-    }
-
-    public void botMove() {
-        PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
-        pause.setOnFinished(e -> {
-            Rectangle card = (Rectangle) botHandBox.getChildren().getFirst();
-            botHandBox.getChildren().remove(card);
-            tableBox.getChildren().add(card);
-            board.addCardToTable(botHand.getCards()[0]);
-
-            board.removeCardFromHand(botHand.getCards()[0], card);
-
-            playerTurn = true;
-        });
-        pause.play();
     }
 
     public void updatePoints(Text player, int newPoints) {
