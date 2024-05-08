@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.Cursor;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.Deque;
@@ -24,14 +25,18 @@ public class InitGame {
     private final Hand playerHand = new Hand();
     private final Hand botHand = new Hand();
     private boolean playerTurn = true;
-    private boolean updatePoints = false;
+    private final Text playerPoints;
+    private final Text botPoints;
+    private boolean update = false;
 
 
 
-    public InitGame(Deque<Rectangle> deckObject, Board board, BorderPane boardPaneHands) {
+    public InitGame(Deque<Rectangle> deckObject, Board board, BorderPane boardPaneHands, Text playerPoints, Text botPoints) {
         this.deckObject = deckObject;
         this.board = board;
         this.boardPaneHands = boardPaneHands;
+        this.playerPoints = playerPoints;
+        this.botPoints = botPoints;
         appendHandsObject();
     }
 
@@ -53,21 +58,13 @@ public class InitGame {
     public void mainLoop() {
 
         if (!deckObject.isEmpty()) {
-            updatePoints = false;
             fillHands();
             if (board.tableIsFull()) {
                 checkTable();
-            } else {
-                board.setPlayerPoints(0);
-                board.setBotPoints(0);
             }
         } else {
             endGame();
         }
-    }
-
-    public boolean updatePoints() {
-        return updatePoints;
     }
 
     public void fillHands() {
@@ -115,20 +112,20 @@ public class InitGame {
     }
 
     public void checkTable() {
-        if (board.getTable(0).getValue() > board.getTable(1).getValue()) {
-            tableBox.getChildren().getFirst().setTranslateX(-50);
-            board.setPlayerPoints(board.getTable(0).getValue() + board.getTable(1).getValue());
-            board.setBotPoints(0);
+        int pointsFirst = board.getTable(0).getValue();
+        int pointsSecond = board.getTable(1).getValue();
+        if (pointsFirst > pointsSecond) {
+            //tableBox.getChildren().getFirst().setTranslateX(-50);
+            updatePoints(playerPoints, pointsFirst + pointsSecond);
         } else {
-            tableBox.getChildren().getFirst().setTranslateX(50);
-            board.setBotPoints(board.getTable(0).getValue() + board.getTable(1).getValue());
-            board.setPlayerPoints(0);
+            //tableBox.getChildren().getFirst().setTranslateX(50);
+            updatePoints(botPoints, pointsFirst + pointsSecond);
         }
-        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+        PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
         pause.setOnFinished(e -> {
             tableBox.getChildren().clear();
             board.clearTable();
-            updatePoints = true;
+            update = true;
         });
         pause.play();
     }
@@ -157,6 +154,14 @@ public class InitGame {
             playerTurn = true;
         });
         pause.play();
+    }
+
+    public void updatePoints(Text player, int newPoints) {
+        if (update) {
+            int points = Integer.parseInt(player.getText()) + newPoints;
+            player.setText(String.valueOf(points));
+            update = false;
+        }
     }
 
     public void endGame() {

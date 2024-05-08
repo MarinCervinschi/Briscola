@@ -26,6 +26,7 @@ public class GameController {
     @FXML private AnchorPane root;
     @FXML private Text playerPoints;
     @FXML private Text botPoints;
+    @FXML private Text deckCards;
     AnimationTimer timer;
 
     private Board board;
@@ -58,7 +59,7 @@ public class GameController {
         } else {
             gameStarted = true;
         }
-        initGame = new InitGame(deckObject, board, boardPaneHands);
+        initGame = new InitGame(deckObject, board, boardPaneHands, playerPoints, botPoints);
         initializeTimer();
     }
 
@@ -116,15 +117,10 @@ public class GameController {
             @Override
             public void handle(long now) {
                 initGame.mainLoop();
-                if (initGame.updatePoints()) {
-                    updatePoints(playerPoints, board.getPlayerPoints());
-                    updatePoints(botPoints, board.getBotPoints());
-                }
             }
         };
         timer.start();
     }
-
 
     private Rectangle createCardObject(Card card) {
         Rectangle rectangle = new Rectangle(CWIDTH, CHEIGHT);
@@ -170,11 +166,6 @@ public class GameController {
         botPoints.setText("0");
     }
 
-    private void updatePoints(Text player, int newPoints) {
-        int points = Integer.parseInt(player.getText());
-        points += newPoints;
-        player.setText(String.valueOf(points));
-    }
 
     @FXML
     protected void showRules() {

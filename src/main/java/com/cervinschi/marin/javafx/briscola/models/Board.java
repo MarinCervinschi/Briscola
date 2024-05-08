@@ -11,14 +11,10 @@ public class Board {
     private Deque<Card> deck = new ArrayDeque<>();
     private final Card[] table = new Card[2];
     private Card briscola;
-    private int playerPoints;
-    private int botPoints;
 
     public Board() {
         createDeck();
         shuffleDeck();
-        playerPoints = 0;
-        botPoints = 0;
     }
 
     public Deque<Card> getDeck() {
@@ -60,22 +56,6 @@ public class Board {
 
     public void setBriscola(Card briscola) {
         this.briscola = briscola;
-    }
-
-    public void setPlayerPoints(int points) {
-        playerPoints = points;
-    }
-
-    public void setBotPoints(int points) {
-        botPoints = points;
-    }
-
-    public int getPlayerPoints() {
-        return playerPoints;
-    }
-
-    public int getBotPoints() {
-        return botPoints;
     }
 
     public void addCardToTable(Card card) {
