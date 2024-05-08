@@ -167,13 +167,16 @@ public class InitGame {
 
         tt.play();
 
+        PauseTransition pause = getPauseTransition(pointsFirst, pointsSecond);
+        pause.play();
+    }
+
+    private PauseTransition getPauseTransition(int pointsFirst, int pointsSecond) {
         PauseTransition pause = new PauseTransition(Duration.seconds(2));
-        int finalPointsFirst = pointsFirst;
-        int finalPointsSecond = pointsSecond;
         pause.setOnFinished(e -> {
             if (board.tableIsFull()) {
-                updatePoints(playerPoints, finalPointsFirst);
-                updatePoints(botPoints, finalPointsSecond);
+                updatePoints(playerPoints, pointsFirst);
+                updatePoints(botPoints, pointsSecond);
 
                 tableBox.getChildren().clear();
                 board.clearTable();
@@ -181,7 +184,7 @@ public class InitGame {
                 canSelect = true;
             }
         });
-        pause.play();
+        return pause;
     }
 
     public void showHoverEffect(Rectangle card) {
