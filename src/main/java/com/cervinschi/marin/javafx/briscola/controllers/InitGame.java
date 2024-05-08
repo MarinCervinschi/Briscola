@@ -83,19 +83,23 @@ public class InitGame {
         while (!playerHand.isCardsObjectFull()) {
             Rectangle card = deckObject.poll();
             Card selectedCard = board.getDeck().poll();
-            playerHand.addCard(selectedCard);
-            playerHand.addCardObject(card);
+            if (!board.getDeck().isEmpty() && !deckObject.isEmpty()) {
+                playerHand.addCard(selectedCard);
+                playerHand.addCardObject(card);
 
-            playerHandBox.getChildren().add(card);
+                playerHandBox.getChildren().add(card);
 
-            showHoverEffect(Objects.requireNonNull(card));
-            selectCard(card, selectedCard);
+                showHoverEffect(Objects.requireNonNull(card));
+                selectCard(card, selectedCard);
+            }
         }
         while (!botHand.isCardsObjectFull()) {
             Rectangle card = deckObject.poll();
-            botHand.addCard(board.getDeck().poll());
-            botHand.addCardObject(card);
-            botHandBox.getChildren().add(card);
+            if (!deckObject.isEmpty() && !board.getDeck().isEmpty()) {
+                botHand.addCard(board.getDeck().poll());
+                botHand.addCardObject(card);
+                botHandBox.getChildren().add(card);
+            }
         }
         board.setHand(playerHand);
         board.setHand(botHand);
