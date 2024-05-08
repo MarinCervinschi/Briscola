@@ -94,13 +94,9 @@ public class InitGame {
         board.setHand(playerHand);
         board.setHand(botHand);
     }
-    private boolean isMoving = false;
 
     public void selectCard(Rectangle card, Card selectedCard) {
         card.setOnMouseClicked(e -> {
-            if (isMoving) {
-                return;
-            }
             playerHandBox.getChildren().remove(card);
 
             card.setOnMouseEntered(null);
@@ -116,10 +112,6 @@ public class InitGame {
     }
 
     public void botMove() {
-        if (isMoving) {
-            return;
-        }
-        isMoving = true;
         PauseTransition pause = new PauseTransition(Duration.seconds(1));
         pause.setOnFinished(e -> {
             Rectangle card = (Rectangle) botHandBox.getChildren().getFirst();
@@ -129,12 +121,14 @@ public class InitGame {
 
             board.removeCardFromHand(botHand.getCards()[0], card);
 
-            isMoving = false;
         });
         pause.play();
     }
 
     public void checkTable() {
+        if (!board.tableIsFull()) {
+            return;
+        }
         int pointsFirst = board.getTable(0).getValue();
         int pointsSecond = board.getTable(1).getValue();
 
@@ -150,14 +144,14 @@ public class InitGame {
             secondCard = (Rectangle) tableBox.getChildren().getFirst();
         }
 
-        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), firstCard);
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.3), firstCard);
 
         tt.setToX(secondCard.getLayoutX() - firstCard.getLayoutX());
         tt.setToY(secondCard.getLayoutY() - firstCard.getLayoutY());
 
         tt.play();
 
-        PauseTransition pause = new PauseTransition(Duration.seconds(1.6));
+        PauseTransition pause = new PauseTransition(Duration.seconds(2));
         pause.setOnFinished(e -> {
             if (board.tableIsFull()) {
                 tableBox.getChildren().clear();
