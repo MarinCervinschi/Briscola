@@ -126,7 +126,6 @@ public class InitGame {
         pause.setOnFinished(e -> {
             Rectangle card = (Rectangle) botHandBox.getChildren().getFirst();
             botHandBox.getChildren().remove(card);
-            tableBox.getChildren().addLast(card);
             for (int i = 0; i < 3; i++) {
                 if (botHand.getCards()[i].toString().equals(card.getId())) {
                     board.addCardToTable(botHand.getCards()[i]);
@@ -134,6 +133,12 @@ public class InitGame {
                     break;
                 }
             }
+            if (board.getTable(0).getValue() > board.getTable(1).getValue()) {
+                tableBox.getChildren().addFirst(card);
+            } else {
+                tableBox.getChildren().addLast(card);
+            }
+
 
         });
         pause.play();
@@ -146,18 +151,14 @@ public class InitGame {
         int pointsFirst = board.getTable(0).getValue();
         int pointsSecond = board.getTable(1).getValue();
 
-        Rectangle firstCard = null;
-        Rectangle secondCard = null;
+        Rectangle firstCard = (Rectangle) tableBox.getChildren().getLast();
+        Rectangle secondCard = (Rectangle) tableBox.getChildren().getFirst();
         if (pointsFirst > pointsSecond) {
             pointsFirst += pointsSecond;
             pointsSecond = 0;
-            firstCard = (Rectangle) tableBox.getChildren().getFirst();
-            secondCard = (Rectangle) tableBox.getChildren().getLast();
         } else {
             pointsSecond += pointsFirst;
             pointsFirst = 0;
-            firstCard = (Rectangle) tableBox.getChildren().getLast();
-            secondCard = (Rectangle) tableBox.getChildren().getFirst();
         }
 
         TranslateTransition tt = new TranslateTransition(Duration.seconds(0.3), firstCard);
