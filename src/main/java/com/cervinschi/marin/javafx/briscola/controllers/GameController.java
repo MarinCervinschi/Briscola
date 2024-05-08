@@ -117,6 +117,9 @@ public class GameController {
             @Override
             public void handle(long now) {
                 initGame.mainLoop();
+                if (initGame.isGameEnded()) {
+                    timer.stop();
+                }
             }
         };
         timer.start();

@@ -9,9 +9,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.Cursor;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
-
+import javafx.scene.paint.Color;
+import java.awt.*;
 import java.util.Deque;
 import java.util.Objects;
 
@@ -29,6 +33,7 @@ public class InitGame {
     private final Text botPoints;
     private final Text deckCards;
     private boolean update = false;
+    private boolean gameEnded = false;
 
 
 
@@ -144,7 +149,7 @@ public class InitGame {
     }
 
     public void botMove() {
-        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+        PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
         pause.setOnFinished(e -> {
             Rectangle card = (Rectangle) botHandBox.getChildren().getFirst();
             botHandBox.getChildren().remove(card);
@@ -168,6 +173,39 @@ public class InitGame {
     }
 
     public void endGame() {
-        // end game
+        int playerScore = Integer.parseInt(playerPoints.getText());
+        int botScore = Integer.parseInt(botPoints.getText());
+        playerPoints.setText(" ");
+        botPoints.setText(" ");
+        deckCards.setText(" ");
+
+        Text endGameMessage = getText(playerScore, botScore);
+
+        // Add the message to the board
+        boardPaneHands.getChildren().clear();
+        boardPaneHands.setCenter(endGameMessage);
+
+        gameEnded = true;
+    }
+
+    private Text getText(int playerScore, int botScore) {
+        Text endGameMessage = new Text();
+        endGameMessage.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 90));
+        endGameMessage.setFill(Color.YELLOWGREEN);
+
+        endGameMessage.setTextAlignment(TextAlignment.CENTER);
+
+        if (playerScore > 61) {
+            endGameMessage.setText("You won");
+        } else if (botScore > 61) {
+            endGameMessage.setText("You lose");
+        } else {
+            endGameMessage.setText("Draw");
+        }
+        return endGameMessage;
+    }
+
+    public boolean isGameEnded() {
+        return gameEnded;
     }
 }
