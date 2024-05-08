@@ -72,7 +72,13 @@ public class InitGame {
         }
     }
 
+    private boolean canFill = true;
+
     public void fillHands() {
+        if (!canFill) {
+            return;
+        }
+        canFill = false;
         while (!playerHand.isCardsObjectFull()) {
             Rectangle card = deckObject.poll();
             Card selectedCard = board.getDeck().poll();
@@ -166,6 +172,7 @@ public class InitGame {
 
                 tableBox.getChildren().clear();
                 board.clearTable();
+                canFill = true;
             }
         });
         pause.play();
