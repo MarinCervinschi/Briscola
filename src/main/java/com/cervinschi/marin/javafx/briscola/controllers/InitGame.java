@@ -30,7 +30,6 @@ public class InitGame {
     private final Text playerPoints;
     private final Text botPoints;
     private final Text deckCards;
-    private boolean update = false;
     private boolean gameEnded = false;
 
 
@@ -117,9 +116,13 @@ public class InitGame {
             Rectangle card = (Rectangle) botHandBox.getChildren().getFirst();
             botHandBox.getChildren().remove(card);
             tableBox.getChildren().addLast(card);
-            board.addCardToTable(botHand.getCards()[0]);
-
-            board.removeCardFromHand(botHand.getCards()[0], card);
+            for (int i = 0; i < 3; i++) {
+                if (botHand.getCards()[i].toString().equals(card.getId())) {
+                    board.addCardToTable(botHand.getCards()[i]);
+                    board.removeCardFromHand(botHand.getCards()[i], card);
+                    break;
+                }
+            }
 
         });
         pause.play();
@@ -135,11 +138,13 @@ public class InitGame {
         Rectangle firstCard = null;
         Rectangle secondCard = null;
         if (pointsFirst > pointsSecond) {
-            updatePoints(playerPoints, pointsFirst + pointsSecond);
+            pointsFirst += pointsSecond;
+            pointsSecond = 0;
             firstCard = (Rectangle) tableBox.getChildren().getFirst();
             secondCard = (Rectangle) tableBox.getChildren().getLast();
         } else {
-            updatePoints(botPoints, pointsFirst + pointsSecond);
+            pointsSecond += pointsFirst;
+            pointsFirst = 0;
             firstCard = (Rectangle) tableBox.getChildren().getLast();
             secondCard = (Rectangle) tableBox.getChildren().getFirst();
         }
@@ -152,11 +157,15 @@ public class InitGame {
         tt.play();
 
         PauseTransition pause = new PauseTransition(Duration.seconds(2));
+        int finalPointsFirst = pointsFirst;
+        int finalPointsSecond = pointsSecond;
         pause.setOnFinished(e -> {
             if (board.tableIsFull()) {
+                updatePoints(playerPoints, finalPointsFirst);
+                updatePoints(botPoints, finalPointsSecond);
+
                 tableBox.getChildren().clear();
                 board.clearTable();
-                update = true;
             }
         });
         pause.play();
@@ -174,11 +183,8 @@ public class InitGame {
     }
 
     public void updatePoints(Text player, int newPoints) {
-        if (update) {
-            int points = Integer.parseInt(player.getText()) + newPoints;
-            player.setText(String.valueOf(points));
-            update = false;
-        }
+        int points = Integer.parseInt(player.getText()) + newPoints;
+        player.setText(String.valueOf(points));
         deckCards.setText(String.valueOf(board.getDeck().size()));
     }
 

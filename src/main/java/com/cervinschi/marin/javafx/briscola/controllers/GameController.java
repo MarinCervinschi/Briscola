@@ -16,6 +16,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+
+import javax.sound.midi.Soundbank;
 import java.util.*;
 
 
@@ -91,7 +93,7 @@ public class GameController {
 
         StackPane stack = new StackPane();
 
-        Rectangle briscola = Objects.requireNonNull(deckObject.pollLast());
+        Rectangle briscola = Objects.requireNonNull(deckObject.poll());
         board.setBriscola(board.getDeck().poll());
         board.setBriscolaToCards(board.getBriscola().getSeed());
         Objects.requireNonNull(briscola).setTranslateY(-50);
@@ -128,6 +130,7 @@ public class GameController {
     private Rectangle createCardObject(Card card) {
         Rectangle rectangle = new Rectangle(CWIDTH, CHEIGHT);
         setCardStyle(rectangle);
+        rectangle.setId(card.toString());
 
         String path = "/com/cervinschi/marin/javafx/briscola/media/cards/" + card.getSeed() + card.getName() + ".png";
         Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
