@@ -73,6 +73,7 @@ public class InitGame {
     }
 
     private boolean canFill = true;
+    private boolean canSelect = true;
 
     public void fillHands() {
         if (!canFill) {
@@ -102,6 +103,10 @@ public class InitGame {
 
     public void selectCard(Rectangle card, Card selectedCard) {
         card.setOnMouseClicked(e -> {
+            if (!canSelect) {
+                return;
+            }
+            canSelect = false;
             playerHandBox.getChildren().remove(card);
 
             card.setOnMouseEntered(null);
@@ -173,6 +178,7 @@ public class InitGame {
                 tableBox.getChildren().clear();
                 board.clearTable();
                 canFill = true;
+                canSelect = true;
             }
         });
         pause.play();
