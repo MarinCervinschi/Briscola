@@ -21,19 +21,19 @@
     </top>
    <center>
        <AnchorPane fx:id="root" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-           <Text fx:id="botPoints" fill="WHITE" layoutX="740.0" layoutY="121.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+           <Text fx:id="botPoints" fill="WHITE" layoutX="740.0" layoutY="121.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" ">
                <font>
                    <Font name="Arial Bold" size="40.0" />
                </font>
            </Text>
-           <Text fx:id="playerPoints" fill="WHITE" layoutX="740.0" layoutY="607.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+           <Text fx:id="playerPoints" fill="WHITE" layoutX="740.0" layoutY="607.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" ">
                <font>
                    <Font name="Arial Bold" size="40.0" />
                </font>
            </Text>
-           <Text fx:id="deckCards" fill="WHITE" layoutX="50" layoutY="400.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+           <Text fx:id="deckCards" fill="WHITE" layoutX="110" layoutY="500.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" ">
                <font>
-                   <Font name="Arial Bold" size="40.0" />
+                   <Font name="Arial Bold" size="30.0" />
                </font>
            </Text>
            <BorderPane fx:id="boardPaneHands" prefHeight="665.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />

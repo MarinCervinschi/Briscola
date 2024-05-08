@@ -27,16 +27,18 @@ public class InitGame {
     private boolean playerTurn = true;
     private final Text playerPoints;
     private final Text botPoints;
+    private final Text deckCards;
     private boolean update = false;
 
 
 
-    public InitGame(Deque<Rectangle> deckObject, Board board, BorderPane boardPaneHands, Text playerPoints, Text botPoints) {
+    public InitGame(Deque<Rectangle> deckObject, Board board, BorderPane boardPaneHands, Text playerPoints, Text botPoints, Text deckCards) {
         this.deckObject = deckObject;
         this.board = board;
         this.boardPaneHands = boardPaneHands;
         this.playerPoints = playerPoints;
         this.botPoints = botPoints;
+        this.deckCards = deckCards;
         appendHandsObject();
     }
 
@@ -162,6 +164,7 @@ public class InitGame {
             player.setText(String.valueOf(points));
             update = false;
         }
+        deckCards.setText(String.valueOf(board.getDeck().size()));
     }
 
     public void endGame() {

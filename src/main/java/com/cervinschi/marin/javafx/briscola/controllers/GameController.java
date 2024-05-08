@@ -38,7 +38,6 @@ public class GameController {
     public void initialize() {
         showBackground();
         initializeGameObjects();
-
     }
 
     @FXML
@@ -59,8 +58,9 @@ public class GameController {
         } else {
             gameStarted = true;
         }
-        initGame = new InitGame(deckObject, board, boardPaneHands, playerPoints, botPoints);
+        initGame = new InitGame(deckObject, board, boardPaneHands, playerPoints, botPoints, deckCards);
         initializeTimer();
+        initializePoints();
     }
 
     public void showBackground() {
@@ -164,6 +164,7 @@ public class GameController {
     private void initializePoints() {
         playerPoints.setText("0");
         botPoints.setText("0");
+        deckCards.setText("33");
     }
 
 
