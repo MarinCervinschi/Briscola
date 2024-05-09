@@ -61,13 +61,14 @@ public class InitGame {
 
     public void mainLoop() {
 
-        if (!deckObject.isEmpty()) {
+        if (!deckObject.isEmpty() && !gameEnded) {
             fillHands();
-            if (board.tableIsFull()) {
-                checkTable();
-                tableBox.setAlignment(Pos.CENTER);
-            }
-        } else {
+        }
+        if (board.tableIsFull()) {
+            checkTable();
+            tableBox.setAlignment(Pos.CENTER);
+        }
+        if (botHand.isEmptyObject() && playerHand.isEmptyObject()) {
             endGame();
         }
     }
@@ -80,26 +81,36 @@ public class InitGame {
             return;
         }
         canFill = false;
-        while (!playerHand.isCardsObjectFull()) {
-            Rectangle card = deckObject.poll();
-            Card selectedCard = board.getDeck().poll();
-            if (!board.getDeck().isEmpty() && !deckObject.isEmpty()) {
-                playerHand.addCard(selectedCard);
-                playerHand.addCardObject(card);
-
-                playerHandBox.getChildren().add(card);
-
-                showHoverEffect(Objects.requireNonNull(card));
-                selectCard(card, selectedCard);
+        while (playerHand.isCardsObjectFull()) {
+            Rectangle card;
+            Card selectedCard;
+            if (deckObject.size() == 1) {
+                card = board.getBriscolaObject();
+                selectedCard = board.getBriscola();
+            } else {
+                card = deckObject.poll();
+                selectedCard = board.getDeck().poll();
             }
+
+            assert card != null;
+            playerHand.addCard(selectedCard);
+            playerHand.addCardObject(card);
+
+            playerHandBox.getChildren().add(card);
+            if (card.equals(board.getBriscolaObject())) {
+                boardPaneHands.getChildren().remove(boardPaneHands.getLeft());
+                deckCards.setText(" ");
+            }
+
+            showHoverEffect(Objects.requireNonNull(card));
+            selectCard(card, selectedCard);
         }
-        while (!botHand.isCardsObjectFull()) {
+        while (botHand.isCardsObjectFull()) {
             Rectangle card = deckObject.poll();
-            if (!deckObject.isEmpty() && !board.getDeck().isEmpty()) {
-                botHand.addCard(board.getDeck().poll());
-                botHand.addCardObject(card);
-                botHandBox.getChildren().add(card);
-            }
+            assert card != null;
+            botHand.addCard(board.getDeck().poll());
+            botHand.addCardObject(card);
+            botHandBox.getChildren().add(card);
         }
         board.setHand(playerHand);
         board.setHand(botHand);
@@ -128,21 +139,24 @@ public class InitGame {
     public void botMove() {
         PauseTransition pause = new PauseTransition(Duration.seconds(1));
         pause.setOnFinished(e -> {
-            Rectangle card = (Rectangle) botHandBox.getChildren().getFirst();
-            botHandBox.getChildren().remove(card);
-            for (int i = 0; i < 3; i++) {
-                if (botHand.getCards()[i].toString().equals(card.getId())) {
-                    board.addCardToTable(botHand.getCards()[i]);
-                    board.removeCardFromHand(botHand.getCards()[i], card);
-                    break;
+            if (!board.tableIsFull()) {
+                Rectangle card = (Rectangle) botHandBox.getChildren().getFirst();
+                botHandBox.getChildren().remove(card);
+                for (int i = 0; i < 3; i++) {
+                    if (botHand.getCards()[i] != null) {
+                        if (botHand.getCards()[i].toString().equals(card.getId())) {
+                            board.addCardToTable(botHand.getCards()[i]);
+                            board.removeCardFromHand(botHand.getCards()[i], card);
+                            break;
+                        }
+                    }
+                }
+                if (board.getTable(0).getValue() > board.getTable(1).getValue()) {
+                    tableBox.getChildren().addFirst(card);
+                } else {
+                    tableBox.getChildren().addLast(card);
                 }
             }
-            if (board.getTable(0).getValue() > board.getTable(1).getValue()) {
-                tableBox.getChildren().addFirst(card);
-            } else {
-                tableBox.getChildren().addLast(card);
-            }
-
 
         });
         pause.play();
@@ -165,7 +179,7 @@ public class InitGame {
             pointsFirst = 0;
         }
 
-        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.3), firstCard);
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), firstCard);
 
         tt.setToX(secondCard.getLayoutX() - firstCard.getLayoutX());
         tt.setToY(secondCard.getLayoutY() - firstCard.getLayoutY());
@@ -177,7 +191,7 @@ public class InitGame {
     }
 
     private PauseTransition getPauseTransition(int pointsFirst, int pointsSecond) {
-        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
         pause.setOnFinished(e -> {
             if (board.tableIsFull()) {
                 updatePoints(playerPoints, pointsFirst);
@@ -204,9 +218,14 @@ public class InitGame {
     }
 
     public void updatePoints(Text player, int newPoints) {
+        if (gameEnded) {
+            return;
+        }
         int points = Integer.parseInt(player.getText()) + newPoints;
         player.setText(String.valueOf(points));
-        deckCards.setText(String.valueOf(board.getDeck().size()));
+        if (deckObject.size() > 1) {
+            deckCards.setText(String.valueOf(deckObject.size() - 1));
+        }
     }
 
     public void endGame() {
@@ -231,14 +250,16 @@ public class InitGame {
         endGameMessage.setFill(Color.YELLOWGREEN);
 
         endGameMessage.setTextAlignment(TextAlignment.CENTER);
-
+        String message;
         if (playerScore > 61) {
-            endGameMessage.setText("You won");
+            message = "You won!";
         } else if (botScore > 61) {
-            endGameMessage.setText("You lose");
+            message = "You lost!";
         } else {
-            endGameMessage.setText("Draw");
+            message = "Draw!";
         }
+
+        endGameMessage.setText(playerScore + " - " + botScore + "\n" + message);
         return endGameMessage;
     }
 

@@ -24,7 +24,6 @@ public class GameController {
 
     @FXML private BorderPane boardPane;
     @FXML private BorderPane boardPaneHands;
-    @FXML private AnchorPane root;
     @FXML private Text playerPoints;
     @FXML private Text botPoints;
     @FXML private Text deckCards;
@@ -49,7 +48,7 @@ public class GameController {
             return;
         }
         initializeGameObjects();
-        initializePoints();
+        initializePoints(" ", " ", "40");
     }
 
     @FXML
@@ -61,7 +60,7 @@ public class GameController {
         }
         initGame = new InitGame(deckObject, board, boardPaneHands, playerPoints, botPoints, deckCards);
         initializeTimer();
-        initializePoints();
+        initializePoints("0", "0", "34");
     }
 
     public void showBackground() {
@@ -93,6 +92,7 @@ public class GameController {
         StackPane stack = new StackPane();
 
         Rectangle briscola = Objects.requireNonNull(deckObject.poll());
+        board.setBriscolaObject(briscola);
         board.setBriscola(board.getDeck().poll());
         board.setBriscolaToCards(board.getBriscola().getSeed());
         Objects.requireNonNull(briscola).setTranslateY(-50);
@@ -166,10 +166,10 @@ public class GameController {
         rectangle.setEffect(dropShadow2);
     }
 
-    private void initializePoints() {
-        playerPoints.setText("0");
-        botPoints.setText("0");
-        deckCards.setText("33");
+    private void initializePoints(String playerPoints, String botPoints, String deckCards) {
+        this.playerPoints.setText(playerPoints);
+        this.botPoints.setText(botPoints);
+        this.deckCards.setText(deckCards);
     }
 
 

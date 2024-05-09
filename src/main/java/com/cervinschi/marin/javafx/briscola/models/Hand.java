@@ -11,10 +11,6 @@ public class Hand {
         cards = new Card[3];
     }
 
-    public Rectangle[] getCardsObject() {
-        return cardsObject;
-    }
-
     public void addCard(Card card) {
         for (int i = 0; i < cards.length; i++) {
             if (cards[i] == null) {
@@ -28,13 +24,14 @@ public class Hand {
         return cards;
     }
 
-    public boolean isEmpty() {
-        for (Card card : cards) {
-            if (card == null) {
-                return true;
+
+    public boolean isEmptyObject() {
+        for (Rectangle card : cardsObject) {
+            if (card != null) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public void addCardObject(Rectangle card) {
@@ -82,14 +79,12 @@ public class Hand {
         return false;
     }
 
-
-
     public boolean isCardsObjectFull() {
         for (Rectangle card : cardsObject) {
             if (card == null) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }

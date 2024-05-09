@@ -1,5 +1,4 @@
 package com.cervinschi.marin.javafx.briscola.models;
-import static com.cervinschi.marin.javafx.briscola.utils.Const.*;
 
 public class Card {
     private final String name;

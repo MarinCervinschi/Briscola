@@ -4,13 +4,12 @@ import javafx.scene.shape.Rectangle;
 
 import java.util.*;
 
-import static com.cervinschi.marin.javafx.briscola.utils.Const.*;
-
 public class Board {
     private final Deque<Hand> hands = new ArrayDeque<>(2);
     private Deque<Card> deck = new ArrayDeque<>();
     private final Card[] table = new Card[2];
     private Card briscola;
+    private Rectangle briscolaObject;
 
     public Board() {
         createDeck();
@@ -58,6 +57,14 @@ public class Board {
         this.briscola = briscola;
     }
 
+    public void setBriscolaObject(Rectangle briscolaObject) {
+        this.briscolaObject = briscolaObject;
+    }
+
+    public Rectangle getBriscolaObject() {
+        return briscolaObject;
+    }
+
     public void addCardToTable(Card card) {
         if (table[0] == null) {
             table[0] = card;
@@ -75,8 +82,6 @@ public class Board {
 
         }
     }
-
-
 
     public boolean tableIsFull() {
         return table[0] != null && table[1] != null;
