@@ -69,7 +69,9 @@ public class InitGame {
             tableBox.setAlignment(Pos.CENTER);
         }
         if (botHand.isEmptyObject() && playerHand.isEmptyObject()) {
-            endGame();
+            PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
+            pause.setOnFinished(e -> endGame());
+            pause.play();
         }
     }
 
@@ -98,6 +100,8 @@ public class InitGame {
 
             playerHandBox.getChildren().add(card);
             if (card.equals(board.getBriscolaObject())) {
+                card.setTranslateX(0);
+                card.setTranslateY(0);
                 boardPaneHands.getChildren().remove(boardPaneHands.getLeft());
                 deckCards.setText(" ");
             }
@@ -218,7 +222,7 @@ public class InitGame {
     }
 
     public void updatePoints(Text player, int newPoints) {
-        if (gameEnded) {
+        if (gameEnded || player.getText().equals(" ")){
             return;
         }
         int points = Integer.parseInt(player.getText()) + newPoints;
@@ -229,6 +233,9 @@ public class InitGame {
     }
 
     public void endGame() {
+        if (gameEnded) {
+            return;
+        }
         int playerScore = Integer.parseInt(playerPoints.getText());
         int botScore = Integer.parseInt(botPoints.getText());
         playerPoints.setText(" ");
