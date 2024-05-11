@@ -1,12 +1,10 @@
 package com.cervinschi.marin.javafx.briscola.controllers;
 
-import com.cervinschi.marin.javafx.briscola.models.Board;
 import com.cervinschi.marin.javafx.briscola.models.Card;
 import com.cervinschi.marin.javafx.briscola.models.Hand;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
-import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.Cursor;
 import javafx.scene.text.Font;
@@ -15,57 +13,33 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import javafx.scene.paint.Color;
-import java.util.Deque;
+
 import java.util.Objects;
 
-public class InitGame {
-    private final Deque<Rectangle> deckObject;
-    private final Board board;
-    private final BorderPane tablePane;
-    private final HBox playerHandBox = new HBox();
-    private final HBox botHandBox = new HBox();
-    private final HBox tableBox = new HBox();
+public class GameInit {
+    private final GameObjects gameObjects;
+    
     private final Hand playerHand = new Hand();
     private final Hand botHand = new Hand();
-    private final Text playerPoints;
-    private final Text botPoints;
-    private final Text deckCards;
+
+
+    private boolean canFill = true;
+    private boolean canSelect = true;
     private boolean gameEnded = false;
 
-
-    public InitGame(Deque<Rectangle> deckObject, Board board, BorderPane boardPaneHands, Text playerPoints, Text botPoints, Text deckCards) {
-        this.deckObject = deckObject;
-        this.board = board;
-        this.tablePane = boardPaneHands;
-        this.playerPoints = playerPoints;
-        this.botPoints = botPoints;
-        this.deckCards = deckCards;
-        appendHandsObject();
-    }
-
-    public void appendHandsObject() {
-
-        playerHandBox.setSpacing(10);
-        botHandBox.setSpacing(10);
-        tableBox.setSpacing(10);
-
-        playerHandBox.setAlignment(Pos.CENTER);
-        botHandBox.setAlignment(Pos.CENTER);
-        tableBox.setAlignment(Pos.CENTER);
-
-        tablePane.setTop(botHandBox);
-        tablePane.setBottom(playerHandBox);
-        tablePane.setCenter(tableBox);
+    public GameInit(GameObjects gameObjects) {
+        this.gameObjects = gameObjects;
+        gameObjects.appendHandsObject();
     }
 
     public void mainLoop() {
 
-        if (!deckObject.isEmpty() && !gameEnded) {
+        if (!gameObjects.getDeckObject().isEmpty() && !gameEnded) {
             fillHands();
         }
-        if (board.tableIsFull()) {
+        if (gameObjects.getBoard().tableIsFull()) {
             checkTable();
-            tableBox.setAlignment(Pos.CENTER);
+            gameObjects.getTableBox().setAlignment(Pos.CENTER);
         }
         if (botHand.isEmptyObject() && playerHand.isEmptyObject()) {
             PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
@@ -74,66 +48,61 @@ public class InitGame {
         }
     }
 
-    private boolean canFill = true;
-    private boolean canSelect = true;
-
     public void fillHands() {
-        if (!canFill) {
-            return;
-        }
+        if (!canFill) return;
+
         canFill = false;
         while (playerHand.isCardsObjectFull()) {
             Rectangle card;
             Card selectedCard;
-            if (deckObject.size() == 1) {
-                card = board.getBriscolaObject();
-                selectedCard = board.getBriscola();
+            if (gameObjects.getDeckObject().size() == 1) {
+                card = gameObjects.getBoard().getBriscolaObject();
+                selectedCard = gameObjects.getBoard().getBriscola();
             } else {
-                card = deckObject.poll();
-                selectedCard = board.getDeck().poll();
+                card = gameObjects.getDeckObject().poll();
+                selectedCard = gameObjects.getBoard().getDeck().poll();
             }
 
             assert card != null;
             playerHand.addCard(selectedCard);
             playerHand.addCardObject(card);
 
-            playerHandBox.getChildren().add(card);
-            if (card.equals(board.getBriscolaObject())) {
+            gameObjects.getPlayerHandBox().getChildren().add(card);
+            if (card.equals(gameObjects.getBoard().getBriscolaObject())) {
                 card.setTranslateX(0);
                 card.setTranslateY(0);
-                tablePane.getChildren().remove(tablePane.getLeft());
-                deckCards.setText(" ");
+                gameObjects.getTablePane().getChildren().remove(gameObjects.getTablePane().getLeft());
+                gameObjects.getDeckCards().setText(" ");
             }
 
             showHoverEffect(Objects.requireNonNull(card));
             selectCard(card, selectedCard);
         }
         while (botHand.isCardsObjectFull()) {
-            Rectangle card = deckObject.poll();
+            Rectangle card = gameObjects.getDeckObject().poll();
             assert card != null;
-            botHand.addCard(board.getDeck().poll());
+            botHand.addCard(gameObjects.getBoard().getDeck().poll());
             botHand.addCardObject(card);
-            botHandBox.getChildren().add(card);
+            gameObjects.getBotHandBox().getChildren().add(card);
         }
-        board.setHand(playerHand);
-        board.setHand(botHand);
+        gameObjects.getBoard().setHand(playerHand);
+        gameObjects.getBoard().setHand(botHand);
     }
 
     public void selectCard(Rectangle card, Card selectedCard) {
         card.setOnMouseClicked(e -> {
-            if (!canSelect) {
-                return;
-            }
+            if (!canSelect) return;
+
             canSelect = false;
-            playerHandBox.getChildren().remove(card);
+            gameObjects.getPlayerHandBox().getChildren().remove(card);
 
             card.setOnMouseEntered(null);
             card.setOnMouseExited(null);
 
-            tableBox.getChildren().addFirst(card);
+            gameObjects.getTableBox().getChildren().addFirst(card);
 
-            board.removeCardFromHand(selectedCard, card);
-            board.addCardToTable(selectedCard);
+            gameObjects.getBoard().removeCardFromHand(selectedCard, card);
+            gameObjects.getBoard().addCardToTable(selectedCard);
 
             botMove();
         });
@@ -142,22 +111,22 @@ public class InitGame {
     public void botMove() {
         PauseTransition pause = new PauseTransition(Duration.seconds(1));
         pause.setOnFinished(e -> {
-            if (!board.tableIsFull()) {
-                Rectangle card = (Rectangle) botHandBox.getChildren().getFirst();
-                botHandBox.getChildren().remove(card);
+            if (!gameObjects.getBoard().tableIsFull()) {
+                Rectangle card = (Rectangle) gameObjects.getBotHandBox().getChildren().getFirst();
+                gameObjects.getBotHandBox().getChildren().remove(card);
                 for (int i = 0; i < 3; i++) {
                     if (botHand.getCards()[i] != null) {
                         if (botHand.getCards()[i].toString().equals(card.getId())) {
-                            board.addCardToTable(botHand.getCards()[i]);
-                            board.removeCardFromHand(botHand.getCards()[i], card);
+                            gameObjects.getBoard().addCardToTable(botHand.getCards()[i]);
+                            gameObjects.getBoard().removeCardFromHand(botHand.getCards()[i], card);
                             break;
                         }
                     }
                 }
-                if (board.getTable(0).getValue() > board.getTable(1).getValue()) {
-                    tableBox.getChildren().addFirst(card);
+                if (gameObjects.getBoard().getTable(0).getValue() > gameObjects.getBoard().getTable(1).getValue()) {
+                    gameObjects.getTableBox().getChildren().addFirst(card);
                 } else {
-                    tableBox.getChildren().addLast(card);
+                    gameObjects.getTableBox().getChildren().addLast(card);
                 }
             }
 
@@ -166,14 +135,13 @@ public class InitGame {
     }
 
     public void checkTable() {
-        if (!board.tableIsFull()) {
-            return;
-        }
-        int pointsFirst = board.getTable(0).getValue();
-        int pointsSecond = board.getTable(1).getValue();
+        if (!gameObjects.getBoard().tableIsFull()) return;
 
-        Rectangle firstCard = (Rectangle) tableBox.getChildren().getLast();
-        Rectangle secondCard = (Rectangle) tableBox.getChildren().getFirst();
+        int pointsFirst = gameObjects.getBoard().getTable(0).getValue();
+        int pointsSecond = gameObjects.getBoard().getTable(1).getValue();
+
+        Rectangle firstCard = (Rectangle) gameObjects.getTableBox().getChildren().getLast();
+        Rectangle secondCard = (Rectangle) gameObjects.getTableBox().getChildren().getFirst();
         if (pointsFirst > pointsSecond) {
             pointsFirst += pointsSecond;
             pointsSecond = 0;
@@ -196,12 +164,12 @@ public class InitGame {
     private PauseTransition getPauseTransition(int pointsFirst, int pointsSecond) {
         PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
         pause.setOnFinished(e -> {
-            if (board.tableIsFull()) {
-                updatePoints(playerPoints, pointsFirst);
-                updatePoints(botPoints, pointsSecond);
+            if (gameObjects.getBoard().tableIsFull()) {
+                updatePoints(gameObjects.getPlayerPoints(), pointsSecond);
+                updatePoints(gameObjects.getBotPoints(), pointsFirst);
 
-                tableBox.getChildren().clear();
-                board.clearTable();
+                gameObjects.getTableBox().getChildren().clear();
+                gameObjects.getBoard().clearTable();
                 canFill = true;
                 canSelect = true;
             }
@@ -221,31 +189,29 @@ public class InitGame {
     }
 
     public void updatePoints(Text player, int newPoints) {
-        if (gameEnded || player.getText().equals(" ")){
-            return;
-        }
+        if (gameEnded || player.getText().equals(" ")) return;
+
         int points = Integer.parseInt(player.getText()) + newPoints;
         player.setText(String.valueOf(points));
-        if (deckObject.size() > 1) {
-            deckCards.setText(String.valueOf(deckObject.size() - 1));
+        if (gameObjects.getDeckObject().size() > 1) {
+            gameObjects.getDeckCards().setText(String.valueOf(gameObjects.getDeckObject().size() - 1));
         }
     }
 
     public void endGame() {
-        if (gameEnded) {
-            return;
-        }
-        int playerScore = Integer.parseInt(playerPoints.getText());
-        int botScore = Integer.parseInt(botPoints.getText());
-        playerPoints.setText(" ");
-        botPoints.setText(" ");
-        deckCards.setText(" ");
+        if (gameEnded) return;
 
-        Text endGameMessage = getText(playerScore, botScore);
+        int playerScore = Integer.parseInt(gameObjects.getPlayerPoints().getText());
+        int botScore = Integer.parseInt(gameObjects.getBotPoints().getText());
+        gameObjects.getPlayerPoints().setText(" ");
+        gameObjects.getBotPoints().setText(" ");
+        gameObjects.getDeckCards().setText(" ");
+
+        Text endGameMessage = getText(botScore, playerScore);
 
         // Add the message to the board
-        tablePane.getChildren().clear();
-        tablePane.setCenter(endGameMessage);
+        gameObjects.getTablePane().getChildren().clear();
+        gameObjects.getTablePane().setCenter(endGameMessage);
 
         gameEnded = true;
     }

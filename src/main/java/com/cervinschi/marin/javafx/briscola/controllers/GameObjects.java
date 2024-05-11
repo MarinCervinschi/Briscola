@@ -30,6 +30,10 @@ public class GameObjects {
 
     private BorderPane tablePane;
 
+    private HBox playerHandBox;
+    private HBox botHandBox;
+    private HBox tableBox;
+
     private Board board;
     private ArrayDeque<Rectangle> deckObject;
 
@@ -61,6 +65,10 @@ public class GameObjects {
         // remove sprites from eventual former match
         tablePane.getChildren().clear();
 
+        playerHandBox = new HBox();
+        botHandBox = new HBox();
+        tableBox = new HBox();
+
         board = new Board();
 
         deckObject = new ArrayDeque<>();
@@ -71,6 +79,20 @@ public class GameObjects {
         }
 
         initializeDeckBox();
+    }
+
+    public void appendHandsObject() {
+        playerHandBox.setSpacing(10);
+        botHandBox.setSpacing(10);
+        tableBox.setSpacing(10);
+
+        playerHandBox.setAlignment(Pos.CENTER);
+        botHandBox.setAlignment(Pos.CENTER);
+        tableBox.setAlignment(Pos.CENTER);
+
+        tablePane.setTop(botHandBox);
+        tablePane.setBottom(playerHandBox);
+        tablePane.setCenter(tableBox);
     }
 
     public void initializePoints(String playerPoints, String botPoints, String deckCards) {
@@ -166,15 +188,39 @@ public class GameObjects {
         AnchorPane.setTopAnchor(tablePane, 0.0);
     }
 
-    public Text getDeckCards() {
-        return deckCards;
+    public Text getPlayerPoints() {
+        return playerPoints;
     }
 
     public Text getBotPoints() {
         return botPoints;
     }
 
-    public Text getPlayerPoints() {
-        return playerPoints;
+    public Text getDeckCards() {
+        return deckCards;
+    }
+
+    public BorderPane getTablePane() {
+        return tablePane;
+    }
+
+    public HBox getPlayerHandBox() {
+        return playerHandBox;
+    }
+
+    public HBox getBotHandBox() {
+        return botHandBox;
+    }
+
+    public HBox getTableBox() {
+        return tableBox;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public ArrayDeque<Rectangle> getDeckObject() {
+        return deckObject;
     }
 }

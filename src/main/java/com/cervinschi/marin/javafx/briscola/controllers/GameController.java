@@ -1,23 +1,9 @@
 package com.cervinschi.marin.javafx.briscola.controllers;
 
-import com.cervinschi.marin.javafx.briscola.models.Board;
-import com.cervinschi.marin.javafx.briscola.models.Card;
-import static com.cervinschi.marin.javafx.briscola.utils.Const.*;
 import javafx.animation.AnimationTimer;
-
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-
-import java.util.*;
 
 
 public class GameController {
@@ -26,10 +12,10 @@ public class GameController {
     @FXML protected AnchorPane root;
 
     protected GameObjects gameObjects;
-    AnimationTimer timer;
+    protected GameInit gameInit;
 
+    private AnimationTimer timer;
     private boolean gameStarted = false;
-    private InitGame initGame;
 
     @FXML
     public void initialize() {
@@ -44,7 +30,8 @@ public class GameController {
         if (gameStarted) return;
         gameStarted = true;
 
-        initializeTimer();
+        gameInit = new GameInit(gameObjects);
+        start();
         gameObjects.initializePoints("0", "0", "34");
     }
 
@@ -57,17 +44,15 @@ public class GameController {
         gameObjects.initializePoints(" ", " ", "40");
     }
 
-    void initializeTimer() {
+    void start() {
         if (timer != null) timer.stop();
 
         timer = new AnimationTimer() {
 
             @Override
             public void handle(long now) {
-                initGame.mainLoop();
-                if (initGame.isGameEnded()) {
-                    timer.stop();
-                }
+                gameInit.mainLoop();
+                if (gameInit.isGameEnded()) timer.stop();
             }
         };
         timer.start();
@@ -91,4 +76,3 @@ public class GameController {
         System.exit(0);
     }
 }
-
