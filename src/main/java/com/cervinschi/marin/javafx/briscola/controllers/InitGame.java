@@ -21,7 +21,7 @@ import java.util.Objects;
 public class InitGame {
     private final Deque<Rectangle> deckObject;
     private final Board board;
-    private final BorderPane boardPaneHands;
+    private final BorderPane tablePane;
     private final HBox playerHandBox = new HBox();
     private final HBox botHandBox = new HBox();
     private final HBox tableBox = new HBox();
@@ -33,11 +33,10 @@ public class InitGame {
     private boolean gameEnded = false;
 
 
-
     public InitGame(Deque<Rectangle> deckObject, Board board, BorderPane boardPaneHands, Text playerPoints, Text botPoints, Text deckCards) {
         this.deckObject = deckObject;
         this.board = board;
-        this.boardPaneHands = boardPaneHands;
+        this.tablePane = boardPaneHands;
         this.playerPoints = playerPoints;
         this.botPoints = botPoints;
         this.deckCards = deckCards;
@@ -54,9 +53,9 @@ public class InitGame {
         botHandBox.setAlignment(Pos.CENTER);
         tableBox.setAlignment(Pos.CENTER);
 
-        boardPaneHands.setTop(botHandBox);
-        boardPaneHands.setBottom(playerHandBox);
-        boardPaneHands.setCenter(tableBox);
+        tablePane.setTop(botHandBox);
+        tablePane.setBottom(playerHandBox);
+        tablePane.setCenter(tableBox);
     }
 
     public void mainLoop() {
@@ -102,7 +101,7 @@ public class InitGame {
             if (card.equals(board.getBriscolaObject())) {
                 card.setTranslateX(0);
                 card.setTranslateY(0);
-                boardPaneHands.getChildren().remove(boardPaneHands.getLeft());
+                tablePane.getChildren().remove(tablePane.getLeft());
                 deckCards.setText(" ");
             }
 
@@ -245,8 +244,8 @@ public class InitGame {
         Text endGameMessage = getText(playerScore, botScore);
 
         // Add the message to the board
-        boardPaneHands.getChildren().clear();
-        boardPaneHands.setCenter(endGameMessage);
+        tablePane.getChildren().clear();
+        tablePane.setCenter(endGameMessage);
 
         gameEnded = true;
     }

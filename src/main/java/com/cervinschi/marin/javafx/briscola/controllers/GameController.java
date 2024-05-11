@@ -22,22 +22,21 @@ import java.util.*;
 
 public class GameController {
 
-    @FXML private BorderPane boardPane;
-    @FXML private BorderPane boardPaneHands;
-    @FXML private Text playerPoints;
-    @FXML private Text botPoints;
-    @FXML private Text deckCards;
+    @FXML protected BorderPane boardPane;
+    @FXML protected AnchorPane root;
+
+    protected GameObjects gameObjects;
     AnimationTimer timer;
 
-    private Board board;
     private boolean gameStarted = false;
-    private Deque<Rectangle> deckObject;
     private InitGame initGame;
 
     @FXML
     public void initialize() {
-        showBackground();
-        initializeGameObjects();
+        gameObjects = new GameObjects(boardPane, root);
+        gameObjects.createGameObjects();
+        gameObjects.showBackground();
+        gameObjects.initializeGameObjects();
     }
 
     @FXML
@@ -47,8 +46,8 @@ public class GameController {
         } else {
             return;
         }
-        initializeGameObjects();
-        initializePoints(" ", " ", "40");
+        gameObjects.initializeGameObjects();
+        gameObjects.initializePoints(" ", " ", "40");
     }
 
     @FXML
@@ -58,57 +57,11 @@ public class GameController {
         } else {
             gameStarted = true;
         }
-        initGame = new InitGame(deckObject, board, boardPaneHands, playerPoints, botPoints, deckCards);
         initializeTimer();
-        initializePoints("0", "0", "34");
+        gameObjects.initializePoints("0", "0", "34");
     }
 
-    public void showBackground() {
-        String path = "/com/cervinschi/marin/javafx/briscola/media/background.png";
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
-        BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, true);
-        BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
-        Background background = new Background(backgroundImage);
-        boardPane.setBackground(background);
-    }
 
-    private void initializeGameObjects() {
-        // remove sprites from eventual former match
-        boardPaneHands.getChildren().removeAll(boardPaneHands.getBottom(), boardPaneHands.getTop(), boardPaneHands.getCenter());
-
-        board = new Board();
-
-        deckObject = new ArrayDeque<>();
-
-        for (Card card : board.getDeck()) {
-            Rectangle rectangle = createCardObject(card);
-            deckObject.add(rectangle);
-        }
-
-        HBox deckBox = new HBox();
-
-        deckBox.setAlignment(Pos.CENTER);
-
-        StackPane stack = new StackPane();
-
-        Rectangle briscola = Objects.requireNonNull(deckObject.poll());
-        board.setBriscolaObject(briscola);
-        board.setBriscola(board.getDeck().poll());
-        board.setBriscolaToCards(board.getBriscola().getSeed());
-        Objects.requireNonNull(briscola).setTranslateY(-50);
-        Objects.requireNonNull(briscola).setTranslateX(25);
-
-        Rectangle backDeck = createCardObject(new Card("1", "back", 0, false));
-        Objects.requireNonNull(backDeck).setTranslateY(50);
-
-        stack.getChildren().addAll(briscola, backDeck);
-
-        deckBox.getChildren().add(stack);
-
-        boardPaneHands.setLeft(deckBox);
-        boardPaneHands.setPadding(new Insets(5));
-
-    }
     void initializeTimer() {
         if (timer != null) {
             timer.stop();
@@ -126,51 +79,7 @@ public class GameController {
         timer.start();
     }
 
-    private Rectangle createCardObject(Card card) {
-        Rectangle rectangle = new Rectangle(CWIDTH, CHEIGHT);
-        setCardStyle(rectangle);
-        rectangle.setId(card.toString());
 
-        String path = "/com/cervinschi/marin/javafx/briscola/media/cards/" + card.getSeed() + card.getName() + ".png";
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
-
-        ImagePattern imagePattern = new ImagePattern(image);
-        rectangle.setFill(imagePattern);
-        return rectangle;
-    }
-
-    private void setCardStyle(Rectangle rectangle) {
-        /* Set bord radius*/
-        rectangle.setArcHeight(16);
-        rectangle.setArcWidth(16);
-
-        /* Set border */
-        rectangle.setStroke(Color.BLACK);
-        rectangle.setStrokeWidth(1);
-
-        /* Set shadow */
-        DropShadow dropShadow1 = new DropShadow();
-        dropShadow1.setRadius(12.0);
-        dropShadow1.setOffsetX(0.0);
-        dropShadow1.setOffsetY(6.0);
-        dropShadow1.setColor(Color.rgb(50, 50, 93, 0.25));
-
-        DropShadow dropShadow2 = new DropShadow();
-        dropShadow2.setRadius(7.0);
-        dropShadow2.setOffsetX(0.0);
-        dropShadow2.setOffsetY(3.0);
-        dropShadow2.setColor(Color.rgb(0, 0, 0, 0.3));
-
-        /* add shadow */
-        rectangle.setEffect(dropShadow1);
-        rectangle.setEffect(dropShadow2);
-    }
-
-    private void initializePoints(String playerPoints, String botPoints, String deckCards) {
-        this.playerPoints.setText(playerPoints);
-        this.botPoints.setText(botPoints);
-        this.deckCards.setText(deckCards);
-    }
 
 
     @FXML
