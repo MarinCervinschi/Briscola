@@ -22,7 +22,6 @@ public class GameInit {
     private final Hand playerHand = new Hand();
     private final Hand botHand = new Hand();
 
-
     private boolean canFill = true;
     private boolean canSelect = true;
     private boolean gameEnded = false;
@@ -48,7 +47,7 @@ public class GameInit {
         }
     }
 
-    public void fillHands() {
+    private void fillHands() {
         if (!canFill) return;
 
         canFill = false;
@@ -89,7 +88,7 @@ public class GameInit {
         gameObjects.getBoard().setHand(botHand);
     }
 
-    public void selectCard(Rectangle card, Card selectedCard) {
+    private void selectCard(Rectangle card, Card selectedCard) {
         card.setOnMouseClicked(e -> {
             if (!canSelect) return;
 
@@ -108,7 +107,7 @@ public class GameInit {
         });
     }
 
-    public void botMove() {
+    private void botMove() {
         PauseTransition pause = new PauseTransition(Duration.seconds(1));
         pause.setOnFinished(e -> {
             if (!gameObjects.getBoard().tableIsFull()) {
@@ -134,7 +133,7 @@ public class GameInit {
         pause.play();
     }
 
-    public void checkTable() {
+    private void checkTable() {
         if (!gameObjects.getBoard().tableIsFull()) return;
 
         int pointsFirst = gameObjects.getBoard().getTable(0).getValue();
@@ -177,7 +176,7 @@ public class GameInit {
         return pause;
     }
 
-    public void showHoverEffect(Rectangle card) {
+    private void showHoverEffect(Rectangle card) {
         card.setOnMouseEntered(e -> {
             card.setTranslateY(-20);
             card.setCursor(Cursor.HAND);
@@ -188,7 +187,7 @@ public class GameInit {
         });
     }
 
-    public void updatePoints(Text player, int newPoints) {
+    private void updatePoints(Text player, int newPoints) {
         if (gameEnded || player.getText().equals(" ")) return;
 
         int points = Integer.parseInt(player.getText()) + newPoints;
@@ -198,7 +197,7 @@ public class GameInit {
         }
     }
 
-    public void endGame() {
+    private void endGame() {
         if (gameEnded) return;
 
         int playerScore = Integer.parseInt(gameObjects.getPlayerPoints().getText());
