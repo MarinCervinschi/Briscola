@@ -40,32 +40,26 @@ public class GameController {
     }
 
     @FXML
-    protected void newGame() {
-        if (gameStarted) {
-            gameStarted = false;
-        } else {
-            return;
-        }
-        gameObjects.initializeGameObjects();
-        gameObjects.initializePoints(" ", " ", "40");
-    }
-
-    @FXML
     protected void startGame() {
-        if (gameStarted) {
-            return;
-        } else {
-            gameStarted = true;
-        }
+        if (gameStarted) return;
+        gameStarted = true;
+
         initializeTimer();
         gameObjects.initializePoints("0", "0", "34");
     }
 
+    @FXML
+    protected void newGame() {
+        if (!gameStarted) return;
+        gameStarted = false;
+
+        gameObjects.initializeGameObjects();
+        gameObjects.initializePoints(" ", " ", "40");
+    }
 
     void initializeTimer() {
-        if (timer != null) {
-            timer.stop();
-        }
+        if (timer != null) timer.stop();
+
         timer = new AnimationTimer() {
 
             @Override
@@ -78,9 +72,6 @@ public class GameController {
         };
         timer.start();
     }
-
-
-
 
     @FXML
     protected void showRules() {
@@ -99,6 +90,5 @@ public class GameController {
     protected void exit() {
         System.exit(0);
     }
-
 }
 

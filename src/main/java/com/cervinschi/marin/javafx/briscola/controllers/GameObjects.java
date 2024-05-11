@@ -59,7 +59,7 @@ public class GameObjects {
 
     public void initializeGameObjects() {
         // remove sprites from eventual former match
-        tablePane.getChildren().removeAll(tablePane.getBottom(), tablePane.getTop(), tablePane.getCenter());
+        tablePane.getChildren().clear();
 
         board = new Board();
 
@@ -70,6 +70,16 @@ public class GameObjects {
             deckObject.add(rectangle);
         }
 
+        initializeDeckBox();
+    }
+
+    public void initializePoints(String playerPoints, String botPoints, String deckCards) {
+        this.playerPoints.setText(playerPoints);
+        this.botPoints.setText(botPoints);
+        this.deckCards.setText(deckCards);
+    }
+
+    private void initializeDeckBox() {
         HBox deckBox = new HBox();
 
         deckBox.setAlignment(Pos.CENTER);
@@ -92,11 +102,6 @@ public class GameObjects {
 
         tablePane.setLeft(deckBox);
         tablePane.setPadding(new Insets(5));
-    }
-    public void initializePoints(String playerPoints, String botPoints, String deckCards) {
-        this.playerPoints.setText(playerPoints);
-        this.botPoints.setText(botPoints);
-        this.deckCards.setText(deckCards);
     }
 
     private Rectangle createCardObject(Card card) {
