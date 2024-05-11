@@ -164,8 +164,8 @@ public class GameInit {
         PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
         pause.setOnFinished(e -> {
             if (gameObjects.getBoard().tableIsFull()) {
-                updatePoints(gameObjects.getPlayerPoints(), pointsSecond);
-                updatePoints(gameObjects.getBotPoints(), pointsFirst);
+                updatePoints(gameObjects.getPlayerPoints(), pointsFirst);
+                updatePoints(gameObjects.getBotPoints(), pointsSecond);
 
                 gameObjects.getTableBox().getChildren().clear();
                 gameObjects.getBoard().clearTable();
@@ -206,7 +206,7 @@ public class GameInit {
         gameObjects.getBotPoints().setText(" ");
         gameObjects.getDeckCards().setText(" ");
 
-        Text endGameMessage = getText(botScore, playerScore);
+        Text endGameMessage = getText(playerScore, botScore);
 
         // Add the message to the board
         gameObjects.getTablePane().getChildren().clear();

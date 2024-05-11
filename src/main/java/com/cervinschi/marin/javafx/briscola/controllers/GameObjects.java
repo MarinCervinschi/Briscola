@@ -44,12 +44,12 @@ public class GameObjects {
     }
 
     public void createGameObjects() {
-        playerPoints = createText("playerPoints", 740.0, 121.0, 40);
-        botPoints = createText("botPoints", 740.0, 607.0, 40);
-        deckCards = createText("deckCards", 110, 500, 30);
+        botPoints = createText(740.0, 121.0, 35);
+        playerPoints = createText(740.0, 607.0, 35);
+        deckCards = createText(110, 500, 25);
         createBorderPane();
 
-        root.getChildren().addAll(playerPoints, botPoints, deckCards, tablePane);
+        root.getChildren().addAll(botPoints, playerPoints, deckCards, tablePane);
     }
 
     public void showBackground() {
@@ -166,17 +166,16 @@ public class GameObjects {
         rectangle.setEffect(dropShadow2);
     }
 
-    private Text createText(String id, double layoutX, double layoutY, double fontSize) {
+    private Text createText(double layoutX, double layoutY, double fontSize) {
         Text text = new Text();
-        text.setId(id);
         text.setFill(Color.WHITE);
         text.setLayoutX(layoutX);
         text.setLayoutY(layoutY);
         text.setStroke(Color.WHITE);
         text.setStrokeWidth(0.0);
         text.setFont(Font.font("Arial Bold", FontWeight.BOLD, fontSize));
-    return text;
-}
+        return text;
+    }
 
     private void createBorderPane() {
         tablePane = new BorderPane();
