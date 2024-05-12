@@ -25,6 +25,9 @@ public class GameInit {
     private boolean canFill = true;
     private boolean canSelect = true;
     private boolean gameEnded = false;
+    private boolean botWonLastHand = false;
+    private boolean isPauseActive = false;
+
 
     public GameInit(GameObjects gameObjects) {
         this.gameObjects = gameObjects;
@@ -35,6 +38,9 @@ public class GameInit {
 
         if (!gameObjects.getDeckObject().isEmpty() && !gameEnded) {
             fillHands();
+            if (botWonLastHand) {
+                botMove();
+            }
         }
         if (gameObjects.getBoard().tableIsFull()) {
             checkTable();
@@ -87,7 +93,6 @@ public class GameInit {
         gameObjects.getBoard().setHand(playerHand);
         gameObjects.getBoard().setHand(botHand);
     }
-
     private void selectCard(Rectangle card, Card selectedCard) {
         card.setOnMouseClicked(e -> {
             if (!canSelect) return;
@@ -98,7 +103,7 @@ public class GameInit {
             card.setOnMouseEntered(null);
             card.setOnMouseExited(null);
 
-            gameObjects.getTableBox().getChildren().addFirst(card);
+            gameObjects.getTableBox().getChildren().add(card);
 
             gameObjects.getBoard().removeCardFromHand(selectedCard, card);
             gameObjects.getBoard().addCardToTable(selectedCard);
@@ -107,10 +112,14 @@ public class GameInit {
         });
     }
 
+    boolean botPlayed = false;
     private void botMove() {
+        if (isPauseActive || botPlayed) return;
         PauseTransition pause = new PauseTransition(Duration.seconds(1));
         pause.setOnFinished(e -> {
             if (!gameObjects.getBoard().tableIsFull()) {
+                isPauseActive = false;
+                botPlayed = true;
                 Rectangle card = (Rectangle) gameObjects.getBotHandBox().getChildren().getFirst();
                 gameObjects.getBotHandBox().getChildren().remove(card);
                 for (int i = 0; i < 3; i++) {
@@ -122,25 +131,31 @@ public class GameInit {
                         }
                     }
                 }
-                if (gameObjects.getBoard().getTable(0).getValue() > gameObjects.getBoard().getTable(1).getValue()) {
-                    gameObjects.getTableBox().getChildren().addFirst(card);
-                } else {
-                    gameObjects.getTableBox().getChildren().addLast(card);
-                }
+                gameObjects.getTableBox().getChildren().add(card);
             }
-
         });
+        isPauseActive = true;
         pause.play();
     }
 
     private void checkTable() {
         if (!gameObjects.getBoard().tableIsFull()) return;
 
-        int pointsFirst = gameObjects.getBoard().getTable(0).getValue();
-        int pointsSecond = gameObjects.getBoard().getTable(1).getValue();
+        int pointsFirst, pointsSecond;
+        Rectangle firstCard, secondCard;
 
-        Rectangle firstCard = (Rectangle) gameObjects.getTableBox().getChildren().getLast();
-        Rectangle secondCard = (Rectangle) gameObjects.getTableBox().getChildren().getFirst();
+        if (botWonLastHand) {
+            firstCard = (Rectangle) gameObjects.getTableBox().getChildren().getLast();
+            secondCard = (Rectangle) gameObjects.getTableBox().getChildren().getFirst();
+            pointsFirst = gameObjects.getBoard().getTable(1).getValue();
+            pointsSecond = gameObjects.getBoard().getTable(0).getValue();
+        } else {
+            firstCard = (Rectangle) gameObjects.getTableBox().getChildren().getFirst();
+            secondCard = (Rectangle) gameObjects.getTableBox().getChildren().getLast();
+            pointsFirst = gameObjects.getBoard().getTable(0).getValue();
+            pointsSecond = gameObjects.getBoard().getTable(1).getValue();
+        }
+
         if (pointsFirst > pointsSecond) {
             pointsFirst += pointsSecond;
             pointsSecond = 0;
@@ -171,6 +186,8 @@ public class GameInit {
                 gameObjects.getBoard().clearTable();
                 canFill = true;
                 canSelect = true;
+                botPlayed = false;
+                botWonLastHand = pointsFirst <= pointsSecond;
             }
         });
         return pause;
