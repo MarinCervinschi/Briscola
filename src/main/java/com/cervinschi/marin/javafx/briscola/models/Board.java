@@ -55,6 +55,7 @@ public class Board {
 
     public void setBriscola(Card briscola) {
         this.briscola = briscola;
+        briscola.setBriscola(true);
     }
 
     public void setBriscolaObject(Rectangle briscolaObject) {
