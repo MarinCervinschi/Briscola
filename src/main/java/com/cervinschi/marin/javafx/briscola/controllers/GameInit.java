@@ -141,38 +141,58 @@ public class GameInit {
     private void checkTable() {
         if (!gameObjects.getBoard().tableIsFull()) return;
 
-        int pointsFirst, pointsSecond;
-        Rectangle firstCard, secondCard;
+        int[] points = getPointsFromTable();
+        int pointsFirst = points[0];
+        int pointsSecond = points[1];
 
-        if (botWonLastHand) {
-            firstCard = (Rectangle) gameObjects.getTableBox().getChildren().getLast();
-            secondCard = (Rectangle) gameObjects.getTableBox().getChildren().getFirst();
-            pointsFirst = gameObjects.getBoard().getTable(1).getValue();
-            pointsSecond = gameObjects.getBoard().getTable(0).getValue();
-        } else {
-            firstCard = (Rectangle) gameObjects.getTableBox().getChildren().getFirst();
-            secondCard = (Rectangle) gameObjects.getTableBox().getChildren().getLast();
-            pointsFirst = gameObjects.getBoard().getTable(0).getValue();
-            pointsSecond = gameObjects.getBoard().getTable(1).getValue();
-        }
+        Rectangle[] cards = getRectangleFromTable();
+        Rectangle playerCard, botCard;
 
         if (pointsFirst > pointsSecond) {
+            playerCard = cards[0];
+            botCard = cards[1];
             pointsFirst += pointsSecond;
             pointsSecond = 0;
         } else {
+            playerCard = cards[1];
+            botCard = cards[0];
             pointsSecond += pointsFirst;
             pointsFirst = 0;
         }
 
-        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), firstCard);
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), playerCard);
 
-        tt.setToX(secondCard.getLayoutX() - firstCard.getLayoutX());
-        tt.setToY(secondCard.getLayoutY() - firstCard.getLayoutY());
+        tt.setToX(botCard.getLayoutX() - playerCard.getLayoutX());
+        tt.setToY(botCard.getLayoutY() - playerCard.getLayoutY());
 
         tt.play();
 
         PauseTransition pause = getPauseTransition(pointsFirst, pointsSecond);
         pause.play();
+    }
+
+    private int[] getPointsFromTable() {
+        int[] points = new int[2];
+        if (botWonLastHand) {
+            points[0] = gameObjects.getBoard().getTable(1).getValue();
+            points[1] = gameObjects.getBoard().getTable(0).getValue();
+        } else {
+            points[0] = gameObjects.getBoard().getTable(0).getValue();
+            points[1] = gameObjects.getBoard().getTable(1).getValue();
+        }
+        return points;
+    }
+
+    private Rectangle[] getRectangleFromTable() {
+        Rectangle[] cards = new Rectangle[2];
+        if (botWonLastHand) {
+            cards[0] = (Rectangle) gameObjects.getTableBox().getChildren().getLast();
+            cards[1] = (Rectangle) gameObjects.getTableBox().getChildren().getFirst();
+        } else {
+            cards[0] = (Rectangle) gameObjects.getTableBox().getChildren().getFirst();
+            cards[1] = (Rectangle) gameObjects.getTableBox().getChildren().getLast();
+        }
+        return cards;
     }
 
     private PauseTransition getPauseTransition(int pointsFirst, int pointsSecond) {
