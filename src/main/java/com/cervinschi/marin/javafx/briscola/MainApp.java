@@ -15,6 +15,12 @@ public class MainApp extends Application {
         Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
         stage.setTitle("Briscola!");
         stage.setScene(scene);
+
+        /* block the resizing of the window */
+        stage.setMinWidth(WIDTH);
+        stage.setMaxWidth(WIDTH);
+        stage.setMinHeight(HEIGHT);
+        stage.setMaxHeight(HEIGHT);
         stage.show();
     }
 
