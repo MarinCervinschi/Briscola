@@ -141,46 +141,101 @@ public class GameInit {
     private void checkTable() {
         if (!gameObjects.getBoard().tableIsFull()) return;
 
-        int[] points = getPointsFromTable();
-        int pointsFirst = points[0];
-        int pointsSecond = points[1];
+        int[] points = new int[2];
+        Rectangle[] results = findWinningCard(getCardsFromTable(), points);
+        Rectangle winningCard = results[0];
+        Rectangle losingCard = results[1];
 
-        Rectangle[] cards = getRectangleFromTable();
-        Rectangle playerCard, botCard;
+        boolean botWon = winningCard.equals(getRectangleFromTable()[1]);
 
-        if (pointsFirst > pointsSecond) {
-            playerCard = cards[0];
-            botCard = cards[1];
-            pointsFirst += pointsSecond;
-            pointsSecond = 0;
-        } else {
-            playerCard = cards[1];
-            botCard = cards[0];
-            pointsSecond += pointsFirst;
-            pointsFirst = 0;
-        }
 
-        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), playerCard);
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), winningCard);
 
-        tt.setToX(botCard.getLayoutX() - playerCard.getLayoutX());
-        tt.setToY(botCard.getLayoutY() - playerCard.getLayoutY());
+        tt.setToX(losingCard.getLayoutX() - winningCard.getLayoutX());
+        tt.setToY(losingCard.getLayoutY() - winningCard.getLayoutY());
 
         tt.play();
 
-        PauseTransition pause = getPauseTransition(pointsFirst, pointsSecond);
+        PauseTransition pause = getPauseTransition(points[0], points[1], botWon);
         pause.play();
     }
 
-    private int[] getPointsFromTable() {
-        int[] points = new int[2];
-        if (botWonLastHand) {
-            points[0] = gameObjects.getBoard().getTable(1).getValue();
-            points[1] = gameObjects.getBoard().getTable(0).getValue();
+    private Rectangle[] findWinningCard(Card[] cards, int[] points) {
+        Rectangle[] winningCard = new Rectangle[2];
+
+        if (cards[0].isBriscola() && !cards[1].isBriscola()) {
+            winningCard[0] = getRectangleFromTable()[0];
+            winningCard[1] = getRectangleFromTable()[1];
+            points[0] = cards[0].getValue() + cards[1].getValue();
+            points[1] = 0;
+        } else if (!cards[0].isBriscola() && cards[1].isBriscola()) {
+            winningCard[0] = getRectangleFromTable()[1];
+            winningCard[1] = getRectangleFromTable()[0];
+            points[0] = 0;
+            points[1] = cards[0].getValue() + cards[1].getValue();
+        } else if (cards[0].getSeed().equals(cards[1].getSeed())) {
+            winningCard = checkForName(cards, points);
         } else {
-            points[0] = gameObjects.getBoard().getTable(0).getValue();
-            points[1] = gameObjects.getBoard().getTable(1).getValue();
+            if (cards[0].equals(gameObjects.getBoard().getTable(0))) {
+                winningCard[0] = getRectangleFromTable()[0];
+                winningCard[1] = getRectangleFromTable()[1];
+                points[0] = cards[0].getValue() + cards[1].getValue();
+                points[1] = 0;
+            } else {
+                winningCard[0] = getRectangleFromTable()[1];
+                winningCard[1] = getRectangleFromTable()[0];
+                points[0] = 0;
+                points[1] = cards[0].getValue() + cards[1].getValue();
+            }
         }
-        return points;
+
+        return winningCard;
+    }
+
+    private Rectangle[] checkForName(Card[] cards, int[] points) {
+        Rectangle[] sameSeed = new Rectangle[2];
+        int playerValue = Integer.parseInt(cards[0].getName());
+        int botValue = Integer.parseInt(cards[1].getName());
+
+        if (playerValue == 1) {
+            playerValue = 11;
+        } else if (playerValue == 3) {
+            playerValue = 10;
+        }
+        if (botValue == 1) {
+            botValue = 11;
+        } else if (botValue == 3) {
+            botValue = 10;
+        }
+
+        if (playerValue > botValue) {
+            sameSeed[0] = getRectangleFromTable()[0];
+            sameSeed[1] = getRectangleFromTable()[1];
+            points[0] = cards[0].getValue() + cards[1].getValue();
+            points[1] = 0;
+        } else if (playerValue < botValue) {
+            sameSeed[0] = getRectangleFromTable()[1];
+            sameSeed[1] = getRectangleFromTable()[0];
+            points[0] = 0;
+            points[1] = cards[0].getValue() + cards[1].getValue();
+        } else {
+            points[0] = cards[0].getValue() + cards[1].getValue();
+            points[1] = 0;
+            return getRectangleFromTable();
+        }
+        return sameSeed;
+    }
+
+    private Card[] getCardsFromTable() {
+        Card[] cards = new Card[2];
+        if (botWonLastHand) {
+            cards[0] = gameObjects.getBoard().getTable(1);
+            cards[1] = gameObjects.getBoard().getTable(0);
+        } else {
+            cards[0] = gameObjects.getBoard().getTable(0);
+            cards[1] = gameObjects.getBoard().getTable(1);
+        }
+        return cards;
     }
 
     private Rectangle[] getRectangleFromTable() {
@@ -195,7 +250,7 @@ public class GameInit {
         return cards;
     }
 
-    private PauseTransition getPauseTransition(int pointsFirst, int pointsSecond) {
+    private PauseTransition getPauseTransition(int pointsFirst, int pointsSecond, boolean botWon) {
         PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
         pause.setOnFinished(e -> {
             if (gameObjects.getBoard().tableIsFull()) {
@@ -207,7 +262,7 @@ public class GameInit {
                 canFill = true;
                 canSelect = true;
                 botPlayed = false;
-                botWonLastHand = pointsFirst <= pointsSecond;
+                botWonLastHand = botWon;
             }
         });
         return pause;
