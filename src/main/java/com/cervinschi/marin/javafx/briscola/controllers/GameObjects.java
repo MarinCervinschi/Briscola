@@ -110,7 +110,7 @@ public class GameObjects {
 
         Rectangle briscola = Objects.requireNonNull(deckObject.poll());
         board.setBriscolaObject(briscola);
-        board.setBriscola(board.getDeck().poll());
+        board.setBriscola(Objects.requireNonNull(board.getDeck().poll()));
         board.setBriscolaToCards(board.getBriscola().getSeed());
         Objects.requireNonNull(briscola).setTranslateY(-50);
         Objects.requireNonNull(briscola).setTranslateX(25);

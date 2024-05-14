@@ -25,12 +25,12 @@ public class Card {
         return isBriscola;
     }
 
-    public void setBriscola(boolean isBriscola) {
-        this.isBriscola = isBriscola;
-    }
-
     public int getValue() {
         return value;
+    }
+
+    public void setBriscola(boolean isBriscola) {
+        this.isBriscola = isBriscola;
     }
 
     @Override
@@ -49,5 +49,4 @@ public class Card {
         Card card = (Card) obj;
         return value == card.value && isBriscola == card.isBriscola && name.equals(card.name) && seed.equals(card.seed);
     }
-
 }

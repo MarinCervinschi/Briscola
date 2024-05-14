@@ -18,7 +18,7 @@ public class GameController {
     private boolean gameStarted = false;
 
     @FXML
-    public void initialize() {
+    protected void initialize() {
         gameObjects = new GameObjects(boardPane, root);
         gameObjects.createGameObjects();
         gameObjects.showBackground();
@@ -44,7 +44,7 @@ public class GameController {
         gameObjects.initializePoints(" ", " ", "40");
     }
 
-    void start() {
+    private void start() {
         if (timer != null) timer.stop();
 
         timer = new AnimationTimer() {

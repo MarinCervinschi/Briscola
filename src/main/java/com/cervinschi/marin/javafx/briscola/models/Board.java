@@ -5,7 +5,7 @@ import javafx.scene.shape.Rectangle;
 import java.util.*;
 
 public class Board {
-    private final Deque<Hand> hands = new ArrayDeque<>(2);
+    private final List<Hand> hands = new ArrayList<>(2);
     private Deque<Card> deck = new ArrayDeque<>();
     private final Card[] table = new Card[2];
     private Card briscola;
