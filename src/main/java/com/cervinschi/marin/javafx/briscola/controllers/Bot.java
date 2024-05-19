@@ -65,6 +65,7 @@ public class Bot {
         } else {
             /* bot move second */
             if (tableCard.isBriscola()) {
+                /* if table card is briscola */
                 Rectangle maxCard = findMaxCardName(tableCard.getSeed(), true);
                 if (tableCard.getValue() == 10 && maxCard != null) {
                     if (Integer.parseInt(maxCard.getId().split(" ")[3]) == 11) {
@@ -76,6 +77,7 @@ public class Bot {
                     card = Optional.ofNullable(findMinCardName(false)).orElseGet(() -> findMinCardName(true));
                 }
             } else {
+                /* if table card is 10 or 11 (higher points) */
                 if (tableCard.getValue() == 10 || tableCard.getValue() == 11) {
                     Rectangle maxCard = findMaxCardName(tableCard.getSeed(), false);
                     if (maxCard != null) {
@@ -88,6 +90,7 @@ public class Bot {
                         card = Optional.ofNullable(findMinCardName(true)).orElseGet(() -> findMinCardName(false));
                     }
                 } else {
+                    /* check for the higher card of the same seed else give the smallest*/
                     card = findMaxCardName(tableCard.getSeed(), false);
                     if (card == null || Integer.parseInt(card.getId().split(" ")[3]) <= getCardValue(tableCard)) {
                         card = Optional.ofNullable(findMinCardName(false)).orElseGet(() -> findMinCardName(true));

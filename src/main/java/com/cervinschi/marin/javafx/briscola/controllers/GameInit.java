@@ -159,68 +159,48 @@ public class GameInit {
 
     private Rectangle[] findWinningCard(Card[] cards, int[] points) {
         Rectangle[] winningCard = new Rectangle[2];
+        boolean playerWins;
 
         if (cards[0].isBriscola() && !cards[1].isBriscola()) {
-            winningCard[0] = getRectangleFromTable()[0];
-            winningCard[1] = getRectangleFromTable()[1];
-            points[0] = cards[0].getValue() + cards[1].getValue();
-            points[1] = 0;
+            playerWins = true;
         } else if (!cards[0].isBriscola() && cards[1].isBriscola()) {
-            winningCard[0] = getRectangleFromTable()[1];
-            winningCard[1] = getRectangleFromTable()[0];
-            points[0] = 0;
-            points[1] = cards[0].getValue() + cards[1].getValue();
+            playerWins = false;
         } else if (cards[0].getSeed().equals(cards[1].getSeed())) {
-            winningCard = checkForName(cards, points);
+            return checkForName(cards, points);
         } else {
-            if (cards[0].equals(gameObjects.getBoard().getTable(0))) {
-                winningCard[0] = getRectangleFromTable()[0];
-                winningCard[1] = getRectangleFromTable()[1];
-                points[0] = cards[0].getValue() + cards[1].getValue();
-                points[1] = 0;
-            } else {
-                winningCard[0] = getRectangleFromTable()[1];
-                winningCard[1] = getRectangleFromTable()[0];
-                points[0] = 0;
-                points[1] = cards[0].getValue() + cards[1].getValue();
-            }
+            playerWins = cards[0].equals(gameObjects.getBoard().getTable(0));
         }
+
+        winningCard[0] = getRectangleFromTable()[playerWins ? 0 : 1];
+        winningCard[1] = getRectangleFromTable()[playerWins ? 1 : 0];
+        points[0] = playerWins ? cards[0].getValue() + cards[1].getValue() : 0;
+        points[1] = playerWins ? 0 : cards[0].getValue() + cards[1].getValue();
 
         return winningCard;
     }
 
     private Rectangle[] checkForName(Card[] cards, int[] points) {
-        Rectangle[] sameSeed = new Rectangle[2];
-        int playerValue = Integer.parseInt(cards[0].getName());
-        int botValue = Integer.parseInt(cards[1].getName());
+        int playerValue = adjustCardValue(Integer.parseInt(cards[0].getName()));
+        int botValue = adjustCardValue(Integer.parseInt(cards[1].getName()));
 
-        if (playerValue == 1) {
-            playerValue = 11;
-        } else if (playerValue == 3) {
-            playerValue = 10;
-        }
-        if (botValue == 1) {
-            botValue = 11;
-        } else if (botValue == 3) {
-            botValue = 10;
-        }
-
-        if (playerValue > botValue) {
-            sameSeed[0] = getRectangleFromTable()[0];
-            sameSeed[1] = getRectangleFromTable()[1];
-            points[0] = cards[0].getValue() + cards[1].getValue();
-            points[1] = 0;
-        } else if (playerValue < botValue) {
-            sameSeed[0] = getRectangleFromTable()[1];
-            sameSeed[1] = getRectangleFromTable()[0];
-            points[0] = 0;
-            points[1] = cards[0].getValue() + cards[1].getValue();
-        } else {
+        if (playerValue == botValue) {
             points[0] = cards[0].getValue() + cards[1].getValue();
             points[1] = 0;
             return getRectangleFromTable();
         }
-        return sameSeed;
+
+        boolean playerWins = playerValue > botValue;
+        points[0] = playerWins ? cards[0].getValue() + cards[1].getValue() : 0;
+        points[1] = playerWins ? 0 : cards[0].getValue() + cards[1].getValue();
+
+        return new Rectangle[]{
+            getRectangleFromTable()[playerWins ? 0 : 1],
+            getRectangleFromTable()[playerWins ? 1 : 0]
+        };
+    }
+
+    private int adjustCardValue(int cardValue) {
+        return cardValue == 1 ? 11 : cardValue == 3 ? 10 : cardValue;
     }
 
     private Card[] getCardsFromTable() {
@@ -254,16 +234,20 @@ public class GameInit {
                 updatePoints(gameObjects.getPlayerPoints(), pointsFirst);
                 updatePoints(gameObjects.getBotPoints(), pointsSecond);
 
-                gameObjects.getTableBox().getChildren().clear();
-                gameObjects.getBoard().clearTable();
-                canFill = true;
-                canSelect = true;
-                bot.setHasPlayed(false);
-                botWonLastHand = botWon;
-                turn = botWon ? "bot" : "player";
+                resetGame(botWon);
             }
         });
         return pause;
+    }
+
+    private void resetGame(boolean botWon) {
+        gameObjects.getTableBox().getChildren().clear();
+        gameObjects.getBoard().clearTable();
+        canFill = true;
+        canSelect = true;
+        bot.setHasPlayed(false);
+        botWonLastHand = botWon;
+        turn = botWon ? "bot" : "player";
     }
 
     private void showHoverEffect(Rectangle card) {
@@ -296,7 +280,7 @@ public class GameInit {
         gameObjects.getBotPoints().setText(" ");
         gameObjects.getDeckCards().setText(" ");
 
-        Text endGameMessage = getText(playerScore, botScore);
+        Text endGameMessage = getEndGameMessage(playerScore, botScore);
 
         // Add the message to the board
         gameObjects.getTablePane().getChildren().clear();
@@ -305,23 +289,17 @@ public class GameInit {
         gameEnded = true;
     }
 
-    private Text getText(int playerScore, int botScore) {
-        Text endGameMessage = new Text();
-        endGameMessage.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 90));
-        endGameMessage.setFill(Color.YELLOWGREEN);
+    private Text getEndGameMessage(int playerScore, int botScore) {
+        String message = playerScore > 61 ? "You won!" : botScore > 61 ? "You lost!" : "Draw!";
+        return createText(playerScore + " - " + botScore + "\n" + message);
+    }
 
-        endGameMessage.setTextAlignment(TextAlignment.CENTER);
-        String message;
-        if (playerScore > 61) {
-            message = "You won!";
-        } else if (botScore > 61) {
-            message = "You lost!";
-        } else {
-            message = "Draw!";
-        }
-
-        endGameMessage.setText(playerScore + " - " + botScore + "\n" + message);
-        return endGameMessage;
+    private Text createText(String message) {
+        Text text = new Text(message);
+        text.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 90));
+        text.setFill(Color.YELLOWGREEN);
+        text.setTextAlignment(TextAlignment.CENTER);
+        return text;
     }
 
     public boolean isGameEnded() {
