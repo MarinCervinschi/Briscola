@@ -21,18 +21,16 @@ public class GameInit {
     private final Bot bot;
     
     private final Hand playerHand = new Hand();
-    private final Hand botHand = new Hand();
 
     private boolean canFill = true;
     private boolean canSelect = true;
     private boolean gameEnded = false;
     private boolean botWonLastHand = false;
-    private boolean isPauseActive = false;
 
 
-    public GameInit(GameObjects gameObjects, Bot bot) {
+    public GameInit(GameObjects gameObjects, String mode) {
         this.gameObjects = gameObjects;
-        this.bot = bot;
+        this.bot = new Bot(gameObjects, mode);
         gameObjects.appendHandsObject();
     }
 
@@ -41,14 +39,14 @@ public class GameInit {
         if (!gameObjects.getDeckObject().isEmpty() && !gameEnded) {
             fillHands();
             if (botWonLastHand) {
-                botMove();
+                bot.move();
             }
         }
         if (gameObjects.getBoard().tableIsFull()) {
             checkTable();
             gameObjects.getTableBox().setAlignment(Pos.CENTER);
         }
-        if (botHand.isEmptyObject() && playerHand.isEmptyObject()) {
+        if (bot.getHand().isEmptyObject() && playerHand.isEmptyObject()) {
             PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
             pause.setOnFinished(e -> endGame());
             pause.play();
@@ -85,15 +83,15 @@ public class GameInit {
             showHoverEffect(Objects.requireNonNull(card));
             selectCard(card, selectedCard);
         }
-        while (botHand.isCardsObjectFull()) {
+        while (bot.getHand().isCardsObjectFull()) {
             Rectangle card = gameObjects.getDeckObject().poll();
             assert card != null;
-            botHand.addCard(gameObjects.getBoard().getDeck().poll());
-            botHand.addCardObject(card);
+            bot.getHand().addCard(gameObjects.getBoard().getDeck().poll());
+            bot.getHand().addCardObject(card);
             gameObjects.getBotHandBox().getChildren().add(card);
         }
         gameObjects.getBoard().setHand(playerHand);
-        gameObjects.getBoard().setHand(botHand);
+        gameObjects.getBoard().setHand(bot.getHand());
     }
     private void selectCard(Rectangle card, Card selectedCard) {
         card.setOnMouseClicked(e -> {
@@ -110,35 +108,10 @@ public class GameInit {
             gameObjects.getBoard().removeCardFromHand(selectedCard, card);
             gameObjects.getBoard().addCardToTable(selectedCard);
 
-            botMove();
+            bot.move();
         });
     }
 
-    boolean botPlayed = false;
-    private void botMove() {
-        if (isPauseActive || botPlayed) return;
-        PauseTransition pause = new PauseTransition(Duration.seconds(1));
-        pause.setOnFinished(e -> {
-            if (!gameObjects.getBoard().tableIsFull()) {
-                isPauseActive = false;
-                botPlayed = true;
-                Rectangle card = (Rectangle) gameObjects.getBotHandBox().getChildren().getFirst();
-                gameObjects.getBotHandBox().getChildren().remove(card);
-                for (int i = 0; i < 3; i++) {
-                    if (botHand.getCards()[i] != null) {
-                        if (botHand.getCards()[i].toString().equals(card.getId())) {
-                            gameObjects.getBoard().addCardToTable(botHand.getCards()[i]);
-                            gameObjects.getBoard().removeCardFromHand(botHand.getCards()[i], card);
-                            break;
-                        }
-                    }
-                }
-                gameObjects.getTableBox().getChildren().add(card);
-            }
-        });
-        isPauseActive = true;
-        pause.play();
-    }
 
     private void checkTable() {
         if (!gameObjects.getBoard().tableIsFull()) return;
@@ -149,7 +122,6 @@ public class GameInit {
         Rectangle losingCard = results[1];
 
         boolean botWon = winningCard.equals(getRectangleFromTable()[1]);
-
 
         TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), winningCard);
 
@@ -263,7 +235,7 @@ public class GameInit {
                 gameObjects.getBoard().clearTable();
                 canFill = true;
                 canSelect = true;
-                botPlayed = false;
+                bot.setHasPlayed(false);
                 botWonLastHand = botWon;
             }
         });
