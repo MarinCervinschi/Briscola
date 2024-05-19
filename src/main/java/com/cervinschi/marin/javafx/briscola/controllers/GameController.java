@@ -13,6 +13,7 @@ public class GameController {
 
     protected GameObjects gameObjects;
     protected GameInit gameInit;
+    protected Bot bot;
 
     private AnimationTimer timer;
     private boolean gameStarted = false;
@@ -30,7 +31,8 @@ public class GameController {
         if (gameStarted) return;
         gameStarted = true;
 
-        gameInit = new GameInit(gameObjects);
+        bot = new Bot(gameObjects, false, false, true);
+        gameInit = new GameInit(gameObjects, bot);
         start();
         gameObjects.initializePoints("0", "0", "34");
     }

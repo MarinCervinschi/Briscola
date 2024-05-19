@@ -18,6 +18,7 @@ import java.util.Objects;
 
 public class GameInit {
     private final GameObjects gameObjects;
+    private final Bot bot;
     
     private final Hand playerHand = new Hand();
     private final Hand botHand = new Hand();
@@ -29,8 +30,9 @@ public class GameInit {
     private boolean isPauseActive = false;
 
 
-    public GameInit(GameObjects gameObjects) {
+    public GameInit(GameObjects gameObjects, Bot bot) {
         this.gameObjects = gameObjects;
+        this.bot = bot;
         gameObjects.appendHandsObject();
     }
 
