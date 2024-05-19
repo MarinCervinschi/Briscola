@@ -27,6 +27,8 @@ public class GameInit {
     private boolean gameEnded = false;
     private boolean botWonLastHand = false;
 
+    private String turn = "player";
+
 
     public GameInit(GameObjects gameObjects, String mode) {
         this.gameObjects = gameObjects;
@@ -57,42 +59,63 @@ public class GameInit {
         if (!canFill) return;
 
         canFill = false;
-        while (playerHand.isCardsObjectFull()) {
-            Rectangle card;
-            Card selectedCard;
-            if (gameObjects.getDeckObject().size() == 1) {
-                card = gameObjects.getBoard().getBriscolaObject();
-                selectedCard = gameObjects.getBoard().getBriscola();
+
+        Rectangle cardObject;
+        Card card;
+
+        while (playerHand.isCardsObjectFull() || bot.getHand().isCardsObjectFull()) {
+
+            if (gameObjects.getBoard().getDeck().size() == 1 && gameObjects.getBoard().getBriscola() != null) {
+                cardObject = gameObjects.getBoard().getBriscolaObject();
+                card = gameObjects.getBoard().getBriscola();
+                gameObjects.getBoard().setBriscola(null);
+                handleBriscolaCard(cardObject);
+
+                turn = botWonLastHand ? "player" : "bot";
             } else {
-                card = gameObjects.getDeckObject().poll();
-                selectedCard = gameObjects.getBoard().getDeck().poll();
+                cardObject = gameObjects.getDeckObject().poll();
+                card = gameObjects.getBoard().getDeck().poll();
             }
 
-            assert card != null;
-            playerHand.addCard(selectedCard);
-            playerHand.addCardObject(card);
-
-            gameObjects.getPlayerHandBox().getChildren().add(card);
-            if (card.equals(gameObjects.getBoard().getBriscolaObject())) {
-                card.setTranslateX(0);
-                card.setTranslateY(0);
-                gameObjects.getTablePane().getChildren().remove(gameObjects.getTablePane().getLeft());
-                gameObjects.getDeckCards().setText(" ");
+            if (turn.equals("bot") && bot.getHand().isCardsObjectFull()) {
+                fillBotHand(cardObject, card);
+                turn = "player";
+            } else if (turn.equals("player") && playerHand.isCardsObjectFull()) {
+                fillPlayerHand(cardObject, card);
+                turn = "bot";
             }
+        }
 
-            showHoverEffect(Objects.requireNonNull(card));
-            selectCard(card, selectedCard);
-        }
-        while (bot.getHand().isCardsObjectFull()) {
-            Rectangle card = gameObjects.getDeckObject().poll();
-            assert card != null;
-            bot.getHand().addCard(gameObjects.getBoard().getDeck().poll());
-            bot.getHand().addCardObject(card);
-            gameObjects.getBotHandBox().getChildren().add(card);
-        }
+    }
+
+    private void fillPlayerHand(Rectangle cardObject, Card card) {
+        playerHand.addCard(card);
+        playerHand.addCardObject(cardObject);
+
+        gameObjects.getPlayerHandBox().getChildren().add(cardObject);
+
+        showHoverEffect(Objects.requireNonNull(cardObject));
+        selectCard(cardObject, card);
+
         gameObjects.getBoard().setHand(playerHand);
+    }
+
+    private void fillBotHand(Rectangle cardObject, Card card) {
+        bot.getHand().addCard(card);
+        bot.getHand().addCardObject(cardObject);
+
+        gameObjects.getBotHandBox().getChildren().add(cardObject);
+
         gameObjects.getBoard().setHand(bot.getHand());
     }
+
+    private void handleBriscolaCard(Rectangle card) {
+        card.setTranslateX(0);
+        card.setTranslateY(0);
+        gameObjects.getTablePane().getChildren().remove(gameObjects.getTablePane().getLeft());
+        gameObjects.getDeckCards().setText(" ");
+    }
+
     private void selectCard(Rectangle card, Card selectedCard) {
         card.setOnMouseClicked(e -> {
             if (!canSelect) return;
@@ -237,6 +260,7 @@ public class GameInit {
                 canSelect = true;
                 bot.setHasPlayed(false);
                 botWonLastHand = botWon;
+                turn = botWon ? "bot" : "player";
             }
         });
         return pause;
