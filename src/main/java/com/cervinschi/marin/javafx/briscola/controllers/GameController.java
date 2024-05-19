@@ -30,7 +30,7 @@ public class GameController {
         if (gameStarted) return;
         gameStarted = true;
 
-        gameInit = new GameInit(gameObjects, "easy");
+        gameInit = new GameInit(gameObjects, "medium");
         start();
         gameObjects.initializePoints("0", "0", "34");
     }

@@ -24,6 +24,10 @@ public class Hand {
         return cards;
     }
 
+    public Rectangle[] getCardsObject() {
+        return cardsObject;
+    }
+
 
     public boolean isEmptyObject() {
         for (Rectangle card : cardsObject) {
