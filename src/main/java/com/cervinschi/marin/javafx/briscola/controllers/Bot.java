@@ -11,8 +11,10 @@ import java.util.*;
 public class Bot {
     private final GameObjects gameObjects;
     private final String mode;
-    private boolean isPauseActive = false;
+
     private final Hand hand = new Hand();
+
+    private boolean isPauseActive = false;
     private boolean hasPlayed = false;
 
     public Bot(GameObjects gameObjects, String mode) {
@@ -34,22 +36,24 @@ public class Bot {
                     default -> hardMove();
                 };
 
+                Card cardToPlay = findCardToPlay(card);
                 gameObjects.getBotHandBox().getChildren().remove(card);
-                for (int i = 0; i < 3; i++) {
-                    if (hand.getCards()[i] != null) {
-                        if (hand.getCards()[i].toString().equals(card.getId())) {
-                            gameObjects.getBoard().addCardToTable(hand.getCards()[i]);
-                            gameObjects.getBoard().removeCardFromHand(hand.getCards()[i], card);
-                            break;
-                        }
-                    }
-                }
+                gameObjects.getBoard().addCardToTable(cardToPlay);
+                gameObjects.getBoard().removeCardFromHand(cardToPlay, card);
                 gameObjects.getTableBox().getChildren().add(card);
             }
         });
         isPauseActive = true;
         pause.play();
     }
+
+    private Card findCardToPlay(Rectangle card) {
+    return Arrays.stream(hand.getCards())
+        .filter(Objects::nonNull)
+        .filter(handCard -> handCard.toString().equals(card.getId()))
+        .findFirst()
+        .orElse(null);
+}
 
     private Rectangle easyMove() {
         return (Rectangle) gameObjects.getBotHandBox().getChildren().get(new Random().nextInt(3));
