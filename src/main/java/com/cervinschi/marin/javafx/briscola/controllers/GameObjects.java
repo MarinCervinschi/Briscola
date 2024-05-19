@@ -109,9 +109,9 @@ public class GameObjects {
         StackPane stack = new StackPane();
 
         Rectangle briscola = Objects.requireNonNull(deckObject.poll());
+        board.setBriscolaToCards(board.getDeck().getFirst().getSeed());
         board.setBriscolaObject(briscola);
         board.setBriscola(Objects.requireNonNull(board.getDeck().poll()));
-        board.setBriscolaToCards(board.getBriscola().getSeed());
         Objects.requireNonNull(briscola).setTranslateY(-50);
         Objects.requireNonNull(briscola).setTranslateX(25);
 
