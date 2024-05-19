@@ -6,10 +6,7 @@ import javafx.animation.PauseTransition;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class Bot {
     private final GameObjects gameObjects;
@@ -60,57 +57,40 @@ public class Bot {
 
     private Rectangle mediumMove() {
         Rectangle card;
+        Card tableCard = gameObjects.getBoard().getTable(0);
+
         /* bot move first */
-        if (gameObjects.getBoard().tableIsEmpty()) {
-            card = findMinCardName(false);
-            if (card == null) {
-                card = findMinCardName(true);
-            }
+        if (tableCard == null) {
+            card = Optional.ofNullable(findMinCardName(false)).orElseGet(() -> findMinCardName(true));
         } else {
             /* bot move second */
-            Card tableCard = gameObjects.getBoard().getTable(0);
             if (tableCard.isBriscola()) {
                 Rectangle maxCard = findMaxCardName(tableCard.getSeed(), true);
                 if (tableCard.getValue() == 10 && maxCard != null) {
-                    if (Integer.parseInt(maxCard.getId().split(" ")[3]) > 10) {
+                    if (Integer.parseInt(maxCard.getId().split(" ")[3]) == 11) {
                         card = maxCard;
                     } else {
-                        card = findMinCardName(false);
-                        if (card == null) {
-                            card = findMinCardName(true);
-                        }
+                        card = Optional.ofNullable(findMinCardName(true)).orElseGet(() -> findMinCardName(false));
                     }
                 } else {
-                    card = findMinCardName(false);
-                    if (card == null) {
-                        card = findMinCardName(true);
-                    }
+                    card = Optional.ofNullable(findMinCardName(false)).orElseGet(() -> findMinCardName(true));
                 }
             } else {
                 if (tableCard.getValue() == 10 || tableCard.getValue() == 11) {
                     Rectangle maxCard = findMaxCardName(tableCard.getSeed(), false);
                     if (maxCard != null) {
-                        if (Integer.parseInt(maxCard.getId().split(" ")[3]) > 10) {
+                        if (Integer.parseInt(maxCard.getId().split(" ")[3]) == 11) {
                             card = maxCard;
                         } else {
-                            card = findMinCardName(false);
-                            if (card == null) {
-                                card = findMinCardName(true);
-                            }
+                            card = Optional.ofNullable(findMinCardName(true)).orElseGet(() -> findMinCardName(false));
                         }
                     } else {
-                        card = findMinCardName(true);
-                        if (card == null) {
-                            card = findMinCardName(true);
-                        }
+                        card = Optional.ofNullable(findMinCardName(true)).orElseGet(() -> findMinCardName(false));
                     }
                 } else {
                     card = findMaxCardName(tableCard.getSeed(), false);
                     if (card == null || Integer.parseInt(card.getId().split(" ")[3]) <= getCardValue(tableCard)) {
-                        card = findMinCardName(false);
-                        if (card == null) {
-                            card = findMinCardName(true);
-                        }
+                        card = Optional.ofNullable(findMinCardName(false)).orElseGet(() -> findMinCardName(true));
                     }
                 }
             }
@@ -122,7 +102,7 @@ public class Bot {
     private Rectangle findMinCardName(boolean isBriscola) {
         Card minCard = Arrays.stream(hand.getCards())
             .filter(Objects::nonNull)
-            .filter(card -> card.isBriscola() != isBriscola)
+            .filter(card -> card.isBriscola() == isBriscola)
             .min(Comparator.comparingInt(this::getCardValue))
             .orElse(null);
 
@@ -132,7 +112,7 @@ public class Bot {
     private Rectangle findMaxCardName(String seed, boolean isBriscola) {
         Card maxCard = Arrays.stream(hand.getCards())
             .filter(Objects::nonNull)
-            .filter(card -> card.getSeed().equals(seed) && card.isBriscola() != isBriscola)
+            .filter(card -> card.getSeed().equals(seed) && card.isBriscola() == isBriscola)
             .max(Comparator.comparingInt(this::getCardValue))
             .orElse(null);
 

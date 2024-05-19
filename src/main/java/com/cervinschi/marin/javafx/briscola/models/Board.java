@@ -87,9 +87,6 @@ public class Board {
     public boolean tableIsFull() {
         return table[0] != null && table[1] != null;
     }
-    public boolean tableIsEmpty() {
-        return table[0] == null && table[1] == null;
-    }
 
     public Card getTable(int index) {
         return table[index];
