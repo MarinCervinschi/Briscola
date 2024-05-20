@@ -29,7 +29,6 @@ public class GameInit {
 
     private String turn = "player";
 
-
     public GameInit(GameObjects gameObjects, String mode) {
         this.gameObjects = gameObjects;
         this.bot = new Bot(gameObjects, mode);
@@ -49,7 +48,7 @@ public class GameInit {
             gameObjects.getTableBox().setAlignment(Pos.CENTER);
         }
         if (bot.getHand().isEmptyObject() && playerHand.isEmptyObject()) {
-            PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
+            PauseTransition pause = new PauseTransition(Duration.seconds(1.6));
             pause.setOnFinished(e -> endGame());
             pause.play();
         }
@@ -135,7 +134,6 @@ public class GameInit {
             bot.move();
         });
     }
-
 
     private void checkTable() {
         if (!gameObjects.getBoard().tableIsFull()) return;
@@ -291,7 +289,7 @@ public class GameInit {
     }
 
     private Text getEndGameMessage(int playerScore, int botScore) {
-        String message = playerScore > 61 ? "You won!" : botScore > 61 ? "You lost!" : "Draw!";
+        String message = playerScore > 60 ? "You won!" : botScore > 60 ? "You lost!" : "Draw!";
         return createText(playerScore + " - " + botScore + "\n" + message);
     }
 

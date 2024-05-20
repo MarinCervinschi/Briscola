@@ -54,7 +54,7 @@ public class Bot {
         .filter(handCard -> handCard.toString().equals(card.getId()))
         .findFirst()
         .orElse(null);
-}
+    }
 
     private Rectangle easyMove() {
         return (Rectangle) gameObjects.getBotHandBox().getChildren().get(new Random().nextInt(3));
