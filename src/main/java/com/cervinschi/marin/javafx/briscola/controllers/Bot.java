@@ -37,7 +37,8 @@ public class Bot {
                 };
 
                 Card cardToPlay = findCardToPlay(card);
-                gameObjects.getBotHandBox().getChildren().remove(card);
+                int index = gameObjects.getBoard().getDeck().isEmpty() ? 1 : 3;
+                gameObjects.getBotHandBox().getChildren().remove(new Random().nextInt(index));
                 gameObjects.getBoard().addCardToTable(cardToPlay);
                 gameObjects.getBoard().removeCardFromHand(cardToPlay, card);
                 gameObjects.getTableBox().getChildren().add(card);

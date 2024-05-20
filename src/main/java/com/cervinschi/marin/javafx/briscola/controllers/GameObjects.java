@@ -126,7 +126,7 @@ public class GameObjects {
         tablePane.setPadding(new Insets(5));
     }
 
-    private Rectangle createCardObject(Card card) {
+    protected Rectangle createCardObject(Card card) {
         Rectangle rectangle = new Rectangle(CWIDTH, CHEIGHT);
         setCardStyle(rectangle);
         rectangle.setId(card.toString());

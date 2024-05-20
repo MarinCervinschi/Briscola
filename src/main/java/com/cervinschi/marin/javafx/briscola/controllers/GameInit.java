@@ -104,7 +104,8 @@ public class GameInit {
         bot.getHand().addCard(card);
         bot.getHand().addCardObject(cardObject);
 
-        gameObjects.getBotHandBox().getChildren().add(cardObject);
+        Rectangle backDeck = gameObjects.createCardObject(new Card("1", "back", 0, false));
+        gameObjects.getBotHandBox().getChildren().add(backDeck);
 
         gameObjects.getBoard().setHand(bot.getHand());
     }
