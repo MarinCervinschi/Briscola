@@ -30,10 +30,10 @@ public class Bot {
                 isPauseActive = false;
                 hasPlayed = true;
 
-
+                System.out.println(mode);
                 Rectangle card = switch (mode) {
-                    case "easy" -> easyMove();
-                    case "medium" -> mediumMove();
+                    case "Easy" -> easyMove();
+                    case "Medium" -> mediumMove();
                     default -> hardMove();
                 };
 
@@ -58,7 +58,7 @@ public class Bot {
     }
 
     private Rectangle easyMove() {
-        return (Rectangle) gameObjects.getBotHandBox().getChildren().get(new Random().nextInt(3));
+        return hand.getCardsObject()[new Random().nextInt(3)];
     }
 
     private Rectangle mediumMove() {

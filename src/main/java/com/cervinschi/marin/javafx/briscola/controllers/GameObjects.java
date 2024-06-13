@@ -2,17 +2,22 @@ package com.cervinschi.marin.javafx.briscola.controllers;
 
 import com.cervinschi.marin.javafx.briscola.models.Board;
 import com.cervinschi.marin.javafx.briscola.models.Card;
+import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.control.MenuButton;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-import javafx.scene.paint.Color;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import java.util.ArrayDeque;
 import java.util.Objects;
@@ -34,6 +39,9 @@ public class GameObjects {
     private HBox botHandBox;
     private HBox tableBox;
 
+    private MenuButton menuIcon;
+
+
     private Board board;
     private ArrayDeque<Rectangle> deckObject;
 
@@ -47,9 +55,47 @@ public class GameObjects {
         botPoints = createText(740.0, 121.0, 35);
         playerPoints = createText(740.0, 607.0, 35);
         deckCards = createText(110, 500, 25);
+        menuIcon = createMenuIcon();
+
         createBorderPane();
 
-        root.getChildren().addAll(botPoints, playerPoints, deckCards, tablePane);
+        root.getChildren().addAll(botPoints, playerPoints, deckCards, tablePane, menuIcon);
+    }
+
+    private MenuButton createMenuIcon() {
+        MenuButton menuIcon = new MenuButton();
+        Image menuImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/cervinschi/marin/javafx/briscola/media/menu.png")));
+
+        ImageView menuImageView = new ImageView(menuImage);
+        menuImageView.setFitHeight(30);
+        menuImageView.setFitWidth(30);
+        menuIcon.setGraphic(menuImageView);
+        menuIcon.setPrefSize(30, 30);
+
+        menuIcon.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
+        menuIcon.setBorder(Border.EMPTY);
+
+        menuIcon.setCursor(Cursor.HAND);
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(200), menuIcon);
+
+        menuIcon.setOnMouseEntered(e -> {
+            tt.setToX(10);
+            tt.setToY(10);
+            tt.playFromStart();
+        });
+
+        menuIcon.setOnMouseExited(e -> {
+            tt.setToX(0);
+            tt.setToY(0);
+            tt.playFromStart();
+        });
+
+        AnchorPane.setTopAnchor(menuIcon, 15.0);
+        AnchorPane.setLeftAnchor(menuIcon, 15.0);
+
+
+        return menuIcon;
     }
 
     public void showBackground() {
@@ -218,6 +264,12 @@ public class GameObjects {
     public Board getBoard() {
         return board;
     }
+
+    public MenuButton getMenuIcon() {
+        return menuIcon;
+    }
+
+
 
     public ArrayDeque<Rectangle> getDeckObject() {
         return deckObject;
