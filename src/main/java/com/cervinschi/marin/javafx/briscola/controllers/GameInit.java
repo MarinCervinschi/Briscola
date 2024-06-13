@@ -26,6 +26,7 @@ public class GameInit {
     private boolean canSelect = true;
     private boolean gameEnded = false;
     private boolean botWonLastHand = false;
+    private boolean isPauseActive = false;
 
     private String turn = "player";
 
@@ -37,25 +38,28 @@ public class GameInit {
 
     public void mainLoop() {
 
-        if (!gameObjects.getDeckObject().isEmpty() && !gameEnded) {
-            fillHands();
-            if (botWonLastHand) {
-                bot.move();
-            }
+        if (!gameObjects.getDeckObject().isEmpty()) fillHands();
+        if (!gameEnded && botWonLastHand) {
+            bot.move();
+            canSelect = bot.isHasPlayed();
         }
         if (gameObjects.getBoard().tableIsFull()) {
             checkTable();
             gameObjects.getTableBox().setAlignment(Pos.CENTER);
         }
-        if (bot.getHand().isEmptyObject() && playerHand.isEmptyObject()) {
-            PauseTransition pause = new PauseTransition(Duration.seconds(1.6));
-            pause.setOnFinished(e -> endGame());
+        if (bot.getHand().isEmptyObject() && playerHand.isEmptyObject() && !isPauseActive) {
+            PauseTransition pause = new PauseTransition(Duration.seconds(1));
+            pause.setOnFinished(e -> {
+                isPauseActive = false;
+                endGame();
+            });
+            isPauseActive = true;
             pause.play();
         }
     }
 
     private void fillHands() {
-        if (!canFill) return;
+        if (!canFill || isPauseActive) return;
 
         canFill = false;
 
@@ -84,7 +88,6 @@ public class GameInit {
                 turn = "bot";
             }
         }
-
     }
 
     private void fillPlayerHand(Rectangle cardObject, Card card) {
@@ -118,7 +121,7 @@ public class GameInit {
 
     private void selectCard(Rectangle card, Card selectedCard) {
         card.setOnMouseClicked(e -> {
-            if (!canSelect) return;
+            if (!canSelect || isPauseActive) return;
 
             canSelect = false;
             gameObjects.getPlayerHandBox().getChildren().remove(card);
@@ -151,8 +154,9 @@ public class GameInit {
         tt.setToY(losingCard.getLayoutY() - winningCard.getLayoutY());
 
         tt.play();
-
+        if (isPauseActive) return;
         PauseTransition pause = getPauseTransition(points[0], points[1], botWon);
+        isPauseActive = true;
         pause.play();
     }
 
@@ -243,7 +247,8 @@ public class GameInit {
         gameObjects.getTableBox().getChildren().clear();
         gameObjects.getBoard().clearTable();
         canFill = true;
-        canSelect = true;
+        canSelect = !botWon;
+        isPauseActive = false;
         bot.setHasPlayed(false);
         botWonLastHand = botWon;
         turn = botWon ? "bot" : "player";

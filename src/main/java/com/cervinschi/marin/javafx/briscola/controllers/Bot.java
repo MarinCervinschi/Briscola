@@ -23,12 +23,13 @@ public class Bot {
     }
 
     public void move() {
-        if (isPauseActive || hasPlayed) return;
+        if (isPauseActive || hasPlayed || (gameObjects.getBotHandBox().getChildren().isEmpty())) return;
         PauseTransition pause = new PauseTransition(Duration.seconds(1));
         pause.setOnFinished(e -> {
             if (!gameObjects.getBoard().tableIsFull()) {
                 isPauseActive = false;
                 hasPlayed = true;
+
 
                 Rectangle card = switch (mode) {
                     case "easy" -> easyMove();
@@ -156,6 +157,10 @@ public class Bot {
 
     public void setHasPlayed(boolean hasPlayed) {
         this.hasPlayed = hasPlayed;
+    }
+
+    public boolean isHasPlayed() {
+        return hasPlayed;
     }
 
 }
