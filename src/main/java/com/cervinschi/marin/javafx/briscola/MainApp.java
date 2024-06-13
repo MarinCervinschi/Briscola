@@ -1,12 +1,14 @@
 package com.cervinschi.marin.javafx.briscola;
 
-import static com.cervinschi.marin.javafx.briscola.utils.Const.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+
+import static com.cervinschi.marin.javafx.briscola.utils.Const.HEIGHT;
+import static com.cervinschi.marin.javafx.briscola.utils.Const.WIDTH;
 
 public class MainApp extends Application {
     @Override
