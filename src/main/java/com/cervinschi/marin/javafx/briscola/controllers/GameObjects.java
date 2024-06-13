@@ -5,7 +5,6 @@ import com.cervinschi.marin.javafx.briscola.models.Card;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.control.MenuButton;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -67,15 +66,12 @@ public class GameObjects {
         Image menuImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/cervinschi/marin/javafx/briscola/media/menu.png")));
 
         ImageView menuImageView = new ImageView(menuImage);
-        menuImageView.setFitHeight(30);
-        menuImageView.setFitWidth(30);
+        menuImageView.setFitHeight(25);
+        menuImageView.setFitWidth(25);
         menuIcon.setGraphic(menuImageView);
-        menuIcon.setPrefSize(30, 30);
+        menuIcon.setPrefSize(25, 25);
 
-        menuIcon.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
-        menuIcon.setBorder(Border.EMPTY);
-
-        menuIcon.setCursor(Cursor.HAND);
+        menuIcon.getStyleClass().add("menu-button");
 
         TranslateTransition tt = new TranslateTransition(Duration.millis(200), menuIcon);
 
@@ -93,8 +89,6 @@ public class GameObjects {
 
         AnchorPane.setTopAnchor(menuIcon, 15.0);
         AnchorPane.setLeftAnchor(menuIcon, 15.0);
-
-
         return menuIcon;
     }
 

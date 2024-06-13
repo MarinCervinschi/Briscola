@@ -22,7 +22,7 @@
     -fx-text-fill: linear-gradient(from 0% 0% to 100% 100%, #80ed99, #38a3a5);
 }
 
-.button, .combo-box {
+.button, .combo-box, .menu-button {
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 10, 0.5, 0, 0);
     -fx-cursor: HAND;
 }
@@ -35,9 +35,8 @@
     -fx-font-size: 25px;
     -fx-font-weight: bold;
     -fx-text-fill: linear-gradient(from 0% 0% to 100% 100%, #80ed99, #38a3a5);
-
-
 }
+
 .button:hover {
     -fx-background-color: #4d4d4d;
 }
@@ -84,4 +83,49 @@
 }
 .combo-box .arrow:hover {
     -fx-background-color: #1a1a1a;
+}
+
+/* menu-button */
+.menu-button {
+    -fx-background-color: #2a2a2a;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-background-insets: 0;
+    -fx-text-fill: linear-gradient(from 0% 0% to 100% 100%, #80ed99, #38a3a5);
+}
+
+.menu-button:hover {
+    -fx-background-color: #4d4d4d;
+}
+
+.menu-button:pressed {
+    -fx-background-color: #1a1a1a;
+}
+
+.menu-button .menu-item {
+    -fx-background-color: #2a2a2a;
+    -fx-background-insets: 0;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-cursor: HAND;
+}
+
+.menu-button .menu-item .label {
+    -fx-text-fill: linear-gradient(from 0% 0% to 100% 100%, #80ed99, #38a3a5);
+}
+
+.menu-button .menu-item:hover {
+    -fx-background-color: #4d4d4d;
+}
+
+.menu-button > .arrow-button {
+    -fx-padding: 0;
+}
+
+.menu-button > .arrow-button > .arrow {
+    -fx-padding: 0;
+}
+
+.menu-button .arrow {
+    visibility: hidden;
 }
