@@ -25,24 +25,27 @@ import static com.cervinschi.marin.javafx.briscola.utils.Const.CWIDTH;
 
 public class GameObjects {
     private final BorderPane boardPane;
+
     private final AnchorPane root;
 
     private Label playerPoints;
+
     private Label botPoints;
     private Label deckCards;
-
+    private Label botTurn;
+    private Label playerTurn;
     private BorderPane tablePane;
 
     private HBox playerHandBox;
+
     private HBox botHandBox;
     private HBox tableBox;
-
     private MenuButton menuIcon;
 
 
     private Board board;
-    private ArrayDeque<Rectangle> deckObject;
 
+    private ArrayDeque<Rectangle> deckObject;
 
     public GameObjects(BorderPane boardPane, AnchorPane root) {
         this.boardPane = boardPane;
@@ -50,9 +53,11 @@ public class GameObjects {
     }
 
     public void createGameObjects() {
-        botPoints = createLabel(720.0, 121.0, 30);
-        playerPoints = createLabel(720.0, 607.0, 30);
+        botPoints = createLabel(720.0, 250.0, 30);
+        playerPoints = createLabel(720.0, 450.0, 30);
         deckCards = createLabel(110, 500, 25);
+        botTurn = createLabel(600.0, 30.0, 20);
+        playerTurn = createLabel(600.0, 700.0, 20);
         menuIcon = createMenuIcon();
 
         createBorderPane();
@@ -91,6 +96,14 @@ public class GameObjects {
         return menuIcon;
     }
 
+    private void setTurnIcon(String seed, Label label) {
+        Image turnImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/cervinschi/marin/javafx/briscola/media/turns/" + seed + ".png")));
+        ImageView turnImageView = new ImageView(turnImage);
+        turnImageView.setFitHeight(25);
+        turnImageView.setFitWidth(25);
+        label.setGraphic(turnImageView);
+    }
+
     public void showBackground() {
         String path = "/com/cervinschi/marin/javafx/briscola/media/background.png";
         Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
@@ -118,6 +131,9 @@ public class GameObjects {
         }
 
         initializeDeckBox();
+        setTurnIcon(board.getBriscola().getSeed(), botTurn);
+        setTurnIcon(board.getBriscola().getSeed(), playerTurn);
+        botTurn.setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
     }
 
     public void appendHandsObject() {
@@ -234,6 +250,14 @@ public class GameObjects {
 
     public Label getDeckCards() {
         return deckCards;
+    }
+
+    public Label getPlayerTurn() {
+        return playerTurn;
+    }
+
+    public Label getBotTurn() {
+        return botTurn;
     }
 
     public BorderPane getTablePane() {

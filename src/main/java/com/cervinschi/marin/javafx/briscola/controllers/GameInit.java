@@ -233,6 +233,14 @@ public class GameInit {
                 updatePoints(gameObjects.getPlayerPoints(), pointsFirst);
                 updatePoints(gameObjects.getBotPoints(), pointsSecond);
 
+                if (botWon) {
+                    gameObjects.getPlayerTurn().setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
+                    gameObjects.getBotTurn().setStyle("-fx-background-color: #2a2a2a");
+                } else {
+                    gameObjects.getBotTurn().setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
+                    gameObjects.getPlayerTurn().setStyle("-fx-background-color: #2a2a2a");
+                }
+
                 resetGame(botWon);
             }
         });
@@ -279,6 +287,8 @@ public class GameInit {
         gameObjects.getPlayerPoints().setVisible(false);
         gameObjects.getBotPoints().setVisible(false);
         gameObjects.getDeckCards().setVisible(false);
+        gameObjects.getBotTurn().setVisible(false);
+        gameObjects.getPlayerTurn().setVisible(false);
 
         Label endGameMessage = getEndGameMessage(playerScore, botScore);
 
