@@ -2,12 +2,21 @@ package com.cervinschi.marin.javafx.briscola.controllers;
 
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 public class GameController {
@@ -84,16 +93,23 @@ public class GameController {
 
     @FXML
     protected void showRules() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Rules");
-        alert.setHeaderText("Briscola rules");
-        alert.setContentText("The game is played with a deck of 40 cards. " +
-                "The game is played by two players, or four players in fixed partnerships. " +
-                "Players face each other, and the game is played clockwise. The player who " +
-                "did not deal the cards starts the game. The player who wins the trick leads " +
-                "the next trick. The game is won by the first player to reach 61 points. " +
-                "If both players reach 61 points in the same hand, the game is a tie.");
-        alert.showAndWait();
+        Stage rulesStage = new Stage();
+        rulesStage.setTitle("Rules");
+
+        WebView webView = new WebView();
+
+        try {
+            InputStream is = getClass().getResourceAsStream("/com/cervinschi/marin/javafx/briscola/briscola_rules.html");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)));
+            String htmlContent = reader.lines().collect(Collectors.joining("\n"));
+            webView.getEngine().loadContent(htmlContent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Scene rulesScene = new Scene(webView, 600, 600);
+        rulesStage.setScene(rulesScene);
+        rulesStage.show();
     }
     @FXML
     protected void exit() {

@@ -3,7 +3,7 @@ module com.cervinschi.marin.javafx.briscola {
     requires javafx.fxml;
     requires java.desktop;
     requires javafx.media;
-
+    requires javafx.web;
 
     opens com.cervinschi.marin.javafx.briscola to javafx.fxml;
     exports com.cervinschi.marin.javafx.briscola;
