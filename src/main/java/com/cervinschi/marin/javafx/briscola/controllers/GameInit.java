@@ -44,7 +44,7 @@ public class GameInit {
             gameObjects.getTableBox().setAlignment(Pos.CENTER);
         }
         if (bot.getHand().isEmptyObject() && playerHand.isEmptyObject() && !isPauseActive) {
-            PauseTransition pause = new PauseTransition(Duration.seconds(1));
+            PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
             pause.setOnFinished(e -> {
                 isPauseActive = false;
                 endGame();

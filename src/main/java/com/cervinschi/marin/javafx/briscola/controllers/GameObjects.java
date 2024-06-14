@@ -53,16 +53,16 @@ public class GameObjects {
     }
 
     public void createGameObjects() {
-        botPoints = createLabel(720.0, 250.0, 30);
-        playerPoints = createLabel(720.0, 450.0, 30);
+        botPoints = createLabel(720.0, 280.0, 30);
+        playerPoints = createLabel(720.0, 480.0, 30);
         deckCards = createLabel(110, 500, 25);
-        botTurn = createLabel(600.0, 30.0, 20);
-        playerTurn = createLabel(600.0, 700.0, 20);
+        botTurn = createLabel(590.0, 30.0, 20);
+        playerTurn = createLabel(590.0, 700.0, 20);
         menuIcon = createMenuIcon();
 
         createBorderPane();
 
-        root.getChildren().addAll(botPoints, playerPoints, deckCards, tablePane, menuIcon);
+        root.getChildren().addAll(botPoints, playerPoints, deckCards, tablePane, menuIcon, botTurn, playerTurn);
     }
 
     private MenuButton createMenuIcon() {

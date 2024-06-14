@@ -3,7 +3,6 @@ package com.cervinschi.marin.javafx.briscola.utils;
 public final class Const {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
-    public static final int DECK = 40;
     public static final int CWIDTH = 100;
     public static final int CHEIGHT = 150;
 
