@@ -51,6 +51,7 @@ public class Bot {
                 tt.setToY(0);
 
                 tt.play();
+
                 gameObjects.getTableBox().getChildren().add(card);
 
                 gameObjects.getBoard().addCardToTable(cardToPlay);

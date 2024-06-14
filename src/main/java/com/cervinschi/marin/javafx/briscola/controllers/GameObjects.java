@@ -53,8 +53,8 @@ public class GameObjects {
     }
 
     public void createGameObjects() {
-        botPoints = createLabel(720.0, 280.0, 30);
-        playerPoints = createLabel(720.0, 480.0, 30);
+        botPoints = createLabel(720.0, 270.0, 30);
+        playerPoints = createLabel(720.0, 470.0, 30);
         deckCards = createLabel(110, 500, 25);
         botTurn = createLabel(590.0, 30.0, 20);
         playerTurn = createLabel(590.0, 700.0, 20);

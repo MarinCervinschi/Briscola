@@ -91,6 +91,8 @@ public class GameInit {
         playerHand.addCard(card);
         playerHand.addCardObject(cardObject);
 
+        createTransition(cardObject, -300, -200);
+
         gameObjects.getPlayerHandBox().getChildren().add(cardObject);
 
         showHoverEffect(Objects.requireNonNull(cardObject));
@@ -104,6 +106,9 @@ public class GameInit {
         bot.getHand().addCardObject(cardObject);
 
         Rectangle backDeck = gameObjects.createCardObject(new Card("1", "back", 0, false));
+
+        createTransition(backDeck, -300, 200);
+
         gameObjects.getBotHandBox().getChildren().add(backDeck);
 
         gameObjects.getBoard().setHand(bot.getHand());
@@ -126,16 +131,7 @@ public class GameInit {
             card.setOnMouseEntered(null);
             card.setOnMouseExited(null);
 
-
-            card.setTranslateX(100);
-            card.setTranslateY(200);
-
-            TranslateTransition tt = new TranslateTransition(Duration.millis(1000), card);
-
-            tt.setToX(0);
-            tt.setToY(0);
-
-            tt.play();
+            createTransition(card, 100, 200);
 
             gameObjects.getTableBox().getChildren().add(card);
 
@@ -268,6 +264,18 @@ public class GameInit {
         bot.setHasPlayed(false);
         botWonLastHand = botWon;
         turn = botWon ? "bot" : "player";
+    }
+
+    protected void createTransition(Rectangle card, int x, int y) {
+        card.setTranslateX(x);
+        card.setTranslateY(y);
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(1000), card);
+
+        tt.setToX(0);
+        tt.setToY(0);
+
+        tt.play();
     }
 
     private void showHoverEffect(Rectangle card) {
