@@ -42,7 +42,7 @@ public class Bot extends GameInit{
                 Card cardToPlay = findCardToPlay(card);
 
                 createTransition(card, 100, -200);
-                playSoundCard();
+                playSound("card-sound");
 
                 gameObjects.getTableBox().getChildren().add(card);
 

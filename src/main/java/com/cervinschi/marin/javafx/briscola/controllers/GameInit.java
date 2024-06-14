@@ -94,7 +94,7 @@ public class GameInit {
         playerHand.addCardObject(cardObject);
 
         createTransition(cardObject, -300, -200);
-        playSoundCard();
+        playSound("card-sound");
 
         gameObjects.getPlayerHandBox().getChildren().add(cardObject);
 
@@ -111,7 +111,6 @@ public class GameInit {
         Rectangle backDeck = gameObjects.createCardObject(new Card("1", "back", 0, false));
 
         createTransition(backDeck, -300, 200);
-        playSoundCard();
 
         gameObjects.getBotHandBox().getChildren().add(backDeck);
 
@@ -136,7 +135,11 @@ public class GameInit {
             card.setOnMouseExited(null);
 
             createTransition(card, 100, 200);
-            playSoundCard();
+            if (selectedCard.toString().equals("1 of denara 11")) {
+                playSound("eagle");
+            } else {
+                playSound("card-sound");
+            }
             gameObjects.getTableBox().getChildren().add(card);
 
             gameObjects.getBoard().removeCardFromHand(selectedCard, card);
@@ -146,8 +149,8 @@ public class GameInit {
         });
     }
 
-    protected void playSoundCard() {
-        URL url = getClass().getResource("/com/cervinschi/marin/javafx/briscola/sounds/card-sound.mp3");
+    protected void playSound(String name) {
+        URL url = getClass().getResource("/com/cervinschi/marin/javafx/briscola/sounds/" + name + ".mp3");
         Media musicCard = new Media(Objects.requireNonNull(url).toExternalForm());
         MediaPlayer mediaPlayer = new MediaPlayer(musicCard);
 
@@ -246,12 +249,12 @@ public class GameInit {
         return cards;
     }
 
-    private PauseTransition getPauseTransition(int pointsFirst, int pointsSecond, boolean botWon) {
+    private PauseTransition getPauseTransition(int pointsPlayer, int pointsBot, boolean botWon) {
         PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
         pause.setOnFinished(e -> {
             if (gameObjects.getBoard().tableIsFull()) {
-                updatePoints(gameObjects.getPlayerPoints(), pointsFirst);
-                updatePoints(gameObjects.getBotPoints(), pointsSecond);
+                updatePoints(gameObjects.getPlayerPoints(), pointsPlayer);
+                updatePoints(gameObjects.getBotPoints(), pointsBot);
 
                 if (botWon) {
                     gameObjects.getPlayerTurn().setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
@@ -259,6 +262,12 @@ public class GameInit {
                 } else {
                     gameObjects.getBotTurn().setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
                     gameObjects.getPlayerTurn().setStyle("-fx-background-color: #2a2a2a");
+                }
+
+                if (pointsPlayer > 10) {
+                    playSound("cry");
+                } else if (pointsBot > 10) {
+                    playSound("laugh");
                 }
 
                 resetGame(botWon);
@@ -345,12 +354,15 @@ public class GameInit {
         switch (victory) {
             case "You won!":
                 endGameMessage.getStyleClass().add("victory");
+                playSound("won");
                 break;
             case "You lost!":
                 endGameMessage.getStyleClass().add("defeat");
+                playSound("lost");
                 break;
             default:
                 endGameMessage.getStyleClass().add("draw");
+                playSound("draw");
                 break;
         }
         return endGameMessage;
