@@ -3,6 +3,7 @@ package com.cervinschi.marin.javafx.briscola.controllers;
 import com.cervinschi.marin.javafx.briscola.models.Card;
 import com.cervinschi.marin.javafx.briscola.models.Hand;
 import javafx.animation.PauseTransition;
+import javafx.animation.TranslateTransition;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -36,12 +37,24 @@ public class Bot {
                     default -> hardMove();
                 };
 
-                Card cardToPlay = findCardToPlay(card);
                 int index = gameObjects.getBoard().getDeck().isEmpty() ? 1 : 3;
                 gameObjects.getBotHandBox().getChildren().remove(new Random().nextInt(index));
+
+                Card cardToPlay = findCardToPlay(card);
+
+                card.setTranslateX(100);
+                card.setTranslateY(-200);
+
+                TranslateTransition tt = new TranslateTransition(Duration.millis(1000), card);
+
+                tt.setToX(0);
+                tt.setToY(0);
+
+                tt.play();
+                gameObjects.getTableBox().getChildren().add(card);
+
                 gameObjects.getBoard().addCardToTable(cardToPlay);
                 gameObjects.getBoard().removeCardFromHand(cardToPlay, card);
-                gameObjects.getTableBox().getChildren().add(card);
             }
         });
         isPauseActive = true;

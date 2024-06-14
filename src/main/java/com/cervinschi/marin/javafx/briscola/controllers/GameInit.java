@@ -2,6 +2,7 @@ package com.cervinschi.marin.javafx.briscola.controllers;
 
 import com.cervinschi.marin.javafx.briscola.models.Card;
 import com.cervinschi.marin.javafx.briscola.models.Hand;
+import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
@@ -124,6 +125,17 @@ public class GameInit {
 
             card.setOnMouseEntered(null);
             card.setOnMouseExited(null);
+
+
+            card.setTranslateX(100);
+            card.setTranslateY(200);
+
+            TranslateTransition tt = new TranslateTransition(Duration.millis(1000), card);
+
+            tt.setToX(0);
+            tt.setToY(0);
+
+            tt.play();
 
             gameObjects.getTableBox().getChildren().add(card);
 
@@ -291,6 +303,13 @@ public class GameInit {
         gameObjects.getPlayerTurn().setVisible(false);
 
         Label endGameMessage = getEndGameMessage(playerScore, botScore);
+
+        FadeTransition ft = new FadeTransition(Duration.millis(3000), endGameMessage);
+
+        ft.setFromValue(0.0);
+        ft.setToValue(1.0);
+
+        ft.play();
 
         // Add the message to the board
         gameObjects.getTablePane().getChildren().clear();
