@@ -3,24 +3,23 @@ package com.cervinschi.marin.javafx.briscola.controllers;
 import com.cervinschi.marin.javafx.briscola.models.Card;
 import com.cervinschi.marin.javafx.briscola.models.Hand;
 import javafx.animation.PauseTransition;
-import javafx.animation.TranslateTransition;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.*;
 
-public class Bot {
+public class Bot extends GameInit{
     private final GameObjects gameObjects;
     private final String mode;
 
     private final Hand hand = new Hand();
 
-    private boolean isPauseActive = false;
     private boolean hasPlayed = false;
 
     public Bot(GameObjects gameObjects, String mode) {
-        this.gameObjects = gameObjects;
+        super(gameObjects, mode);
         this.mode = mode;
+        this.gameObjects = gameObjects;
     }
 
     public void move() {
@@ -42,15 +41,8 @@ public class Bot {
 
                 Card cardToPlay = findCardToPlay(card);
 
-                card.setTranslateX(100);
-                card.setTranslateY(-200);
-
-                TranslateTransition tt = new TranslateTransition(Duration.millis(1000), card);
-
-                tt.setToX(0);
-                tt.setToY(0);
-
-                tt.play();
+                createTransition(card, 100, -200);
+                playSoundCard();
 
                 gameObjects.getTableBox().getChildren().add(card);
 
@@ -63,11 +55,11 @@ public class Bot {
     }
 
     private Card findCardToPlay(Rectangle card) {
-    return Arrays.stream(hand.getCards())
-        .filter(Objects::nonNull)
-        .filter(handCard -> handCard.toString().equals(card.getId()))
-        .findFirst()
-        .orElse(null);
+        return Arrays.stream(hand.getCards())
+                .filter(Objects::nonNull)
+                .filter(handCard -> handCard.toString().equals(card.getId()))
+                .findFirst()
+                .orElse(null);
     }
 
     private Rectangle easyMove() {
@@ -124,6 +116,13 @@ public class Bot {
         return card;
     }
 
+    private Rectangle hardMove() {
+        return Arrays.stream(hand.getCardsObject())
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseGet(() -> hand.getCardsObject()[new Random().nextInt(3)]);
+    }
+
     private Rectangle findMinCardName(boolean isBriscola) {
         Card minCard = Arrays.stream(hand.getCards())
             .filter(Objects::nonNull)
@@ -161,13 +160,6 @@ public class Bot {
             }
         }
         return null;
-    }
-
-    private Rectangle hardMove() {
-        return Arrays.stream(hand.getCardsObject())
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseGet(() -> hand.getCardsObject()[new Random().nextInt(3)]);
     }
 
     public Hand getHand() {

@@ -45,6 +45,8 @@ public class GameController {
 
         addMenuIconAction();
         gameInit = new GameInit(gameObjects, difficulty);
+        Bot bot = new Bot(gameObjects, difficulty);
+        gameInit.setBot(bot);
         start();
         gameObjects.initializePoints("0", "0", "34");
     }

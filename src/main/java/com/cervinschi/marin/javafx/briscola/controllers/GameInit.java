@@ -8,14 +8,17 @@ import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+import java.net.URL;
 import java.util.Objects;
 
 public class GameInit {
     private final GameObjects gameObjects;
-    private final Bot bot;
+    private Bot bot;
     
     private final Hand playerHand = new Hand();
 
@@ -23,13 +26,12 @@ public class GameInit {
     private boolean canSelect = true;
     private boolean gameEnded = false;
     private boolean botWonLastHand = false;
-    private boolean isPauseActive = false;
+    protected boolean isPauseActive = false;
 
     private String turn = "player";
 
     public GameInit(GameObjects gameObjects, String mode) {
         this.gameObjects = gameObjects;
-        this.bot = new Bot(gameObjects, mode);
         gameObjects.appendHandsObject();
     }
 
@@ -92,6 +94,7 @@ public class GameInit {
         playerHand.addCardObject(cardObject);
 
         createTransition(cardObject, -300, -200);
+        playSoundCard();
 
         gameObjects.getPlayerHandBox().getChildren().add(cardObject);
 
@@ -108,6 +111,7 @@ public class GameInit {
         Rectangle backDeck = gameObjects.createCardObject(new Card("1", "back", 0, false));
 
         createTransition(backDeck, -300, 200);
+        playSoundCard();
 
         gameObjects.getBotHandBox().getChildren().add(backDeck);
 
@@ -132,7 +136,7 @@ public class GameInit {
             card.setOnMouseExited(null);
 
             createTransition(card, 100, 200);
-
+            playSoundCard();
             gameObjects.getTableBox().getChildren().add(card);
 
             gameObjects.getBoard().removeCardFromHand(selectedCard, card);
@@ -140,6 +144,14 @@ public class GameInit {
 
             bot.move();
         });
+    }
+
+    protected void playSoundCard() {
+        URL url = getClass().getResource("/com/cervinschi/marin/javafx/briscola/sounds/card-sound.mp3");
+        Media musicCard = new Media(Objects.requireNonNull(url).toExternalForm());
+        MediaPlayer mediaPlayer = new MediaPlayer(musicCard);
+
+        mediaPlayer.play();
     }
 
     private void checkTable() {
@@ -346,5 +358,9 @@ public class GameInit {
 
     public boolean isGameEnded() {
         return gameEnded;
+    }
+
+    public void setBot(Bot bot) {
+        this.bot = bot;
     }
 }
