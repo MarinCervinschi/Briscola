@@ -25,8 +25,8 @@
                    </items>
                </ComboBox>
                <Button onAction="#startGame" styleClass="button" text="Start Game" />
-               <Button onAction="#showRules" styleClass="button" text="Show Rules" />
-               <Button onAction="#exit" styleClass="button" text="Exit" />
+               <Button style="-fx-font-size: 20" onAction="#showRules" styleClass="button" text="Show Rules" />
+               <Button style="-fx-font-size: 20" onAction="#exit" styleClass="button" text="Exit" />
            </VBox>
        </AnchorPane>
    </center>

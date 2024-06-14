@@ -1,5 +1,5 @@
 .root {
-    -fx-font-family: Arial;
+    -fx-font-family: SansSerif;
 }
 
 .title {
@@ -22,6 +22,7 @@
     -fx-text-fill: linear-gradient(from 0% 0% to 100% 100%, #80ed99, #38a3a5);
 }
 
+/* shadow effect */
 .button, .combo-box, .menu-button {
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 10, 0.5, 0, 0);
     -fx-cursor: HAND;
@@ -63,8 +64,9 @@
 .combo-box .list-cell {
     -fx-background-color: #2a2a2a;
     -fx-text-fill: linear-gradient(from 0% 0% to 100% 100%, #80ed99, #38a3a5);
-    -fx-font-size: 25px;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
+    -fx-cursor: HAND;
 }
 .combo-box .list-cell:hover {
     -fx-background-color: #4d4d4d;
@@ -128,4 +130,47 @@
 
 .menu-button .arrow {
     visibility: hidden;
+}
+
+/* points-label */
+.points-label {
+    -fx-font-weight: bold;
+    -fx-background-insets: 0;
+    -fx-background-color: #2a2a2a;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 10;
+    -fx-text-fill: linear-gradient(from 0% 0% to 100% 100%, #80ed99, #ccff33);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 10, 0.5, 0, 0);
+}
+
+/* end-game-text */
+.victory, .defeat, .draw {
+    -fx-font-size: 80px;
+    -fx-font-weight: bold;
+    -fx-padding: 20;
+    -fx-background-color: #2a2a2a;
+    -fx-background-radius: 12;
+    -fx-border-width: 3;
+    -fx-border-radius: 12;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.victory {
+    -fx-text-fill: linear-gradient(from 0% 0% to 100% 100%, #00ff00, #007700);
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 0, 0.75), 15, 0.7, 0, 0);
+    -fx-border-color: #00ff00;
+}
+
+.defeat {
+    -fx-text-fill: linear-gradient(from 0% 0% to 100% 100%, #ff0000, #770000);
+    -fx-effect: dropshadow(gaussian, rgba(255, 0, 0, 0.75), 15, 0.7, 0, 0);
+    -fx-border-color: #ff0000;
+}
+
+.draw {
+    -fx-text-fill: linear-gradient(from 0% 0% to 100% 100%, #ffcc00, #cc9900);
+    -fx-effect: dropshadow(gaussian, rgba(255, 204, 0, 0.75), 15, 0.7, 0, 0);
+    -fx-border-color: #ffcc00;
 }

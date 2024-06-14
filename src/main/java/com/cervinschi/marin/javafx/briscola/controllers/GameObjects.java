@@ -5,6 +5,7 @@ import com.cervinschi.marin.javafx.briscola.models.Card;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -14,8 +15,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.ArrayDeque;
@@ -28,9 +27,9 @@ public class GameObjects {
     private final BorderPane boardPane;
     private final AnchorPane root;
 
-    private Text playerPoints;
-    private Text botPoints;
-    private Text deckCards;
+    private Label playerPoints;
+    private Label botPoints;
+    private Label deckCards;
 
     private BorderPane tablePane;
 
@@ -51,9 +50,9 @@ public class GameObjects {
     }
 
     public void createGameObjects() {
-        botPoints = createText(740.0, 121.0, 35);
-        playerPoints = createText(740.0, 607.0, 35);
-        deckCards = createText(110, 500, 25);
+        botPoints = createLabel(720.0, 121.0, 30);
+        playerPoints = createLabel(720.0, 607.0, 30);
+        deckCards = createLabel(110, 500, 25);
         menuIcon = createMenuIcon();
 
         createBorderPane();
@@ -206,15 +205,13 @@ public class GameObjects {
         rectangle.setEffect(dropShadow2);
     }
 
-    private Text createText(double layoutX, double layoutY, double fontSize) {
-        Text text = new Text();
-        text.setFill(Color.WHITE);
-        text.setLayoutX(layoutX);
-        text.setLayoutY(layoutY);
-        text.setStroke(Color.WHITE);
-        text.setStrokeWidth(0.0);
-        text.setFont(Font.font("Arial Bold", FontWeight.BOLD, fontSize));
-        return text;
+    private Label createLabel(double layoutX, double layoutY, double fontSize) {
+        Label label = new Label();
+        label.setLayoutX(layoutX);
+        label.setLayoutY(layoutY);
+        label.setFont(Font.font("SansSerif", fontSize));
+        label.getStyleClass().add("points-label");
+        return label;
     }
 
     private void createBorderPane() {
@@ -227,15 +224,15 @@ public class GameObjects {
         AnchorPane.setTopAnchor(tablePane, 0.0);
     }
 
-    public Text getPlayerPoints() {
+    public Label getPlayerPoints() {
         return playerPoints;
     }
 
-    public Text getBotPoints() {
+    public Label getBotPoints() {
         return botPoints;
     }
 
-    public Text getDeckCards() {
+    public Label getDeckCards() {
         return deckCards;
     }
 
@@ -262,8 +259,6 @@ public class GameObjects {
     public MenuButton getMenuIcon() {
         return menuIcon;
     }
-
-
 
     public ArrayDeque<Rectangle> getDeckObject() {
         return deckObject;

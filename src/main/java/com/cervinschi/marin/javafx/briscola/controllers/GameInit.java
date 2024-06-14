@@ -5,14 +5,10 @@ import com.cervinschi.marin.javafx.briscola.models.Hand;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.Cursor;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.control.Label;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import javafx.scene.paint.Color;
 
 import java.util.Objects;
 
@@ -116,7 +112,7 @@ public class GameInit {
         card.setTranslateX(0);
         card.setTranslateY(0);
         gameObjects.getTablePane().getChildren().remove(gameObjects.getTablePane().getLeft());
-        gameObjects.getDeckCards().setText(" ");
+        gameObjects.getDeckCards().setVisible(false);
     }
 
     private void selectCard(Rectangle card, Card selectedCard) {
@@ -265,7 +261,7 @@ public class GameInit {
         });
     }
 
-    private void updatePoints(Text player, int newPoints) {
+    private void updatePoints(Label player, int newPoints) {
         if (gameEnded || player.getText().equals(" ")) return;
 
         int points = Integer.parseInt(player.getText()) + newPoints;
@@ -280,11 +276,11 @@ public class GameInit {
 
         int playerScore = Integer.parseInt(gameObjects.getPlayerPoints().getText());
         int botScore = Integer.parseInt(gameObjects.getBotPoints().getText());
-        gameObjects.getPlayerPoints().setText(" ");
-        gameObjects.getBotPoints().setText(" ");
-        gameObjects.getDeckCards().setText(" ");
+        gameObjects.getPlayerPoints().setVisible(false);
+        gameObjects.getBotPoints().setVisible(false);
+        gameObjects.getDeckCards().setVisible(false);
 
-        Text endGameMessage = getEndGameMessage(playerScore, botScore);
+        Label endGameMessage = getEndGameMessage(playerScore, botScore);
 
         // Add the message to the board
         gameObjects.getTablePane().getChildren().clear();
@@ -293,17 +289,22 @@ public class GameInit {
         gameEnded = true;
     }
 
-    private Text getEndGameMessage(int playerScore, int botScore) {
-        String message = playerScore > 60 ? "You won!" : botScore > 60 ? "You lost!" : "Draw!";
-        return createText(playerScore + " - " + botScore + "\n" + message);
-    }
-
-    private Text createText(String message) {
-        Text text = new Text(message);
-        text.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 90));
-        text.setFill(Color.YELLOWGREEN);
-        text.setTextAlignment(TextAlignment.CENTER);
-        return text;
+    private Label getEndGameMessage(int playerScore, int botScore) {
+        String victory = playerScore > 60 ? "You won!" : botScore > 60 ? "You lost!" : "Draw!";
+        String message = playerScore + " - " + botScore + "\n" + victory;
+        Label endGameMessage = new Label(message);
+        switch (victory) {
+            case "You won!":
+                endGameMessage.getStyleClass().add("victory");
+                break;
+            case "You lost!":
+                endGameMessage.getStyleClass().add("defeat");
+                break;
+            default:
+                endGameMessage.getStyleClass().add("draw");
+                break;
+        }
+        return endGameMessage;
     }
 
     public boolean isGameEnded() {
