@@ -255,8 +255,8 @@ public class GameInit {
         points[1] = playerWins ? 0 : cards[0].getValue() + cards[1].getValue();
 
         return new Rectangle[]{
-            getRectangleFromTable()[playerWins ? 0 : 1],
-            getRectangleFromTable()[playerWins ? 1 : 0]
+                getRectangleFromTable()[playerWins ? 0 : 1],
+                getRectangleFromTable()[playerWins ? 1 : 0]
         };
     }
 
