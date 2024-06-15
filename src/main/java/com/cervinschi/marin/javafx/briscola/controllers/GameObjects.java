@@ -121,7 +121,7 @@ public class GameObjects {
         botHandBox = new HBox();
         tableBox = new HBox();
 
-        board = new Board();
+        this.board = new Board();
 
         deckObject = new ArrayDeque<>();
 
@@ -131,8 +131,8 @@ public class GameObjects {
         }
 
         initializeDeckBox();
-        setTurnIcon(board.getBriscola().getSeed(), botTurn);
-        setTurnIcon(board.getBriscola().getSeed(), playerTurn);
+        setTurnIcon(board.getBriscolaCard().getSeed(), botTurn);
+        setTurnIcon(board.getBriscolaCard().getSeed(), playerTurn);
         botTurn.setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
     }
 
@@ -166,7 +166,7 @@ public class GameObjects {
         Rectangle briscola = Objects.requireNonNull(deckObject.poll());
         board.setBriscolaToCards(board.getDeck().getFirst().getSeed());
         board.setBriscolaObject(briscola);
-        board.setBriscola(Objects.requireNonNull(board.getDeck().poll()));
+        board.setBriscolaCard(Objects.requireNonNull(board.getDeck().poll()));
         Objects.requireNonNull(briscola).setTranslateY(-50);
         Objects.requireNonNull(briscola).setTranslateX(25);
 

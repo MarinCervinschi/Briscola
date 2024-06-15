@@ -14,24 +14,30 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class GameInit {
     private final GameObjects gameObjects;
     private Bot bot;
-    
-    private final Hand playerHand = new Hand();
+
+    private final Hand playerHand;
+
+    private final List<Card> playedCards;
 
     private boolean canFill = true;
     private boolean canSelect = true;
     private boolean gameEnded = false;
     private boolean botWonLastHand = false;
-    protected boolean isPauseActive = false;
+    private boolean isPauseActive = false;
 
     private String turn = "player";
 
     public GameInit(GameObjects gameObjects, String mode) {
         this.gameObjects = gameObjects;
+        this.playedCards = new ArrayList<>();
+        this.playerHand = gameObjects.getBoard().getPlayerHand();
         gameObjects.appendHandsObject();
     }
 
@@ -67,10 +73,10 @@ public class GameInit {
 
         while (playerHand.isCardsObjectFull() || bot.getHand().isCardsObjectFull()) {
 
-            if (gameObjects.getBoard().getDeck().size() == 1 && gameObjects.getBoard().getBriscola() != null) {
+            if (gameObjects.getBoard().getDeck().size() == 1 && gameObjects.getBoard().getBriscolaCard() != null) {
                 cardObject = gameObjects.getBoard().getBriscolaObject();
-                card = gameObjects.getBoard().getBriscola();
-                gameObjects.getBoard().setBriscola(null);
+                card = gameObjects.getBoard().getBriscolaCard();
+                gameObjects.getBoard().setBriscolaCard(null);
                 handleBriscolaCard(cardObject);
 
                 turn = botWonLastHand ? "player" : "bot";
@@ -90,8 +96,7 @@ public class GameInit {
     }
 
     private void fillPlayerHand(Rectangle cardObject, Card card) {
-        playerHand.addCard(card);
-        playerHand.addCardObject(cardObject);
+        playerHand.addCard(card, cardObject);
 
         createTransition(cardObject, -300, -200);
         playSound("card-sound");
@@ -100,21 +105,16 @@ public class GameInit {
 
         showHoverEffect(Objects.requireNonNull(cardObject));
         selectCard(cardObject, card);
-
-        gameObjects.getBoard().setHand(playerHand);
     }
 
     private void fillBotHand(Rectangle cardObject, Card card) {
-        bot.getHand().addCard(card);
-        bot.getHand().addCardObject(cardObject);
+        bot.getHand().addCard(card, cardObject);
 
         Rectangle backDeck = gameObjects.createCardObject(new Card("1", "back", 0, false));
 
         createTransition(backDeck, -300, 200);
 
         gameObjects.getBotHandBox().getChildren().add(backDeck);
-
-        gameObjects.getBoard().setHand(bot.getHand());
     }
 
     private void handleBriscolaCard(Rectangle card) {
@@ -142,7 +142,8 @@ public class GameInit {
             }
             gameObjects.getTableBox().getChildren().add(card);
 
-            gameObjects.getBoard().removeCardFromHand(selectedCard, card);
+            playerHand.removeCard(selectedCard, card);
+            playedCards.add(selectedCard);
             gameObjects.getBoard().addCardToTable(selectedCard);
 
             bot.move();
@@ -370,6 +371,22 @@ public class GameInit {
 
     public boolean isGameEnded() {
         return gameEnded;
+    }
+
+    public Hand getPlayerHand() {
+        return playerHand;
+    }
+
+    public boolean isPauseActive() {
+        return isPauseActive;
+    }
+
+    public void setPauseActive(boolean pauseActive) {
+        isPauseActive = pauseActive;
+    }
+
+    public List<Card> getPlayedCards() {
+        return playedCards;
     }
 
     public void setBot(Bot bot) {
