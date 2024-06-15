@@ -5,23 +5,56 @@ import javafx.scene.shape.Rectangle;
 import java.util.*;
 
 public class Board {
-    private final List<Hand> hands = new ArrayList<>(2);
-    private Deque<Card> deck = new ArrayDeque<>();
-    private final Card[] table = new Card[2];
-    private Card briscola;
+    private final Hand playerHand;
+    private final Hand botHand;
+    private final Card[] table;
+    private Deque<Card> deck;
+    private Card briscolaCard;
     private Rectangle briscolaObject;
 
     public Board() {
+        playerHand = new Hand();
+        botHand = new Hand();
+        deck = new ArrayDeque<>();
+        table = new Card[2];
         createDeck();
         shuffleDeck();
+    }
+
+    public Hand getBotHand() {
+        return botHand;
+    }
+
+    public Hand getPlayerHand() {
+        return playerHand;
     }
 
     public Deque<Card> getDeck() {
         return deck;
     }
 
-    public void setHand(Hand hand) {
-        hands.add(hand);
+    public void setBriscolaToCards(String seed) {
+        deck.stream().filter(card -> card.getSeed().equals(seed)).forEach(card -> card.setBriscola(true));
+    }
+
+    public Card getBriscolaCard() {
+        return briscolaCard;
+    }
+
+    public void setBriscolaCard(Card briscola) {
+        this.briscolaCard = briscola;
+    }
+
+    public Rectangle getBriscolaObject() {
+        return briscolaObject;
+    }
+
+    public void setBriscolaObject(Rectangle briscolaObject) {
+        this.briscolaObject = briscolaObject;
+    }
+
+    public Card getTable(int index) {
+        return table[index];
     }
 
     public void createDeck() {
@@ -37,63 +70,20 @@ public class Board {
 
     public void shuffleDeck() {
         List<Card> deckList = new ArrayList<>(List.copyOf(deck));
-        Collections.shuffle(deckList);
+        for (int i = 0; i < 100; i++) Collections.shuffle(deckList);
         deck = new ArrayDeque<>(deckList);
     }
 
-    public void setBriscolaToCards(String seed) {
-        for (Card card : deck) {
-            if (card.getSeed().equals(seed) && !card.isBriscola()) {
-                card.setBriscola(true);
-            }
-        }
-    }
-
-    public Card getBriscola() {
-        return briscola;
-    }
-
-    public void setBriscola(Card briscola) {
-        this.briscola = briscola;
-    }
-
-    public void setBriscolaObject(Rectangle briscolaObject) {
-        this.briscolaObject = briscolaObject;
-    }
-
-    public Rectangle getBriscolaObject() {
-        return briscolaObject;
-    }
-
     public void addCardToTable(Card card) {
-        if (table[0] == null) {
-            table[0] = card;
-        } else {
-            table[1] = card;
-        }
-    }
-
-    public void removeCardFromHand(Card card, Rectangle cardObject) {
-        for (Hand hand : hands) {
-            if (hand.containsCard(card) && hand.containsCardObject(cardObject)) {
-                hand.removeCard(card);
-                hand.removeCardObject(cardObject);
-            }
-
-        }
+        table[table[0] == null ? 0 : 1] = card;
     }
 
     public boolean tableIsFull() {
         return table[0] != null && table[1] != null;
     }
 
-    public Card getTable(int index) {
-        return table[index];
-    }
-
     public void clearTable() {
         table[0] = null;
         table[1] = null;
     }
-
 }

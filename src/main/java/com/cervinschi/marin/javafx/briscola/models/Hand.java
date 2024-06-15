@@ -2,93 +2,45 @@ package com.cervinschi.marin.javafx.briscola.models;
 
 import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Hand {
-    private final Rectangle[] cardsObject;
-    private final Card[] cards;
+    private final List<Rectangle> cardsObject;
+    private final List<Card> cards;
 
     public Hand() {
-        cardsObject = new Rectangle[3];
-        cards = new Card[3];
-    }
-
-    public void addCard(Card card) {
-        for (int i = 0; i < cards.length; i++) {
-            if (cards[i] == null) {
-                cards[i] = card;
-                break;
-            }
-        }
+        cardsObject = new ArrayList<>();
+        cards = new ArrayList<>();
     }
 
     public Card[] getCards() {
-        return cards;
+        return cards.toArray(new Card[0]);
     }
 
     public Rectangle[] getCardsObject() {
-        return cardsObject;
+        return cardsObject.toArray(new Rectangle[0]);
     }
 
-
-    public boolean isEmptyObject() {
-        for (Rectangle card : cardsObject) {
-            if (card != null) {
-                return false;
-            }
-        }
-        return true;
+    public int getLength() {
+        return cards.size();
     }
 
-    public void addCardObject(Rectangle card) {
-        for (int i = 0; i < cards.length; i++) {
-            if (cardsObject[i] == null) {
-                cardsObject[i] = card;
-                break;
-            }
-        }
+    public void addCard(Card card, Rectangle cardObject) {
+        cards.add(card);
+        cardsObject.add(cardObject);
     }
 
-    public void removeCardObject(Rectangle card) {
-        for (int i = 0; i < cards.length; i++) {
-            if (cardsObject[i] != null && cardsObject[i].equals(card)) {
-                cardsObject[i] = null;
-                break;
-            }
-        }
-    }
-
-    public void removeCard(Card card) {
-        for (int i = 0; i < cards.length; i++) {
-            if (cards[i] != null && cards[i].equals(card)) {
-                cards[i] = null;
-                break;
-            }
-        }
-    }
-
-    public boolean containsCard(Card card) {
-        for (Card c : cards) {
-            if (c != null && c.equals(card)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean containsCardObject(Rectangle card) {
-        for (Rectangle c : cardsObject) {
-            if (c != null && c.equals(card)) {
-                return true;
-            }
-        }
-        return false;
+    public void removeCard(Card card, Rectangle cardObject) {
+        cards.remove(card);
+        cardsObject.remove(cardObject);
     }
 
     public boolean isCardsObjectFull() {
-        for (Rectangle card : cardsObject) {
-            if (card == null) {
-                return true;
-            }
-        }
-        return false;
+        return cardsObject.size() != 3;
+    }
+
+    public boolean isEmptyObject() {
+        return cardsObject.isEmpty();
     }
 }
