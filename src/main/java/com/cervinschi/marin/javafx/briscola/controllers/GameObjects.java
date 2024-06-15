@@ -216,6 +216,7 @@ public class GameObjects {
         setTurnIcon(board.getBriscolaCard().getSeed(), playerTurn);
         botTurn.setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
     }
+
     protected void initializePoints() {
         this.playerPoints.setText("0");
         this.botPoints.setText("0");
