@@ -16,6 +16,7 @@ import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,11 +29,11 @@ public class GameInit {
     private static List<Card> playedCards;
 
     private boolean canFill = true;
-
     private boolean canSelect = true;
     private boolean gameEnded = false;
     private boolean botWonLastHand = false;
     private boolean isPauseActive = false;
+
     private String turn = "player";
 
     public GameInit(GameObjects gameObjects) {
@@ -42,6 +43,32 @@ public class GameInit {
         gameObjects.appendHandsObject();
     }
 
+    /* --------------------- Getters and Setters --------------------- */
+    public Hand getPlayerHand() {
+        return playerHand;
+    }
+
+    public static List<Card> getPlayedCards() {
+        return playedCards;
+    }
+
+    public boolean isGameEnded() {
+        return gameEnded;
+    }
+
+    public boolean isPauseActive() {
+        return isPauseActive;
+    }
+
+    public void setPauseActive(boolean pauseActive) {
+        isPauseActive = pauseActive;
+    }
+
+    public void setBot(Bot bot) {
+        this.bot = bot;
+    }
+
+    /* --------------------- Main loop --------------------- */
     public void mainLoop() {
 
         if (!gameObjects.getDeckObject().isEmpty()) fillHands();
@@ -64,6 +91,7 @@ public class GameInit {
         }
     }
 
+    /* --------------------- Fill cards methods --------------------- */
     private void fillHands() {
         if (!canFill || isPauseActive || bot.isHasPlayed()) return;
         PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
@@ -73,31 +101,37 @@ public class GameInit {
             Card card;
             if (playerHand.isCardsObjectFull() || bot.getHand().isCardsObjectFull()) {
 
+                /* Manage the briscola card */
                 if (gameObjects.getBoard().getDeck().size() == 1 && gameObjects.getBoard().getBriscolaCard() != null) {
                     cardObject = gameObjects.getBoard().getBriscolaObject();
                     card = gameObjects.getBoard().getBriscolaCard();
+
                     gameObjects.getBoard().setBriscolaCard(null);
                     handleBriscolaCard(cardObject);
 
                     turn = botWonLastHand ? "player" : "bot";
-                } else {
+                } else { /* Manage the deck cards */
                     cardObject = gameObjects.getDeckObject().poll();
                     card = gameObjects.getBoard().getDeck().poll();
                 }
 
-                if (turn.equals("bot") && bot.getHand().isCardsObjectFull()) {
-                    fillBotHand(cardObject, card);
-                    turn = "player";
-                } else if (turn.equals("player") && playerHand.isCardsObjectFull()) {
-                    fillPlayerHand(cardObject, card);
-                    turn = "bot";
-                }
+                fillHandAndSwitchTurn(cardObject, card);
             } else {
                 canFill = false;
             }
         });
         isPauseActive = true;
         pause.play();
+    }
+
+    private void fillHandAndSwitchTurn(Rectangle cardObject, Card card) {
+        if (turn.equals("bot") && bot.getHand().isCardsObjectFull()) {
+            fillBotHand(cardObject, card);
+            turn = "player";
+        } else if (turn.equals("player") && playerHand.isCardsObjectFull()) {
+            fillPlayerHand(cardObject, card);
+            turn = "bot";
+        }
     }
 
     private void fillPlayerHand(Rectangle cardObject, Card card) {
@@ -115,12 +149,12 @@ public class GameInit {
     private void fillBotHand(Rectangle cardObject, Card card) {
         bot.getHand().addCard(card, cardObject);
 
-        Rectangle backDeck = gameObjects.createCardObject(new Card("1", "back", 0, false));
+        Rectangle backCard = gameObjects.createCardObject(new Card("1", "back", 0, false));
 
-        createTransition(cardObject, -300, 200);
+        createTransition(backCard, -300, 200);
         playSound("card-sound");
 
-        gameObjects.getBotHandBox().getChildren().add(cardObject);
+        gameObjects.getBotHandBox().getChildren().add(backCard);
     }
 
     private void handleBriscolaCard(Rectangle card) {
@@ -135,51 +169,49 @@ public class GameInit {
             if (!canSelect || isPauseActive) return;
 
             canSelect = false;
+
+            /* Remove the card from the player hand box */
             gameObjects.getPlayerHandBox().getChildren().remove(card);
 
+            /* Remove the hover effect */
             card.setOnMouseEntered(null);
             card.setOnMouseExited(null);
 
             createTransition(card, 100, 200);
-            if (selectedCard.toString().equals("1 of denara 11")) {
-                playSound("eagle");
-            } else {
-                playSound("card-sound");
-            }
+            playSound(selectedCard.toString().equals("1 of denara 11") ? "eagle" : "card-sound");
+
+            /* Add the card to the table box*/
             gameObjects.getTableBox().getChildren().add(card);
 
+            gameObjects.getBoard().addCardToTable(selectedCard);
             playerHand.removeCard(selectedCard, card);
             playedCards.add(selectedCard);
-            gameObjects.getBoard().addCardToTable(selectedCard);
 
             bot.move();
         });
     }
 
-    protected void playSound(String name) {
-        URL url = getClass().getResource("/com/cervinschi/marin/javafx/briscola/sounds/" + name + ".mp3");
-        Media musicCard = new Media(Objects.requireNonNull(url).toExternalForm());
-        MediaPlayer mediaPlayer = new MediaPlayer(musicCard);
-
-        mediaPlayer.play();
-    }
-
+    /* --------------------- Table methods --------------------- */
     private void checkTable() {
         if (!gameObjects.getBoard().tableIsFull()) return;
 
         int[] points = new int[2];
+
+        /* Find the winning card */
         Rectangle[] results = findWinningCard(getCardsFromTable(), points);
         Rectangle winningCard = results[0];
         Rectangle losingCard = results[1];
 
         boolean botWon = winningCard.equals(getRectangleFromTable()[1]);
 
+        /* Move the winning card to the winning player */
         TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), winningCard);
 
         tt.setToX(losingCard.getLayoutX() - winningCard.getLayoutX());
         tt.setToY(losingCard.getLayoutY() - winningCard.getLayoutY());
 
         tt.play();
+
         if (isPauseActive) return;
         PauseTransition pause = getPauseTransition(points[0], points[1], botWon);
         isPauseActive = true;
@@ -263,24 +295,23 @@ public class GameInit {
                 updatePoints(gameObjects.getPlayerPoints(), pointsPlayer);
                 updatePoints(gameObjects.getBotPoints(), pointsBot);
 
-                if (botWon) {
-                    gameObjects.getPlayerTurn().setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
-                    gameObjects.getBotTurn().setStyle("-fx-background-color: #2a2a2a");
-                } else {
-                    gameObjects.getBotTurn().setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
-                    gameObjects.getPlayerTurn().setStyle("-fx-background-color: #2a2a2a");
-                }
-
-                if (pointsPlayer > 10) {
-                    playSound("cry");
-                } else if (pointsBot > 10) {
-                    playSound("laugh");
-                }
+                setTurnStyle(botWon);
+                playSound(pointsPlayer > 10 ? "cry" : pointsBot > 10 ? "laugh" : "draw");
 
                 resetGame(botWon);
             }
         });
         return pause;
+    }
+
+    private void setTurnStyle(boolean botWon) {
+        if (botWon) {
+            gameObjects.getPlayerTurn().setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
+            gameObjects.getBotTurn().setStyle("-fx-background-color: #2a2a2a");
+        } else {
+            gameObjects.getBotTurn().setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
+            gameObjects.getPlayerTurn().setStyle("-fx-background-color: #2a2a2a");
+        }
     }
 
     private void resetGame(boolean botWon) {
@@ -294,49 +325,13 @@ public class GameInit {
         turn = botWon ? "bot" : "player";
     }
 
-    protected void createTransition(Rectangle card, int x, int y) {
-        card.setTranslateX(x);
-        card.setTranslateY(y);
-
-        TranslateTransition tt = new TranslateTransition(Duration.millis(1000), card);
-
-        tt.setToX(0);
-        tt.setToY(0);
-
-        tt.play();
-    }
-
-    private void showHoverEffect(Rectangle card) {
-        card.setOnMouseEntered(e -> {
-            card.setTranslateY(-20);
-            card.setCursor(Cursor.HAND);
-        });
-        card.setOnMouseExited(e -> {
-            card.setTranslateY(0);
-            card.setCursor(Cursor.DEFAULT);
-        });
-    }
-
-    private void updatePoints(Label player, int newPoints) {
-        if (gameEnded || player.getText().equals(" ")) return;
-
-        int points = Integer.parseInt(player.getText()) + newPoints;
-        player.setText(String.valueOf(points));
-        if (gameObjects.getDeckObject().size() > 1) {
-            gameObjects.getDeckCards().setText(String.valueOf(gameObjects.getDeckObject().size() - 1));
-        }
-    }
-
+    /* --------------------- End Game methods --------------------- */
     private void endGame() {
         if (gameEnded) return;
 
         int playerScore = Integer.parseInt(gameObjects.getPlayerPoints().getText());
         int botScore = Integer.parseInt(gameObjects.getBotPoints().getText());
-        gameObjects.getPlayerPoints().setVisible(false);
-        gameObjects.getBotPoints().setVisible(false);
-        gameObjects.getDeckCards().setVisible(false);
-        gameObjects.getBotTurn().setVisible(false);
-        gameObjects.getPlayerTurn().setVisible(false);
+        setVisibilityFalse(gameObjects.getPlayerPoints(), gameObjects.getBotPoints(), gameObjects.getDeckCards(), gameObjects.getBotTurn(), gameObjects.getPlayerTurn());
 
         Label endGameMessage = getEndGameMessage(playerScore, botScore);
 
@@ -349,13 +344,8 @@ public class GameInit {
         gameEnded = true;
     }
 
-    public void fadeTransition(Node node) {
-        FadeTransition ft = new FadeTransition(Duration.millis(3000), node);
-
-        ft.setFromValue(0.0);
-        ft.setToValue(1.0);
-
-        ft.play();
+    private void setVisibilityFalse(Node... nodes) {
+        Arrays.stream(nodes).forEach(node -> node.setVisible(false));
     }
 
     private Label getEndGameMessage(int playerScore, int botScore) {
@@ -379,27 +369,54 @@ public class GameInit {
         return endGameMessage;
     }
 
-    public boolean isGameEnded() {
-        return gameEnded;
+    /* --------------------- Utility methods --------------------- */
+    private void updatePoints(Label player, int newPoints) {
+        if (gameEnded || player.getText().equals(" ")) return;
+
+        int points = Integer.parseInt(player.getText()) + newPoints;
+        player.setText(String.valueOf(points));
+        if (gameObjects.getDeckObject().size() > 1) {
+            gameObjects.getDeckCards().setText(String.valueOf(gameObjects.getDeckObject().size() - 1));
+        }
     }
 
-    public Hand getPlayerHand() {
-        return playerHand;
+    private void showHoverEffect(Rectangle card) {
+        card.setOnMouseEntered(e -> {
+            card.setTranslateY(-20);
+            card.setCursor(Cursor.HAND);
+        });
+        card.setOnMouseExited(e -> {
+            card.setTranslateY(0);
+            card.setCursor(Cursor.DEFAULT);
+        });
     }
 
-    public boolean isPauseActive() {
-        return isPauseActive;
+    protected void playSound(String name) {
+        URL url = getClass().getResource("/com/cervinschi/marin/javafx/briscola/sounds/" + name + ".mp3");
+        Media musicCard = new Media(Objects.requireNonNull(url).toExternalForm());
+        MediaPlayer mediaPlayer = new MediaPlayer(musicCard);
+
+        mediaPlayer.play();
     }
 
-    public void setPauseActive(boolean pauseActive) {
-        isPauseActive = pauseActive;
+    protected void createTransition(Rectangle card, int x, int y) {
+        card.setTranslateX(x);
+        card.setTranslateY(y);
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(1000), card);
+
+        tt.setToX(0);
+        tt.setToY(0);
+
+        tt.play();
     }
 
-    public static List<Card> getPlayedCards() {
-        return playedCards;
-    }
+    protected void fadeTransition(Node node) {
+        FadeTransition ft = new FadeTransition(Duration.millis(3000), node);
 
-    public void setBot(Bot bot) {
-        this.bot = bot;
+        ft.setFromValue(0.0);
+        ft.setToValue(1.0);
+
+        ft.play();
     }
 }
