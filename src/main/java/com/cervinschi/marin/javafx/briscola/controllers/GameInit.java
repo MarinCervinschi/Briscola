@@ -296,7 +296,7 @@ public class GameInit {
                 updatePoints(gameObjects.getBotPoints(), pointsBot);
 
                 setTurnStyle(botWon);
-                playSound(pointsPlayer > 10 ? "cry" : pointsBot > 10 ? "laugh" : "draw");
+                playSound(pointsPlayer > 10 ? "cry" : pointsBot > 10 ? "laugh" : "");
 
                 resetGame(botWon);
             }
@@ -392,6 +392,7 @@ public class GameInit {
     }
 
     protected void playSound(String name) {
+        if (name.isEmpty()) return;
         URL url = getClass().getResource("/com/cervinschi/marin/javafx/briscola/sounds/" + name + ".mp3");
         Media musicCard = new Media(Objects.requireNonNull(url).toExternalForm());
         MediaPlayer mediaPlayer = new MediaPlayer(musicCard);

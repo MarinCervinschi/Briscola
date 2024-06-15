@@ -177,7 +177,6 @@ public class Bot extends GameInit{
                         probabilityToHaveBriscola(playedCards, playerCardsCount) +
                                 probabilityToHaveHigherCardSameSeed(playedCards, playerCardsCount, card)
                 ))
-                .peek(System.out::println) // This will print every pair
                 .min(Comparator.comparingDouble(Pair::getValue))
                 .orElse(null);
     }
