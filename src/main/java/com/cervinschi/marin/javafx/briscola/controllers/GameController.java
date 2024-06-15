@@ -59,7 +59,7 @@ public class GameController {
 
         gameInit.fadeTransition(root);
         start();
-        gameObjects.initializePoints("0", "0", "34");
+        gameObjects.initializePoints();
     }
 
     private void addMenuIconAction() {
