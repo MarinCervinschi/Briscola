@@ -12,6 +12,8 @@ public class Bot extends GameInit{
     private final GameObjects gameObjects;
     private final String mode;
 
+    private final String briscolaSeed;
+
     private final Hand hand;
 
     private boolean hasPlayed = false;
@@ -21,6 +23,7 @@ public class Bot extends GameInit{
         this.mode = mode;
         this.gameObjects = gameObjects;
         this.hand = gameObjects.getBoard().getBotHand();
+        this.briscolaSeed = gameObjects.getBoard().getBriscolaCard().getSeed();
     }
 
     public void move() {
@@ -40,7 +43,7 @@ public class Bot extends GameInit{
                 int index = gameObjects.getBoard().getDeck().isEmpty() ? 1 : 3;
                 gameObjects.getBotHandBox().getChildren().remove(new Random().nextInt(index));
 
-                Card cardToPlay = findCardToPlay(card);
+                Card cardToPlay = getCard(card);
 
                 createTransition(card, 100, -200);
                 playSound("card-sound");
@@ -56,7 +59,7 @@ public class Bot extends GameInit{
         pause.play();
     }
 
-    private Card findCardToPlay(Rectangle card) {
+    private Card getCard(Rectangle card) {
         return Arrays.stream(hand.getCards())
                 .filter(Objects::nonNull)
                 .filter(handCard -> handCard.toString().equals(card.getId()))
@@ -84,7 +87,7 @@ public class Bot extends GameInit{
                 /* if table card is briscola */
                 Rectangle maxCard = findMaxCardName(tableCard.getSeed(), true);
                 if (tableCard.getValue() == 10 && maxCard != null) {
-                    if (Integer.parseInt(maxCard.getId().split(" ")[3]) == 11) {
+                    if (getCard(maxCard).getValue() == 11) {
                         card = maxCard;
                     } else {
                         card = Optional.ofNullable(findMinCardName(true)).orElseGet(() -> findMinCardName(false));
@@ -94,24 +97,7 @@ public class Bot extends GameInit{
                 }
             } else {
                 /* if table card is 10 or 11 (higher points) */
-                if (tableCard.getValue() == 10 || tableCard.getValue() == 11) {
-                    Rectangle maxCard = findMaxCardName(tableCard.getSeed(), false);
-                    if (maxCard != null) {
-                        if (Integer.parseInt(maxCard.getId().split(" ")[3]) == 11) {
-                            card = maxCard;
-                        } else {
-                            card = Optional.ofNullable(findMinCardName(true)).orElseGet(() -> findMinCardName(false));
-                        }
-                    } else {
-                        card = Optional.ofNullable(findMinCardName(true)).orElseGet(() -> findMinCardName(false));
-                    }
-                } else {
-                    /* check for the higher card of the same seed else give the smallest*/
-                    card = findMaxCardName(tableCard.getSeed(), false);
-                    if (card == null || Integer.parseInt(card.getId().split(" ")[3]) <= getCardValue(tableCard)) {
-                        card = Optional.ofNullable(findMinCardName(false)).orElseGet(() -> findMinCardName(true));
-                    }
-                }
+                card = findBestNoBriscolaCard(tableCard);
             }
         }
 
@@ -119,102 +105,131 @@ public class Bot extends GameInit{
     }
 
     private Rectangle hardMove() {
-        Rectangle card;
         Card tableCard = gameObjects.getBoard().getTable(0);
-        double probabilityToHaveBriscola = probabilityToHaveBriscola(getPlayedCards(), hand.getLength());
-        if (tableCard != null) {
-            double probabilityToHaveSeed = probabilityToHaveSeed(getPlayedCards(), hand.getLength(), tableCard.getSeed());
-            double probabilityToHaveHigherCardSameSeed = probabilityToHaveHigherCardSameSeed(getPlayedCards(), hand.getLength(), tableCard);
-            double probabilityToHaveHigherCard = probabilityToHaveHigherCard(getPlayedCards(), hand.getLength(), tableCard);
+        Rectangle maxCard = findMaxCardName(null, false);
+        Rectangle minBriscolaCard = findMinCardName(true);
+        Rectangle minCard = findMinCardName(false);
+        
+        Rectangle card;
+        double probabilityToHaveBriscola = 0;
+        double probabilityToHaveSeed = 0;
+        double probabilityToHaveHigherCardSameSeed = 0;
 
+        if (tableCard == null && maxCard != null) {
+            probabilityToHaveBriscola = probabilityToHaveBriscola(getPlayedCards(), hand.getLength()) * 100;
+            probabilityToHaveSeed = probabilityToHaveSeed(getPlayedCards(), hand.getLength(), getCard(maxCard).getSeed()) * 100;
+            probabilityToHaveHigherCardSameSeed = probabilityToHaveHigherCardSameSeed(getPlayedCards(), hand.getLength(), getCard(maxCard)) * 100;
         }
 
         /* bot move first */
         if (tableCard == null) {
-            if (probabilityToHaveBriscola > 50) {
-                card = findMaxCardName(null, false);
-                if (card == null) {
-                    card = findMinCardName(false);
-                } else {
-                    card = findMinCardName(false);
-                }
+            if (probabilityToHaveBriscola < 30 && probabilityToHaveSeed < 30 && probabilityToHaveHigherCardSameSeed < 30) {
+                card = maxCard != null ? maxCard : minBriscolaCard;
             } else {
-                card = findMinCardName(false);
+                card = minCard != null ? minCard : minBriscolaCard;
+                if (getCard(minCard).getValue() > 9) {
+                    card = minBriscolaCard != null ? minBriscolaCard : minCard;
+                }
             }
         } else {
             /* bot move second */
             if (tableCard.isBriscola()) {
                 /* if table card is briscola */
-                Rectangle maxCard = findMaxCardName(tableCard.getSeed(), true);
-                if (tableCard.getValue() == 10 && maxCard != null) {
-                    if (Integer.parseInt(maxCard.getId().split(" ")[3]) == 11) {
-                        card = maxCard;
+                Rectangle maxBriscolaCard = findMaxCardName(tableCard.getSeed(), false);
+                if (tableCard.getValue() == 10 && maxBriscolaCard != null) {
+                    if (getCard(maxBriscolaCard).getValue() == 11) {
+                        card = maxBriscolaCard;
                     } else {
-                        card = Optional.ofNullable(findMinCardName(true)).orElseGet(() -> findMinCardName(false));
+                        card = minCard != null ? minCard : minBriscolaCard;
+                        card = findMinBriscolaOrMinCard(card);
                     }
                 } else {
-                    card = Optional.ofNullable(findMinCardName(false)).orElseGet(() -> findMinCardName(true));
+                    card = minCard != null ? minCard : minBriscolaCard;
+                    card = findMinBriscolaOrMinCard(card);
                 }
             } else {
                 /* if table card is 10 or 11 (higher points) */
-                if (tableCard.getValue() == 10 || tableCard.getValue() == 11) {
-                    Rectangle maxCard = findMaxCardName(tableCard.getSeed(), false);
-                    if (maxCard != null) {
-                        if (Integer.parseInt(maxCard.getId().split(" ")[3]) == 11) {
-                            card = maxCard;
-                        } else {
-                            card = Optional.ofNullable(findMinCardName(true)).orElseGet(() -> findMinCardName(false));
-                        }
-                    } else {
-                        card = Optional.ofNullable(findMinCardName(true)).orElseGet(() -> findMinCardName(false));
-                    }
-                } else {
-                    /* check for the higher card of the same seed else give the smallest*/
-                    card = findMaxCardName(tableCard.getSeed(), false);
-                    if (card == null || Integer.parseInt(card.getId().split(" ")[3]) <= getCardValue(tableCard)) {
-                        card = Optional.ofNullable(findMinCardName(false)).orElseGet(() -> findMinCardName(true));
-                    }
-                }
+                card = findBestNoBriscolaCard(tableCard);
+                card = findMinBriscolaOrMinCard(card);
             }
-
         }
 
         return card;
     }
 
+    private Rectangle findBestNoBriscolaCard(Card tableCard) {
+        Rectangle card;
+        if (tableCard.getValue() == 10 || tableCard.getValue() == 11) {
+            Rectangle maxCard = findMaxCardName(tableCard.getSeed(), false);
+            if (maxCard != null) {
+                if (getCard(maxCard).getValue() == 11) {
+                    card = maxCard;
+                } else {
+                    card = Optional.ofNullable(findMinCardName(true)).orElseGet(() -> findMinCardName(false));
+                }
+            } else {
+                card = Optional.ofNullable(findMinCardName(true)).orElseGet(() -> findMinCardName(false));
+            }
+        } else {
+            /* check for the higher card of the same seed else give the smallest*/
+            card = findMaxCardName(tableCard.getSeed(), false);
+            if (card == null || getCard(card).getValue() <= getCardValue(tableCard)) {
+                card = Optional.ofNullable(findMinCardName(false)).orElseGet(() -> findMinCardName(true));
+            }
+        }
+        return card;
+    }
+
+    private Rectangle findMinBriscolaOrMinCard(Rectangle card) {
+        int cardValue = getCard(card).getValue();
+        if (cardValue > 9 && getCardValue(gameObjects.getBoard().getTable(0)) < cardValue) {
+            card = Optional.ofNullable(findMinCardName(true)).orElseGet(() -> findMinCardName(false));
+        }
+        return card;
+    }
+
     private double probabilityToHaveBriscola(List<Card> playedCards, int playerCardsCount) {
         int playedBriscolaCount = (int) playedCards.stream().filter(Card::isBriscola).count();
-        int cardsLeft = gameObjects.getDeckObject().size() + getPlayerHand().getLength();
-        int myBriscolaCount = (int) Arrays.stream(hand.getCards()).filter(Objects::nonNull).filter(Card::isBriscola).count();
+        int cardsLeft = gameObjects.getDeckObject().size() + getPlayerHand().getLength() - 1;
+        int myBriscolaCount = (int) Arrays.stream(hand.getCards()).filter(Card::isBriscola).count();
 
-        double probabilityToBriscolaInGame = calcProbability(9, playedBriscolaCount, myBriscolaCount, cardsLeft) / 100;
-        double probabilityNoBriscola = Math.pow((1 - probabilityToBriscolaInGame), playerCardsCount);
-        return 1 - probabilityNoBriscola; // 40 : 100 : 9 : x
+        double probabilityToBriscolaInGame = calcProbability(9, playedBriscolaCount, myBriscolaCount, cardsLeft);
+
+        return complementaryProbability(probabilityToBriscolaInGame, playerCardsCount);
     }
 
     private double probabilityToHaveSeed(List<Card> playedCards, int playerCardsCount, String seed) {
         long playedSeedCount = playedCards.stream().filter(card -> card.getSeed().equals(seed)).count();
+        int rest = briscolaSeed.equals(seed) ? 1 : 0;
+        int cardsLeft = gameObjects.getDeckObject().size() + getPlayerHand().getLength() - rest;
 
-        int remainingSeedCount = 10 - (int)playedSeedCount;
-        return (double)(playerCardsCount * 100) / remainingSeedCount;
+        int mySeedCount = (int) Arrays.stream(hand.getCards()).filter(card -> card.getSeed().equals(seed)).count();
+        
+        double probabilityToSeedInGame = calcProbability(10, (int)playedSeedCount, mySeedCount, cardsLeft);
+        
+        return complementaryProbability(probabilityToSeedInGame, playerCardsCount);
     }
 
     private double probabilityToHaveHigherCardSameSeed(List<Card> playedCards, int playerCardsCount, Card tableCard) {
-        long playedHigherCardCount = playedCards.stream().filter(card -> card.getSeed().equals(tableCard.getSeed()) && card.getValue() > tableCard.getValue()).count();
+        long playedHigherCardCount = playedCards.stream().filter(card -> card.getSeed().equals(tableCard.getSeed()) && card.getValue() > getCardValue(tableCard)).count();
 
-        int remainingHigherCardCount = 10 - (int)playedHigherCardCount;
-        return (double)(playerCardsCount * 100) / remainingHigherCardCount;
+        int cardsLeft = gameObjects.getDeckObject().size() + getPlayerHand().getLength();
+        int myHigherCardCount = (int) Arrays.stream(hand.getCards()).filter(card -> card.getSeed().equals(tableCard.getSeed()) && card.getValue() > getCardValue(tableCard)).count();
+
+        int countHigherCards = Math.max((10 - getCardValue(tableCard)), 0);
+        if (tableCard.getValue() == 10) countHigherCards = 1;
+        double probabilityToHigherCardInGame = calcProbability(countHigherCards, (int)playedHigherCardCount, myHigherCardCount, cardsLeft);
+
+        return complementaryProbability(probabilityToHigherCardInGame, playerCardsCount);
     }
 
-    private double probabilityToHaveHigherCard(List<Card> playedCards, int playerCardsCount, Card tableCard) {
-        long playedHigherCardCount = playedCards.stream().filter(card -> card.getValue() > tableCard.getValue()).count();
-
-        int remainingHigherCardCount = 10 - (int)playedHigherCardCount;
-        return (double)(playerCardsCount * 100) / remainingHigherCardCount;
+    private double complementaryProbability(double probability, int opponentCardsCount) {
+        double probabilityCalc = Math.pow((1 - probability), opponentCardsCount);
+        return 1 - probabilityCalc;
     }
-
+    
     private double calcProbability(int cardsInTheGame, int playedCards, int myCards, int cardsLeft) {
-        return (double)(cardsInTheGame - playedCards - myCards) * 100 / cardsLeft;
+        return (double)(cardsInTheGame - playedCards - myCards) / cardsLeft;
     }
 
     private Rectangle findMinCardName(boolean isBriscola) {
@@ -245,7 +260,7 @@ public class Bot extends GameInit{
             default -> Integer.parseInt(card.getName());
         };
     }
-
+    
     private Rectangle getRectangle(Card card) {
         if (card == null) return null;
         return Arrays.stream(hand.getCardsObject())
