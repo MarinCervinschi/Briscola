@@ -247,14 +247,11 @@ public class Bot extends GameInit{
     }
 
     private Rectangle getRectangle(Card card) {
-        for (int i = 0; i < 3; i++) {
-            if (hand.getCards()[i] != null) {
-                if (hand.getCards()[i].equals(card)) {
-                    return hand.getCardsObject()[i];
-                }
-            }
-        }
-        return null;
+        if (card == null) return null;
+        return Arrays.stream(hand.getCardsObject())
+                .filter(rectangle -> rectangle.getId().equals(card.toString()))
+                .findFirst()
+                .orElse(null);
     }
 
     public Hand getHand() {

@@ -229,7 +229,7 @@ public class GameInit {
     }
 
     private int adjustCardValue(int cardValue) {
-        return cardValue == 1 ? 11 : cardValue == 3 ? 10 : cardValue;
+        return cardValue == 1 ? 12 : cardValue == 3 ? 11 : cardValue;
     }
 
     private Card[] getCardsFromTable() {
