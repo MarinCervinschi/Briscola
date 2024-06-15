@@ -25,19 +25,19 @@ public class GameInit {
 
     private final Hand playerHand;
 
-    private final List<Card> playedCards;
+    private static List<Card> playedCards;
 
     private boolean canFill = true;
+
     private boolean canSelect = true;
     private boolean gameEnded = false;
     private boolean botWonLastHand = false;
     private boolean isPauseActive = false;
-
     private String turn = "player";
 
-    public GameInit(GameObjects gameObjects, String mode) {
+    public GameInit(GameObjects gameObjects) {
         this.gameObjects = gameObjects;
-        this.playedCards = new ArrayList<>();
+        playedCards = new ArrayList<>();
         this.playerHand = gameObjects.getBoard().getPlayerHand();
         gameObjects.appendHandsObject();
     }
@@ -117,10 +117,10 @@ public class GameInit {
 
         Rectangle backDeck = gameObjects.createCardObject(new Card("1", "back", 0, false));
 
-        createTransition(backDeck, -300, 200);
+        createTransition(cardObject, -300, 200);
         playSound("card-sound");
 
-        gameObjects.getBotHandBox().getChildren().add(backDeck);
+        gameObjects.getBotHandBox().getChildren().add(cardObject);
     }
 
     private void handleBriscolaCard(Rectangle card) {
@@ -395,7 +395,7 @@ public class GameInit {
         isPauseActive = pauseActive;
     }
 
-    public List<Card> getPlayedCards() {
+    public static List<Card> getPlayedCards() {
         return playedCards;
     }
 

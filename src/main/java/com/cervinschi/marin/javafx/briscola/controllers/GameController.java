@@ -53,7 +53,7 @@ public class GameController {
         gameObjects.initializeGameObjects();
 
         addMenuIconAction();
-        gameInit = new GameInit(gameObjects, difficulty);
+        gameInit = new GameInit(gameObjects);
         Bot bot = new Bot(gameObjects, difficulty);
         gameInit.setBot(bot);
 
