@@ -9,7 +9,7 @@ import javafx.util.Pair;
 
 import java.util.*;
 
-public class Bot extends GameInit{
+public class Bot extends GameInit {
     private final GameObjects gameObjects;
     private final String mode;
 
@@ -110,7 +110,7 @@ public class Bot extends GameInit{
         /* bot move first */
         if (tableCard == null) {
             /* if the probability that player (has a briscola card + prob. to have a higher card) is less than 50% */
-            if (bestCard.getValue() < 0.5 && !bestCard.getKey().isBriscola()){
+            if (bestCard.getValue() < 0.5 && !bestCard.getKey().isBriscola()) {
                 return getRectangle(bestCard.getKey());
             } else {
                 Rectangle card = Optional.ofNullable(findMinCardName(false)).orElseGet(() -> findMinCardName(true));
@@ -202,7 +202,7 @@ public class Bot extends GameInit{
             case 3 -> 1;
             default -> 12 - Integer.parseInt(tableCard.getName());
         };
-        double probabilityToHigherCardInGame = calcProbability(countHigherCards, (int)playedHigherCardCount, myHigherCardCount, cardsLeft);
+        double probabilityToHigherCardInGame = calcProbability(countHigherCards, (int) playedHigherCardCount, myHigherCardCount, cardsLeft);
 
         return complementaryProbability(probabilityToHigherCardInGame, playerCardsCount);
     }
@@ -213,15 +213,15 @@ public class Bot extends GameInit{
     }
 
     private double calcProbability(int cardsInTheGame, int playedCards, int myCards, int cardsLeft) {
-        return (double)(cardsInTheGame - playedCards - myCards) / cardsLeft;
+        return (double) (cardsInTheGame - playedCards - myCards) / cardsLeft;
     }
 
     private Rectangle findMinCardName(boolean isBriscola) {
         Card minCard = Arrays.stream(hand.getCards())
-            .filter(Objects::nonNull)
-            .filter(card -> card.isBriscola() == isBriscola)
-            .min(Comparator.comparingInt(this::getCardValue))
-            .orElse(null);
+                .filter(Objects::nonNull)
+                .filter(card -> card.isBriscola() == isBriscola)
+                .min(Comparator.comparingInt(this::getCardValue))
+                .orElse(null);
 
         return getRectangle(minCard);
     }
