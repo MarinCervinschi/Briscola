@@ -21,10 +21,14 @@ import java.util.stream.Collectors;
 
 public class GameController {
 
-    @FXML protected BorderPane boardPane;
-    @FXML protected AnchorPane root;
-    @FXML protected VBox menuVBox;
-    @FXML protected ComboBox<String> difficultyComboBox;
+    @FXML
+    protected BorderPane boardPane;
+    @FXML
+    protected AnchorPane root;
+    @FXML
+    protected VBox menuVBox;
+    @FXML
+    protected ComboBox<String> difficultyComboBox;
 
     protected GameObjects gameObjects;
     protected GameInit gameInit;
@@ -47,19 +51,24 @@ public class GameController {
             alert.showAndWait();
             return;
         }
+        /* Clear the root pane */
         root.getChildren().clear();
 
+        /* Create and initialize the game objects */
         gameObjects.createGameObjects();
         gameObjects.initializeGameObjects();
 
+        /* Add the menu icon to the game */
         addMenuIconAction();
+
+        /* Create the game init object and the bot */
         gameInit = new GameInit(gameObjects);
         Bot bot = new Bot(gameObjects, difficulty);
         gameInit.setBot(bot);
 
         gameInit.fadeTransition(root);
-        start();
         gameObjects.initializePoints();
+        start();
     }
 
     private void addMenuIconAction() {
@@ -113,6 +122,7 @@ public class GameController {
         rulesStage.setScene(rulesScene);
         rulesStage.show();
     }
+
     @FXML
     protected void exit() {
         System.exit(0);
