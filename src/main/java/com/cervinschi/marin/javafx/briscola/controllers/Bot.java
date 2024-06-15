@@ -25,7 +25,7 @@ public class Bot extends GameInit{
 
     public void move() {
         if (isPauseActive() || hasPlayed || (gameObjects.getBotHandBox().getChildren().isEmpty())) return;
-        PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.8));
         pause.setOnFinished(e -> {
             if (!gameObjects.getBoard().tableIsFull()) {
                 setPauseActive(false);

@@ -7,6 +7,7 @@ import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -64,35 +65,39 @@ public class GameInit {
     }
 
     private void fillHands() {
-        if (!canFill || isPauseActive) return;
+        if (!canFill || isPauseActive || bot.isHasPlayed()) return;
+        PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
+        pause.setOnFinished(e -> {
+            isPauseActive = false;
+            Rectangle cardObject;
+            Card card;
+            if (playerHand.isCardsObjectFull() || bot.getHand().isCardsObjectFull()) {
 
-        canFill = false;
+                if (gameObjects.getBoard().getDeck().size() == 1 && gameObjects.getBoard().getBriscolaCard() != null) {
+                    cardObject = gameObjects.getBoard().getBriscolaObject();
+                    card = gameObjects.getBoard().getBriscolaCard();
+                    gameObjects.getBoard().setBriscolaCard(null);
+                    handleBriscolaCard(cardObject);
 
-        Rectangle cardObject;
-        Card card;
+                    turn = botWonLastHand ? "player" : "bot";
+                } else {
+                    cardObject = gameObjects.getDeckObject().poll();
+                    card = gameObjects.getBoard().getDeck().poll();
+                }
 
-        while (playerHand.isCardsObjectFull() || bot.getHand().isCardsObjectFull()) {
-
-            if (gameObjects.getBoard().getDeck().size() == 1 && gameObjects.getBoard().getBriscolaCard() != null) {
-                cardObject = gameObjects.getBoard().getBriscolaObject();
-                card = gameObjects.getBoard().getBriscolaCard();
-                gameObjects.getBoard().setBriscolaCard(null);
-                handleBriscolaCard(cardObject);
-
-                turn = botWonLastHand ? "player" : "bot";
+                if (turn.equals("bot") && bot.getHand().isCardsObjectFull()) {
+                    fillBotHand(cardObject, card);
+                    turn = "player";
+                } else if (turn.equals("player") && playerHand.isCardsObjectFull()) {
+                    fillPlayerHand(cardObject, card);
+                    turn = "bot";
+                }
             } else {
-                cardObject = gameObjects.getDeckObject().poll();
-                card = gameObjects.getBoard().getDeck().poll();
+                canFill = false;
             }
-
-            if (turn.equals("bot") && bot.getHand().isCardsObjectFull()) {
-                fillBotHand(cardObject, card);
-                turn = "player";
-            } else if (turn.equals("player") && playerHand.isCardsObjectFull()) {
-                fillPlayerHand(cardObject, card);
-                turn = "bot";
-            }
-        }
+        });
+        isPauseActive = true;
+        pause.play();
     }
 
     private void fillPlayerHand(Rectangle cardObject, Card card) {
@@ -113,6 +118,7 @@ public class GameInit {
         Rectangle backDeck = gameObjects.createCardObject(new Card("1", "back", 0, false));
 
         createTransition(backDeck, -300, 200);
+        playSound("card-sound");
 
         gameObjects.getBotHandBox().getChildren().add(backDeck);
     }
@@ -334,18 +340,22 @@ public class GameInit {
 
         Label endGameMessage = getEndGameMessage(playerScore, botScore);
 
-        FadeTransition ft = new FadeTransition(Duration.millis(3000), endGameMessage);
-
-        ft.setFromValue(0.0);
-        ft.setToValue(1.0);
-
-        ft.play();
+        fadeTransition(endGameMessage);
 
         // Add the message to the board
         gameObjects.getTablePane().getChildren().clear();
         gameObjects.getTablePane().setCenter(endGameMessage);
 
         gameEnded = true;
+    }
+
+    public void fadeTransition(Node node) {
+        FadeTransition ft = new FadeTransition(Duration.millis(3000), node);
+
+        ft.setFromValue(0.0);
+        ft.setToValue(1.0);
+
+        ft.play();
     }
 
     private Label getEndGameMessage(int playerScore, int botScore) {

@@ -56,6 +56,8 @@ public class GameController {
         gameInit = new GameInit(gameObjects, difficulty);
         Bot bot = new Bot(gameObjects, difficulty);
         gameInit.setBot(bot);
+
+        gameInit.fadeTransition(root);
         start();
         gameObjects.initializePoints("0", "0", "34");
     }
