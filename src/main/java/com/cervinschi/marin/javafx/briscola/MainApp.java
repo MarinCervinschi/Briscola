@@ -11,6 +11,10 @@ import static com.cervinschi.marin.javafx.briscola.utils.Const.HEIGHT;
 import static com.cervinschi.marin.javafx.briscola.utils.Const.WIDTH;
 
 public class MainApp extends Application {
+    public static void main(String[] args) {
+        launch();
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("board-view.fxml"));
@@ -24,9 +28,5 @@ public class MainApp extends Application {
         stage.setMinHeight(HEIGHT);
         stage.setMaxHeight(HEIGHT);
         stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch();
     }
 }

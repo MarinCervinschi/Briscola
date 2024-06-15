@@ -7,8 +7,8 @@ import java.util.*;
 public class Board {
     private final Hand playerHand;
     private final Hand botHand;
-    private Deque<Card> deck;
     private final Card[] table;
+    private Deque<Card> deck;
     private Card briscolaCard;
     private Rectangle briscolaObject;
 
@@ -41,20 +41,20 @@ public class Board {
         return briscolaCard;
     }
 
-    public Rectangle getBriscolaObject() {
-        return briscolaObject;
-    }
-
-    public Card getTable(int index) {
-        return table[index];
-    }
-
     public void setBriscolaCard(Card briscola) {
         this.briscolaCard = briscola;
     }
 
+    public Rectangle getBriscolaObject() {
+        return briscolaObject;
+    }
+
     public void setBriscolaObject(Rectangle briscolaObject) {
         this.briscolaObject = briscolaObject;
+    }
+
+    public Card getTable(int index) {
+        return table[index];
     }
 
     public void createDeck() {
@@ -83,6 +83,7 @@ public class Board {
     }
 
     public void clearTable() {
-        table[0] = null; table[1] = null;
+        table[0] = null;
+        table[1] = null;
     }
 }

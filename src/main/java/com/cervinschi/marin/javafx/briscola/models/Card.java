@@ -3,8 +3,8 @@ package com.cervinschi.marin.javafx.briscola.models;
 public class Card {
     private final String name;
     private final String seed;
-    private boolean isBriscola;
     private final int value;
+    private boolean isBriscola;
 
     public Card(String name, String seed, int value, boolean isBriscola) {
         this.name = name;
@@ -25,12 +25,12 @@ public class Card {
         return isBriscola;
     }
 
-    public int getValue() {
-        return value;
-    }
-
     public void setBriscola(boolean isBriscola) {
         this.isBriscola = isBriscola;
+    }
+
+    public int getValue() {
+        return value;
     }
 
     @Override
