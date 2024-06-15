@@ -24,6 +24,7 @@ public class Bot extends GameInit {
         this.hand = gameObjects.getBoard().getBotHand();
     }
 
+    /* ------------------ Getters & Setters------------------ */
     public Hand getHand() {
         return hand;
     }
@@ -36,6 +37,7 @@ public class Bot extends GameInit {
         return hasPlayed;
     }
 
+    /* ------------------ Move Methods ------------------ */
     public void move() {
         if (isPauseActive() || hasPlayed || (gameObjects.getBotHandBox().getChildren().isEmpty())) return;
         PauseTransition pause = new PauseTransition(Duration.seconds(1.8));
@@ -71,14 +73,7 @@ public class Bot extends GameInit {
         pause.play();
     }
 
-    private Card getCard(Rectangle card) {
-        return Arrays.stream(hand.getCards())
-                .filter(Objects::nonNull)
-                .filter(handCard -> handCard.toString().equals(card.getId()))
-                .findFirst()
-                .orElse(null);
-    }
-
+    /* ------------------ Difficulty Methods ------------------ */
     private Rectangle easyMove() {
         return Arrays.stream(hand.getCardsObject())
                 .filter(Objects::nonNull)
@@ -181,6 +176,8 @@ public class Bot extends GameInit {
                 .orElse(null);
     }
 
+    /* ------------------ Probability Methods ------------------ */
+
     private double probabilityToHaveBriscola(List<Card> playedCards, int playerCardsCount) {
         int playedBriscolaCount = (int) playedCards.stream().filter(Card::isBriscola).count();
         int cardsLeft = gameObjects.getDeckObject().size() + getPlayerHand().getLength() - 1;
@@ -190,7 +187,6 @@ public class Bot extends GameInit {
 
         return complementaryProbability(probabilityToBriscolaInGame, playerCardsCount);
     }
-
     private double probabilityToHaveHigherCardSameSeed(List<Card> playedCards, int playerCardsCount, Card tableCard) {
         long playedHigherCardCount = playedCards.stream().filter(card -> card.getSeed().equals(tableCard.getSeed()) && card.getValue() > tableCard.getValue()).count();
 
@@ -216,6 +212,8 @@ public class Bot extends GameInit {
         return (double) (cardsInTheGame - playedCards - myCards) / cardsLeft;
     }
 
+    /* ------------------ Find Card Methods ------------------ */
+
     private Rectangle findMinCardName(boolean isBriscola) {
         Card minCard = Arrays.stream(hand.getCards())
                 .filter(Objects::nonNull)
@@ -225,7 +223,6 @@ public class Bot extends GameInit {
 
         return getRectangle(minCard);
     }
-
     private Rectangle findMaxCardName(String seed, boolean isBriscola) {
         Card maxCard = Arrays.stream(hand.getCards())
                 .filter(Objects::nonNull)
@@ -237,12 +234,21 @@ public class Bot extends GameInit {
         return getRectangle(maxCard);
     }
 
+    /* ------------------ Utility Methods ------------------ */
     private int getCardValue(Card card) {
         return switch (card.getName()) {
             case "1" -> 12;
             case "3" -> 11;
             default -> Integer.parseInt(card.getName());
         };
+    }
+
+    private Card getCard(Rectangle card) {
+        return Arrays.stream(hand.getCards())
+                .filter(Objects::nonNull)
+                .filter(handCard -> handCard.toString().equals(card.getId()))
+                .findFirst()
+                .orElse(null);
     }
 
     private Rectangle getRectangle(Card card) {
