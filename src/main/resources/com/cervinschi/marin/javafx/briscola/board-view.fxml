@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import java.lang.String?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="boardPane" prefHeight="700.0" prefWidth="800.0"
-            stylesheets="@style.css" xmlns="http://javafx.com/javafx/21"
+            stylesheets="@assets/style.css" xmlns="http://javafx.com/javafx/21"
             fx:controller="com.cervinschi.marin.javafx.briscola.controllers.GameController">
     <center>
         <AnchorPane fx:id="root" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">

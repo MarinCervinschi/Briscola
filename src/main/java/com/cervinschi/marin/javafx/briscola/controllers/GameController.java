@@ -110,7 +110,7 @@ public class GameController {
         WebView webView = new WebView();
 
         try {
-            InputStream is = getClass().getResourceAsStream("/com/cervinschi/marin/javafx/briscola/briscola_rules.html");
+            InputStream is = getClass().getResourceAsStream("/com/cervinschi/marin/javafx/briscola/assets/briscola_rules.html");
             BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)));
             String htmlContent = reader.lines().collect(Collectors.joining("\n"));
             webView.getEngine().loadContent(htmlContent);
