@@ -6,12 +6,6 @@
 This is a simple implementation of the Italian card game Briscola. The game is played between two players, one of which is the computer. There are three difficulty levels: Easy, Medium, and Hard. The game is played in rounds, and the player with the most points at the end of the game wins.
 For more information about the game, see the [Game Description and Rules](#game-description-and-rules) section below.
 
-Usually this game is played with friends and family, but this implementation allows you to play against the computer. 
-The scope of the project is to learn and practice object-oriented programming concepts, Java programming, and JavaFX development. 
-The project includes a graphical user interface (GUI) that allows players to interact with the game and make decisions. 
-JavaFX is used for the graphical user interface in the game, which is written in Java. 
-IntelliJ IDEA or any other IDE that supports Maven can easily import the project as it is structured as a Maven project.
-# For Developers
 ## Overview
 - **Project Type:** JavaFX Application, Maven Project
 - **Scope:** [Object-Oriented Programming Course](#scope)
@@ -20,13 +14,14 @@ IntelliJ IDEA or any other IDE that supports Maven can easily import the project
 - **Screenshots:** [Screenshots](#screenshots)
 - **Project Structure:** [Project Structure](#project-structure)
 - **UML:** [UML](#uml)
+# For Developers
 ## Installation
 1. Clone the repository
     ```bash
     git clone
     ```
 2. Open the project in IntelliJ IDEA
-3. Run the `Main` class located in `src/main/java/com/cervinschi/marin/javafx/briscola/Main.java`
+3. Run the `MainApp` class located in `src/main/java/com/cervinschi/marin/javafx/briscola/MainApp.java`
 4. Enjoy the game!
 
 ### Create a JAR File
@@ -43,7 +38,7 @@ IntelliJ IDEA or any other IDE that supports Maven can easily import the project
 4. The JAR file will be created in the `target` directory with the name `Briscola-1.0-SNAPSHOT-shaded.jar`
 
 - If you don't have Maven installed on your system, open Maven terminal in IntelliJ IDEA and run the following command:
-   - You can do this by clicking on the Maven tab on the right side of the IDE and then click on `Execute Maven Goal` and type the following command:
+     - You can do this by clicking on the Maven tab on the right side of the IDE and then click on `Execute Maven Goal` and type the following command:
     ```bash
     clean package
     ```
@@ -59,6 +54,11 @@ java -jar Briscola.jar
 ```
 
 ## Scope
+The scope of the project is to learn and practice object-oriented programming concepts, Java programming, and JavaFX development.
+The project includes a graphical user interface (GUI) that allows players to interact with the game and make decisions.
+JavaFX is used for the graphical user interface in the game, which is written in Java.
+IntelliJ IDEA or any other IDE that supports Maven can easily import the project as it is structured as a Maven project.
+
 The project is the final assignment for the course "Object-Oriented Programming" at the *Università di Modena e Reggio Emilia - Unimore*, Faculty of Computer Science and Engineering, Academic Year 2023/2024.
 * **Course:** Object-Oriented Programming (https://github.com/nbicocchi/learn-java-core)
 * **Professor:** Prof. Nicola Bicocchi
