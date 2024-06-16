@@ -3,7 +3,7 @@ This is a simple implementation of the Italian card game Briscola. The game is p
 For more information about the game, see the [Game Description and Rules](#game-description-and-rules) section below.
 # For Developers
 ## Overview
-- **Project Type:** JavaFX Application
+- **Project Type:** JavaFX Application, Maven Project
 - **Scope:** [Object-Oriented Programming Course](#scope)
 - **Rules:** [Game Description and Rules](#game-description-and-rules)
 - **Technologies:** [Technologies](#technologies)
@@ -95,17 +95,13 @@ Briscola has several variations, including:
 
 Briscola is a game of strategy, memory, and skill. Understanding the value of cards and the dynamics of trick-taking are key to mastering this traditional Italian game. Enjoy playing Briscola!
 
---- 
 # Project Structure
 <p align="center">
   <img src="src/main/resources/com/cervinschi/marin/javafx/briscola/assets/structure.drawio.svg" alt="Project Structure">
 </p>
 
----
-
 # UML
 ![UML](src/main/resources/com/cervinschi/marin/javafx/briscola/assets/UML.drawio.svg)
-
 
 # License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -113,4 +109,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 # Contribute
 If you would like to contribute to this project, please open an issue or create a pull request with your changes. I welcome contributions from the community and am happy to review and merge them.
 
----
