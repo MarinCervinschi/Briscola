@@ -2,32 +2,27 @@ package com.cervinschi.marin.javafx.briscola.controllers;
 
 import com.cervinschi.marin.javafx.briscola.models.Card;
 import com.cervinschi.marin.javafx.briscola.models.Hand;
-import javafx.animation.FadeTransition;
+import com.cervinschi.marin.javafx.briscola.utils.Animation;
+import com.cervinschi.marin.javafx.briscola.utils.Sound;
+import com.cervinschi.marin.javafx.briscola.utils.Style;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class GameInit {
-    private final GameObjects gameObjects;
-    private Bot bot;
-
-    private final Hand playerHand;
-
     private static List<Card> playedCards;
-
+    private final GameObjects gameObjects;
+    private final Hand playerHand;
+    private Bot bot;
     private boolean canFill = true;
     private boolean canSelect = true;
     private boolean gameEnded = false;
@@ -43,13 +38,13 @@ public class GameInit {
         gameObjects.appendHandsObject();
     }
 
+    public static List<Card> getPlayedCards() {
+        return playedCards;
+    }
+
     /* --------------------- Getters and Setters --------------------- */
     public Hand getPlayerHand() {
         return playerHand;
-    }
-
-    public static List<Card> getPlayedCards() {
-        return playedCards;
     }
 
     public boolean isGameEnded() {
@@ -91,7 +86,7 @@ public class GameInit {
         }
     }
 
-    /* --------------------- Fill cards methods --------------------- */
+    /* --------------------- Fill hands methods --------------------- */
     private void fillHands() {
         if (!canFill || isPauseActive || bot.isHasPlayed()) return;
         PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
@@ -137,12 +132,12 @@ public class GameInit {
     private void fillPlayerHand(Rectangle cardObject, Card card) {
         playerHand.addCard(card, cardObject);
 
-        createTransition(cardObject, -300, -200);
-        playSound("card-sound");
+        Animation.createTransition(cardObject, -300, -200);
+        Sound.play("card-sound");
 
         gameObjects.getPlayerHandBox().getChildren().add(cardObject);
 
-        showHoverEffect(Objects.requireNonNull(cardObject));
+        Style.showHoverEffect(Objects.requireNonNull(cardObject));
         selectCard(cardObject, card);
     }
 
@@ -151,8 +146,8 @@ public class GameInit {
 
         Rectangle backCard = gameObjects.createCardObject(new Card("1", "back", 0, false));
 
-        createTransition(backCard, -300, 200);
-        playSound("card-sound");
+        Animation.createTransition(backCard, -300, 200);
+        Sound.play("card-sound");
 
         gameObjects.getBotHandBox().getChildren().add(backCard);
     }
@@ -177,8 +172,8 @@ public class GameInit {
             card.setOnMouseEntered(null);
             card.setOnMouseExited(null);
 
-            createTransition(card, 100, 200);
-            playSound(selectedCard.toString().equals("1 of denara 11") ? "eagle" : "card-sound");
+            Animation.createTransition(card, 100, 200);
+            Sound.play(selectedCard.toString().equals("1 of denara 11") ? "eagle" : "card-sound");
 
             /* Add the card to the table box*/
             gameObjects.getTableBox().getChildren().add(card);
@@ -295,23 +290,13 @@ public class GameInit {
                 updatePoints(gameObjects.getPlayerPoints(), pointsPlayer);
                 updatePoints(gameObjects.getBotPoints(), pointsBot);
 
-                setTurnStyle(botWon);
-                playSound(pointsPlayer > 10 ? "cry" : pointsBot > 10 ? "laugh" : "");
+                Style.setTurnStyle(botWon, gameObjects);
+                Sound.play(pointsPlayer > 10 ? "cry" : pointsBot > 10 ? "laugh" : "");
 
                 resetGame(botWon);
             }
         });
         return pause;
-    }
-
-    private void setTurnStyle(boolean botWon) {
-        if (botWon) {
-            gameObjects.getPlayerTurn().setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
-            gameObjects.getBotTurn().setStyle("-fx-background-color: #2a2a2a");
-        } else {
-            gameObjects.getBotTurn().setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
-            gameObjects.getPlayerTurn().setStyle("-fx-background-color: #2a2a2a");
-        }
     }
 
     private void resetGame(boolean botWon) {
@@ -335,7 +320,7 @@ public class GameInit {
 
         Label endGameMessage = getEndGameMessage(playerScore, botScore);
 
-        fadeTransition(endGameMessage);
+        Animation.fadeTransition(endGameMessage);
 
         // Add the message to the board
         gameObjects.getTablePane().getChildren().clear();
@@ -355,15 +340,15 @@ public class GameInit {
         switch (victory) {
             case "You won!":
                 endGameMessage.getStyleClass().add("victory");
-                playSound("won");
+                Sound.play("won");
                 break;
             case "You lost!":
                 endGameMessage.getStyleClass().add("defeat");
-                playSound("lost");
+                Sound.play("lost");
                 break;
             default:
                 endGameMessage.getStyleClass().add("draw");
-                playSound("draw");
+                Sound.play("draw");
                 break;
         }
         return endGameMessage;
@@ -378,46 +363,5 @@ public class GameInit {
         if (gameObjects.getDeckObject().size() > 1) {
             gameObjects.getDeckCards().setText(String.valueOf(gameObjects.getDeckObject().size() - 1));
         }
-    }
-
-    private void showHoverEffect(Rectangle card) {
-        card.setOnMouseEntered(e -> {
-            card.setTranslateY(-20);
-            card.setCursor(Cursor.HAND);
-        });
-        card.setOnMouseExited(e -> {
-            card.setTranslateY(0);
-            card.setCursor(Cursor.DEFAULT);
-        });
-    }
-
-    protected void playSound(String name) {
-        if (name.isEmpty()) return;
-        URL url = getClass().getResource("/com/cervinschi/marin/javafx/briscola/sounds/" + name + ".mp3");
-        Media musicCard = new Media(Objects.requireNonNull(url).toExternalForm());
-        MediaPlayer mediaPlayer = new MediaPlayer(musicCard);
-
-        mediaPlayer.play();
-    }
-
-    protected void createTransition(Rectangle card, int x, int y) {
-        card.setTranslateX(x);
-        card.setTranslateY(y);
-
-        TranslateTransition tt = new TranslateTransition(Duration.millis(1000), card);
-
-        tt.setToX(0);
-        tt.setToY(0);
-
-        tt.play();
-    }
-
-    protected void fadeTransition(Node node) {
-        FadeTransition ft = new FadeTransition(Duration.millis(3000), node);
-
-        ft.setFromValue(0.0);
-        ft.setToValue(1.0);
-
-        ft.play();
     }
 }
