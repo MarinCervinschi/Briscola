@@ -58,12 +58,9 @@ public class Board {
     }
 
     public void createDeck() {
-        Map<String, Integer> values = Map.of("1", 11, "2", 0, "3", 10, "4", 0, "5", 0, "6", 0, "7", 0, "8", 2, "9", 3, "10", 4);
-        String[] seeds = {"denara", "coppe", "spade", "bastoni"};
-        for (String seed : seeds) {
-            for (Map.Entry<String, Integer> entry : values.entrySet()) {
-                Card card = new Card(entry.getKey(), seed, entry.getValue(), false);
-                deck.add(card);
+        for (String seed : new String[]{"denara", "coppe", "spade", "bastoni"}) {
+            for (Map.Entry<String, Integer> entry : Map.of("1", 11, "2", 0, "3", 10, "4", 0, "5", 0, "6", 0, "7", 0, "8", 2, "9", 3, "10", 4).entrySet()) {
+                deck.add(new Card(entry.getKey(), seed, entry.getValue(), false));
             }
         }
     }

@@ -18,31 +18,30 @@ import java.io.InputStreamReader;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
 public class GameController {
 
     @FXML
-    protected BorderPane boardPane;
+    private BorderPane boardPane;
     @FXML
-    protected AnchorPane root;
+    private AnchorPane root;
     @FXML
-    protected VBox menuVBox;
+    private VBox menuVBox;
     @FXML
-    protected ComboBox<String> difficultyComboBox;
+    private ComboBox<String> difficultyComboBox;
 
-    protected GameObjects gameObjects;
-    protected GameInit gameInit;
+    private GameObjects gameObjects;
+    private GameInit gameInit;
 
     private AnimationTimer timer;
 
     @FXML
-    protected void initialize() {
+    public void initialize() {
         gameObjects = new GameObjects(boardPane, root);
         gameObjects.showBackground();
     }
 
     @FXML
-    protected void startGame() {
+    public void startGame() {
         String difficulty = difficultyComboBox.getValue();
         if (difficulty == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -103,12 +102,13 @@ public class GameController {
     }
 
     @FXML
-    protected void showRules() {
+    public void showRules() {
         Stage rulesStage = new Stage();
         rulesStage.setTitle("Rules");
 
         WebView webView = new WebView();
 
+        /* Load the rules from the html file */
         try {
             InputStream is = getClass().getResourceAsStream("/com/cervinschi/marin/javafx/briscola/assets/briscola_rules.html");
             BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)));
@@ -124,7 +124,7 @@ public class GameController {
     }
 
     @FXML
-    protected void exit() {
+    public void exit() {
         System.exit(0);
     }
 }
