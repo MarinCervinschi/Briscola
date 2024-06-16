@@ -1,5 +1,5 @@
 <div align="left">
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=MarinCervinschi.Briscola.&"  />
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=MarinCervinschi.Briscola.&" alt="badge" />
 </div>
 
 # Briscola Game
@@ -11,6 +11,7 @@ The scope of the project is to learn and practice object-oriented programming co
 The project includes a graphical user interface (GUI) that allows players to interact with the game and make decisions. 
 JavaFX is used for the graphical user interface in the game, which is written in Java. 
 IntelliJ IDEA or any other IDE that supports Maven can easily import the project as it is structured as a Maven project.
+# For Developers
 ## Overview
 - **Project Type:** JavaFX Application, Maven Project
 - **Scope:** [Object-Oriented Programming Course](#scope)
@@ -21,16 +22,21 @@ IntelliJ IDEA or any other IDE that supports Maven can easily import the project
 - **UML:** [UML](#uml)
 ## Installation
 1. Clone the repository
-```bash
-git clone
-```
+    ```bash
+    git clone
+    ```
 2. Open the project in IntelliJ IDEA
 3. Run the `Main` class located in `src/main/java/com/cervinschi/marin/javafx/briscola/Main.java`
 4. Enjoy the game!
 
 # For Players
 ## How to Play
-
+- Click [here](https://github.com/MarinCervinschi/Briscola/releases/tag/v1.0.3) and download the Briscola.jar file.  
+- Double-click the file to run the game. Enjoy playing Briscola!  
+- If alternative open the terminal and run the following command:
+```bash
+java -jar Briscola.jar
+```
 
 ## Scope
 The project is the final assignment for the course "Object-Oriented Programming" at the *Università di Modena e Reggio Emilia - Unimore*, Faculty of Computer Science and Engineering, Academic Year 2023/2024.
