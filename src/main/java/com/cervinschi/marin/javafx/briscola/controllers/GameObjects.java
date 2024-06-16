@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Objects;
 
 import static com.cervinschi.marin.javafx.briscola.utils.Const.CHEIGHT;
@@ -40,10 +41,9 @@ public class GameObjects {
     private HBox tableBox;
     private MenuButton menuIcon;
 
-
     private Board board;
 
-    private ArrayDeque<Rectangle> deckObject;
+    private Deque<Rectangle> deckObject;
 
     public GameObjects(BorderPane boardPane, AnchorPane root) {
         this.boardPane = boardPane;
@@ -95,7 +95,7 @@ public class GameObjects {
         return menuIcon;
     }
 
-    public ArrayDeque<Rectangle> getDeckObject() {
+    public Deque<Rectangle> getDeckObject() {
         return deckObject;
     }
 
@@ -125,7 +125,7 @@ public class GameObjects {
 
     /* ------------------ Crate Objects ------------------ */
 
-    protected void createGameObjects() {
+    public void createGameObjects() {
         botPoints = createLabel(720.0, 270.0, 30);
         playerPoints = createLabel(720.0, 470.0, 30);
         deckCards = createLabel(110, 500, 25);
@@ -148,7 +148,7 @@ public class GameObjects {
         AnchorPane.setTopAnchor(tablePane, 0.0);
     }
 
-    protected Rectangle createCardObject(Card card) {
+    public Rectangle createCardObject(Card card) {
         Rectangle rectangle = new Rectangle(CWIDTH, CHEIGHT);
         Style.setCardStyle(rectangle);
         rectangle.setId(card.toString());
@@ -193,7 +193,7 @@ public class GameObjects {
 
     /* ------------------ Initialize Objects ------------------ */
 
-    protected void initializeGameObjects() {
+    public void initializeGameObjects() {
         // remove sprites from eventual former match
         tablePane.getChildren().clear();
 
@@ -216,7 +216,7 @@ public class GameObjects {
         botTurn.setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
     }
 
-    protected void initializePoints() {
+    public void initializePoints() {
         this.playerPoints.setText("0");
         this.botPoints.setText("0");
         this.deckCards.setText("34");
