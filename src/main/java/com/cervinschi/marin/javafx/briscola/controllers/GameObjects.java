@@ -2,16 +2,15 @@ package com.cervinschi.marin.javafx.briscola.controllers;
 
 import com.cervinschi.marin.javafx.briscola.models.Board;
 import com.cervinschi.marin.javafx.briscola.models.Card;
+import com.cervinschi.marin.javafx.briscola.utils.Style;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -151,7 +150,7 @@ public class GameObjects {
 
     protected Rectangle createCardObject(Card card) {
         Rectangle rectangle = new Rectangle(CWIDTH, CHEIGHT);
-        setCardStyle(rectangle);
+        Style.setCardStyle(rectangle);
         rectangle.setId(card.toString());
 
         String path = "/com/cervinschi/marin/javafx/briscola/media/cards/" + card.getSeed() + card.getName() + ".png";
@@ -176,7 +175,7 @@ public class GameObjects {
 
         TranslateTransition tt = new TranslateTransition(Duration.millis(200), menuIcon);
 
-        setMenuIconHover(menuIcon, tt);
+        Style.setMenuIconHover(menuIcon, tt);
 
         AnchorPane.setTopAnchor(menuIcon, 15.0);
         AnchorPane.setLeftAnchor(menuIcon, 15.0);
@@ -254,47 +253,5 @@ public class GameObjects {
         turnImageView.setFitHeight(25);
         turnImageView.setFitWidth(25);
         label.setGraphic(turnImageView);
-    }
-
-    /* ------------------ Utility methods ------------------ */
-    private void setCardStyle(Rectangle rectangle) {
-        /* Set bord radius*/
-        rectangle.setArcHeight(16);
-        rectangle.setArcWidth(16);
-
-        /* Set border */
-        rectangle.setStroke(Color.BLACK);
-        rectangle.setStrokeWidth(1);
-
-        /* Set shadow */
-        DropShadow dropShadow1 = new DropShadow();
-        dropShadow1.setRadius(12.0);
-        dropShadow1.setOffsetX(0.0);
-        dropShadow1.setOffsetY(6.0);
-        dropShadow1.setColor(Color.rgb(50, 50, 93, 0.25));
-
-        DropShadow dropShadow2 = new DropShadow();
-        dropShadow2.setRadius(7.0);
-        dropShadow2.setOffsetX(0.0);
-        dropShadow2.setOffsetY(3.0);
-        dropShadow2.setColor(Color.rgb(0, 0, 0, 0.3));
-
-        /* add shadow */
-        rectangle.setEffect(dropShadow1);
-        rectangle.setEffect(dropShadow2);
-    }
-
-    private static void setMenuIconHover(MenuButton menuIcon, TranslateTransition tt) {
-        menuIcon.setOnMouseEntered(e -> {
-            tt.setToX(10);
-            tt.setToY(10);
-            tt.playFromStart();
-        });
-
-        menuIcon.setOnMouseExited(e -> {
-            tt.setToX(0);
-            tt.setToY(0);
-            tt.playFromStart();
-        });
     }
 }

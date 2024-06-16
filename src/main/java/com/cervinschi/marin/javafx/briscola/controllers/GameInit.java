@@ -3,11 +3,11 @@ package com.cervinschi.marin.javafx.briscola.controllers;
 import com.cervinschi.marin.javafx.briscola.models.Card;
 import com.cervinschi.marin.javafx.briscola.models.Hand;
 import com.cervinschi.marin.javafx.briscola.utils.Sound;
+import com.cervinschi.marin.javafx.briscola.utils.Style;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Rectangle;
@@ -140,7 +140,7 @@ public class GameInit {
 
         gameObjects.getPlayerHandBox().getChildren().add(cardObject);
 
-        showHoverEffect(Objects.requireNonNull(cardObject));
+        Style.showHoverEffect(Objects.requireNonNull(cardObject));
         selectCard(cardObject, card);
     }
 
@@ -293,23 +293,13 @@ public class GameInit {
                 updatePoints(gameObjects.getPlayerPoints(), pointsPlayer);
                 updatePoints(gameObjects.getBotPoints(), pointsBot);
 
-                setTurnStyle(botWon);
+                Style.setTurnStyle(botWon, gameObjects);
                 Sound.play(pointsPlayer > 10 ? "cry" : pointsBot > 10 ? "laugh" : "");
 
                 resetGame(botWon);
             }
         });
         return pause;
-    }
-
-    private void setTurnStyle(boolean botWon) {
-        if (botWon) {
-            gameObjects.getPlayerTurn().setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
-            gameObjects.getBotTurn().setStyle("-fx-background-color: #2a2a2a");
-        } else {
-            gameObjects.getBotTurn().setStyle("-fx-background-color: rgba(255, 255, 255, 0.3)");
-            gameObjects.getPlayerTurn().setStyle("-fx-background-color: #2a2a2a");
-        }
     }
 
     private void resetGame(boolean botWon) {
@@ -376,17 +366,6 @@ public class GameInit {
         if (gameObjects.getDeckObject().size() > 1) {
             gameObjects.getDeckCards().setText(String.valueOf(gameObjects.getDeckObject().size() - 1));
         }
-    }
-
-    private void showHoverEffect(Rectangle card) {
-        card.setOnMouseEntered(e -> {
-            card.setTranslateY(-20);
-            card.setCursor(Cursor.HAND);
-        });
-        card.setOnMouseExited(e -> {
-            card.setTranslateY(0);
-            card.setCursor(Cursor.DEFAULT);
-        });
     }
 
     protected void createTransition(Rectangle card, int x, int y) {
