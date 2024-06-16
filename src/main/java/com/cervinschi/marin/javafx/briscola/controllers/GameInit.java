@@ -19,13 +19,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class GameInit {
-    private final GameObjects gameObjects;
-    private Bot bot;
-
-    private final Hand playerHand;
-
     private static List<Card> playedCards;
-
+    private final GameObjects gameObjects;
+    private final Hand playerHand;
+    private Bot bot;
     private boolean canFill = true;
     private boolean canSelect = true;
     private boolean gameEnded = false;
@@ -41,13 +38,13 @@ public class GameInit {
         gameObjects.appendHandsObject();
     }
 
+    public static List<Card> getPlayedCards() {
+        return playedCards;
+    }
+
     /* --------------------- Getters and Setters --------------------- */
     public Hand getPlayerHand() {
         return playerHand;
-    }
-
-    public static List<Card> getPlayedCards() {
-        return playedCards;
     }
 
     public boolean isGameEnded() {
