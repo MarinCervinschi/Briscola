@@ -1,204 +1,116 @@
-# Briscola
+# Briscola Game
+This is a simple implementation of the Italian card game Briscola. The game is played between two players, one of which is the computer. The game is played in rounds, and the player with the most points at the end of the game wins.
+For more information about the game, see the [Game Description and Rules](#game-description-and-rules) section below.
+# For Developers
+## Overview
+- **Project Type:** JavaFX Application
+- **Scope:** [Object-Oriented Programming Course](#scope)
+- **Rules:** [Game Description and Rules](#game-description-and-rules)
+- **Technologies:** [Technologies](#technologies)
+- **Project Structure:** [Project Structure](#project-structure)
+- **UML:** [UML](#uml)
+## Installation
+1. Clone the repository
+```bash
+git clone
+```
+2. Open the project in IntelliJ IDEA
+3. Run the `Main` class located in `src/main/java/com/cervinschi/marin/javafx/briscola/Main.java`
+4. Enjoy the game!
 
-### UML
-````mermaid
-classDiagram
-direction BT
-class Animation {
-  + Animation() 
-  + createTransition(Rectangle, int, int) void
-  + fadeTransition(Node) void
-}
-class Board {
-  + Board() 
-  - Deque~Card~ deck
-  - Rectangle briscolaObject
-  - Card briscolaCard
-  - Hand playerHand
-  - Hand botHand
-  + getTable(int) Card
-  + createDeck() void
-  + clearTable() void
-  + shuffleDeck() void
-  + addCardToTable(Card) void
-  + tableIsFull() boolean
-   Card briscolaCard
-   Deque~Card~ deck
-   String briscolaToCards
-   Hand playerHand
-   Hand botHand
-   Rectangle briscolaObject
-}
-class Bot {
-  + Bot(GameObjects, String) 
-  - Hand hand
-  - boolean hasPlayed
-  - checkValue(Rectangle) Rectangle
-  - getCardValue(Card) int
-  - findMinCardName(boolean) Rectangle
-  + move() void
-  - probabilityToHaveHigherCardSameSeed(List~Card~, int, Card) double
-  - findMaxCardName(String, boolean) Rectangle
-  - mediumMove() Rectangle
-  - complementaryProbability(double, int) double
-  - getRectangle(Card) Rectangle
-  - probabilityToHaveBriscola(List~Card~, int) double
-  - calcProbability(int, int, int, int) double
-  - easyMove() Rectangle
-  - calcBestCardToPlay(List~Card~, int, List~Card~) Pair~Card, Double~
-  - hardMove() Rectangle
-  - findBestCard(Card) Rectangle
-  - getCard(Rectangle) Card
-   boolean hasPlayed
-   Hand hand
-}
-class Card {
-  + Card(String, String, int, boolean) 
-  - boolean isBriscola
-  - String name
-  - int value
-  - String seed
-  + equals(Object) boolean
-  + toString() String
-   String name
-   boolean isBriscola
-   int value
-   String seed
-}
-class Const {
-  - Const() 
-}
-class GameController {
-  + GameController() 
-  + initialize() void
-  + startGame() void
-  - addMenuIconAction() void
-  + exit() void
-  + showRules() void
-  - start() void
-}
-class GameInit {
-  + GameInit(GameObjects) 
-  - List~Card~ playedCards
-  - boolean gameEnded
-  - boolean isPauseActive
-  - Bot bot
-  - Hand playerHand
-  - fillHandAndSwitchTurn(Rectangle, Card) void
-  - resetGame(boolean) void
-  - endGame() void
-  + mainLoop() void
-  - handleBriscolaCard(Rectangle) void
-  - findWinningCard(Card[], int[]) Rectangle[]
-  - getEndGameMessage(int, int) Label
-  - adjustCardValue(int) int
-  - getPauseTransition(int, int, boolean) PauseTransition
-  - checkTable() void
-  - fillBotHand(Rectangle, Card) void
-  - updatePoints(Label, int) void
-  - selectCard(Rectangle, Card) void
-  - checkForName(Card[], int[]) Rectangle[]
-  - fillHands() void
-  - fillPlayerHand(Rectangle, Card) void
-   boolean gameEnded
-   Hand playerHand
-   List~Card~ playedCards
-   Node[] visibilityFalse
-   boolean isPauseActive
-   Card[] cardsFromTable
-   Rectangle[] rectangleFromTable
-   Bot bot
-}
-class GameObjects {
-  + GameObjects(BorderPane, AnchorPane) 
-  - Label botPoints
-  - Label botTurn
-  - Label playerPoints
-  - BorderPane tablePane
-  - MenuButton menuIcon
-  - Deque~Rectangle~ deckObject
-  - HBox botHandBox
-  - HBox playerHandBox
-  - Board board
-  - Label deckCards
-  - HBox tableBox
-  - Label playerTurn
-  - createMenuIcon() MenuButton
-  - setTurnIcon(String, Label) void
-  + createCardObject(Card) Rectangle
-  - createLabel(double, double, double) Label
-  - initializeDeckBox() void
-  + initializeGameObjects() void
-  + createGameObjects() void
-  - createBorderPane() void
-  + initializePoints() void
-  + appendHandsObject() void
-  + showBackground() void
-   BorderPane tablePane
-   HBox botHandBox
-   Label playerTurn
-   MenuButton menuIcon
-   HBox tableBox
-   Label deckCards
-   Deque~Rectangle~ deckObject
-   HBox playerHandBox
-   Board board
-   Label botPoints
-   Label botTurn
-   Label playerPoints
-}
-class Hand {
-  + Hand() 
-  - List~Rectangle~ cardsObject
-  - List~Card~ cards
-  + removeCard(Card, Rectangle) void
-  + addCard(Card, Rectangle) void
-   boolean cardsObjectFull
-   int length
-   boolean emptyObject
-   Card[] cards
-   Rectangle[] cardsObject
-}
-class MainApp {
-  + MainApp() 
-  + start(Stage) void
-  + main(String[]) void
-}
-class Sound {
-  + Sound() 
-  + play(String) void
-}
-class Style {
-  + Style() 
-  + setTurnStyle(boolean, GameObjects) void
-  + showHoverEffect(Rectangle) void
-  + setMenuIconHover(MenuButton, TranslateTransition) void
-   Rectangle cardStyle
-}
-
-Board "1" *--> "table *" Card 
-Board  ..>  Card : «create»
-Board  ..>  Hand : «create»
-Board "1" *--> "playerHand 1" Hand 
-Bot  -->  GameInit 
-Bot "1" *--> "gameObjects 1" GameObjects 
-Bot "1" *--> "hand 1" Hand 
-GameController  ..>  Bot : «create»
-GameController  ..>  GameInit : «create»
-GameController "1" *--> "gameInit 1" GameInit 
-GameController "1" *--> "gameObjects 1" GameObjects 
-GameController  ..>  GameObjects : «create»
-GameInit "1" *--> "bot 1" Bot 
-GameInit  ..>  Card : «create»
-GameInit "1" *--> "playedCards *" Card 
-GameInit "1" *--> "gameObjects 1" GameObjects 
-GameInit "1" *--> "playerHand 1" Hand 
-GameObjects "1" *--> "board 1" Board 
-GameObjects  ..>  Board : «create»
-GameObjects  ..>  Card : «create»
-Hand "1" *--> "cards *" Card 
-Hand  ..>  Card : «create»
+# For Players
+## How to Play
 
 
+## Scope
+The project is the final assignment for the course "Object-Oriented Programming" at the *Università di Modena e Reggio Emilia - Unimore*, Faculty of Computer Science and Engineering, Academic Year 2023/2024.
+* **Course:** Object-Oriented Programming (https://github.com/nbicocchi/learn-java-core)
+* **Professor:** Prof. Nicola Bicocchi
 
-````
+## Technologies
+- Java 21.0.2 (https://docs.oracle.com/en/java/javase/21/docs/api/index.html)
+- JavaFX (OpenJFX) (https://openjfx.io/)
+- JUnit(Jupiter) (https://junit.org/junit5/)
+- Maven (https://maven.apache.org/)
+- Git (https://git-scm.com/)
+- IntelliJ IDEA (https://www.jetbrains.com/idea/)
+- Scene Builder (https://gluonhq.com/products/scene-builder/)
+- Draw.io (https://app.diagrams.net/)
+- UML (https://www.uml.org/)
+- Design Patterns (https://refactoring.guru/design-patterns)
+- Object-Oriented Programming (https://en.wikipedia.org/wiki/Object-oriented_programming)
+- Agile Methodologies (http://agilemanifesto.org)
+
+# Game Description and Rules
+**Overview:**
+Briscola is a popular Italian trick-taking card game that can be played with 2 to 6 players. The game is typically played with an Italian 40-card deck, which consists of four suits: coins, cups, swords, and clubs. Each suit has 10 cards: Ace, 2, 3, 4, 5, 6, 7, Jack (Fante), Knight (Cavallo), and King (Re).
+
+**Objective:**
+The goal of Briscola is to score more points than your opponent(s). Points are scored by winning tricks containing valuable cards. The game is usually played in rounds, and the player or team with the highest cumulative score at the end of the agreed number of rounds wins.
+
+**Card Values:**
+Each card has a point value, which is important for determining the winner of a trick and the overall score.
+
+- Ace (Asso): 11 points
+- Three (Tre): 10 points
+- King (Re): 4 points
+- Knight (Cavallo): 3 points
+- Jack (Fante): 2 points
+- All other cards (2, 4, 5, 6, 7): 0 points
+
+There are 120 points in total in a deck.
+
+**Setup:**
+1. Shuffle the deck and deal three cards to each player.
+2. Place the remaining deck face down in the center.
+3. Turn over the top card of the deck and place it face up under the deck, partially visible. This card determines the Briscola (trump) suit for the game.
+
+**Gameplay:**
+1. The player to the right of the dealer leads the first trick by playing a card.
+2. The other players, in clockwise order, each play one card.
+3. Players must follow suit if they can. If they cannot follow suit, they can play any card, including a trump card.
+
+**Winning Tricks:**
+- The trick is won by the highest-ranking card of the suit led, unless a trump card (Briscola) is played.
+- If one or more trump cards are played, the highest-ranking trump card wins the trick.
+
+**Continuing Play:**
+1. The winner of the trick collects the cards and places them face down in a personal score pile.
+2. The winner then draws a new card from the top of the deck, followed by the other players in clockwise order.
+3. The winner of the trick leads the next trick.
+
+**End of the Round:**
+- The round continues until all cards have been played.
+- Players then count the points in their score piles.
+
+**Winning the Game:**
+- The player or team with the most points at the end of the round wins.
+- In a multi-round game, the player or team with the highest cumulative score at the end of the agreed number of rounds is the overall winner.
+
+**Variations:**
+Briscola has several variations, including:
+- **Briscola Chiamata:** A team-based version where players bid to determine the trump suit and form temporary alliances.
+- **Briscola Scoperta:** All cards are dealt face up, allowing for strategic planning.
+- **Briscola a Cinque:** Played with five players where one player is the soloist against the team of four.
+
+Briscola is a game of strategy, memory, and skill. Understanding the value of cards and the dynamics of trick-taking are key to mastering this traditional Italian game. Enjoy playing Briscola!
+
+--- 
+# Project Structure
+<p align="center">
+  <img src="src/main/resources/com/cervinschi/marin/javafx/briscola/assets/structure.drawio.svg" alt="Project Structure">
+</p>
+
+---
+
+# UML
+![UML](src/main/resources/com/cervinschi/marin/javafx/briscola/assets/UML.drawio.svg)
+
+
+# License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+# Contribute
+If you would like to contribute to this project, please open an issue or create a pull request with your changes. I welcome contributions from the community and am happy to review and merge them.
+
+---
