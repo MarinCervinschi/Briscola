@@ -2,9 +2,9 @@ package com.cervinschi.marin.javafx.briscola.controllers;
 
 import com.cervinschi.marin.javafx.briscola.models.Card;
 import com.cervinschi.marin.javafx.briscola.models.Hand;
+import com.cervinschi.marin.javafx.briscola.utils.Animation;
 import com.cervinschi.marin.javafx.briscola.utils.Sound;
 import com.cervinschi.marin.javafx.briscola.utils.Style;
-import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
@@ -89,7 +89,7 @@ public class GameInit {
         }
     }
 
-    /* --------------------- Fill cards methods --------------------- */
+    /* --------------------- Fill hands methods --------------------- */
     private void fillHands() {
         if (!canFill || isPauseActive || bot.isHasPlayed()) return;
         PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
@@ -135,7 +135,7 @@ public class GameInit {
     private void fillPlayerHand(Rectangle cardObject, Card card) {
         playerHand.addCard(card, cardObject);
 
-        createTransition(cardObject, -300, -200);
+        Animation.createTransition(cardObject, -300, -200);
         Sound.play("card-sound");
 
         gameObjects.getPlayerHandBox().getChildren().add(cardObject);
@@ -149,7 +149,7 @@ public class GameInit {
 
         Rectangle backCard = gameObjects.createCardObject(new Card("1", "back", 0, false));
 
-        createTransition(backCard, -300, 200);
+        Animation.createTransition(backCard, -300, 200);
         Sound.play("card-sound");
 
         gameObjects.getBotHandBox().getChildren().add(backCard);
@@ -175,7 +175,7 @@ public class GameInit {
             card.setOnMouseEntered(null);
             card.setOnMouseExited(null);
 
-            createTransition(card, 100, 200);
+            Animation.createTransition(card, 100, 200);
             Sound.play(selectedCard.toString().equals("1 of denara 11") ? "eagle" : "card-sound");
 
             /* Add the card to the table box*/
@@ -323,7 +323,7 @@ public class GameInit {
 
         Label endGameMessage = getEndGameMessage(playerScore, botScore);
 
-        fadeTransition(endGameMessage);
+        Animation.fadeTransition(endGameMessage);
 
         // Add the message to the board
         gameObjects.getTablePane().getChildren().clear();
@@ -366,26 +366,5 @@ public class GameInit {
         if (gameObjects.getDeckObject().size() > 1) {
             gameObjects.getDeckCards().setText(String.valueOf(gameObjects.getDeckObject().size() - 1));
         }
-    }
-
-    protected void createTransition(Rectangle card, int x, int y) {
-        card.setTranslateX(x);
-        card.setTranslateY(y);
-
-        TranslateTransition tt = new TranslateTransition(Duration.millis(1000), card);
-
-        tt.setToX(0);
-        tt.setToY(0);
-
-        tt.play();
-    }
-
-    protected void fadeTransition(Node node) {
-        FadeTransition ft = new FadeTransition(Duration.millis(3000), node);
-
-        ft.setFromValue(0.0);
-        ft.setToValue(1.0);
-
-        ft.play();
     }
 }

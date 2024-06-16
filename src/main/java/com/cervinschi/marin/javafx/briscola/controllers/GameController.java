@@ -1,5 +1,6 @@
 package com.cervinschi.marin.javafx.briscola.controllers;
 
+import com.cervinschi.marin.javafx.briscola.utils.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -65,7 +66,7 @@ public class GameController {
         Bot bot = new Bot(gameObjects, difficulty);
         gameInit.setBot(bot);
 
-        gameInit.fadeTransition(root);
+        Animation.fadeTransition(root);
         gameObjects.initializePoints();
         start();
     }
