@@ -29,6 +29,26 @@ IntelliJ IDEA or any other IDE that supports Maven can easily import the project
 3. Run the `Main` class located in `src/main/java/com/cervinschi/marin/javafx/briscola/Main.java`
 4. Enjoy the game!
 
+### Create a JAR File
+1. First you need to checkout the Launcher branch
+    ```bash
+    git checkout Launcher
+    ```
+2. Then make sure you are in the same directory as the pom.xml file
+
+3. Open the terminal and run the following command to create a JAR file
+    ```bash
+    mvn clean package
+    ```
+4. The JAR file will be created in the `target` directory with the name `Briscola-1.0-SNAPSHOT-shaded.jar`
+
+- If you don't have Maven installed on your system, open Maven terminal in IntelliJ IDEA and run the following command:
+   - You can do this by clicking on the Maven tab on the right side of the IDE and then click on `Execute Maven Goal` and type the following command:
+    ```bash
+    clean package
+    ```
+- The JAR file will be created in the `target` directory with the name `Briscola-1.0-SNAPSHOT-shaded.jar`
+
 # For Players
 ## How to Play
 - Click [here](https://github.com/MarinCervinschi/Briscola/releases/tag/v1.0.3) and download the Briscola.jar file.  
