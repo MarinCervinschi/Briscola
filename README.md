@@ -1,12 +1,12 @@
 # Briscola Game
 This is a simple implementation of the Italian card game Briscola. The game is played between two players, one of which is the computer. The game is played in rounds, and the player with the most points at the end of the game wins.
 For more information about the game, see the [Game Description and Rules](#game-description-and-rules) section below.
-# For Developers
 ## Overview
 - **Project Type:** JavaFX Application, Maven Project
 - **Scope:** [Object-Oriented Programming Course](#scope)
 - **Rules:** [Game Description and Rules](#game-description-and-rules)
 - **Technologies:** [Technologies](#technologies)
+- **Screenshots:** [Screenshots](#screenshots)
 - **Project Structure:** [Project Structure](#project-structure)
 - **UML:** [UML](#uml)
 ## Installation
@@ -102,6 +102,11 @@ Briscola is a game of strategy, memory, and skill. Understanding the value of ca
 
 # UML
 ![UML](src/main/resources/com/cervinschi/marin/javafx/briscola/assets/UML.drawio.svg)
+
+# Screenshots
+![Screenshot](src/main/resources/com/cervinschi/marin/javafx/briscola/assets/menu.png)
+![Screenshot](src/main/resources/com/cervinschi/marin/javafx/briscola/assets/game.png)
+![Screenshot](src/main/resources/com/cervinschi/marin/javafx/briscola/assets/move.png)
 
 # License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
