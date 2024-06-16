@@ -26,7 +26,7 @@ For more information about the game, see the [Game Description and Rules](#game-
 
 # For Players
 ## How to Play
-- Click [here](https://github.com/MarinCervinschi/Briscola/releases/tag/v1.0.3) and download the Briscola.jar file.  
+- Click [here](https://github.com/MarinCervinschi/Briscola/releases/) and download the Briscola.jar file.  
 - Double-click the file to run the game. Enjoy playing Briscola!  
 - If alternative open the terminal and run the following command:
 ```bash
