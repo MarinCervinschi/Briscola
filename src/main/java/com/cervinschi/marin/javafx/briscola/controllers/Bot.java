@@ -2,6 +2,7 @@ package com.cervinschi.marin.javafx.briscola.controllers;
 
 import com.cervinschi.marin.javafx.briscola.models.Card;
 import com.cervinschi.marin.javafx.briscola.models.Hand;
+import com.cervinschi.marin.javafx.briscola.utils.Sound;
 import javafx.animation.PauseTransition;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -59,7 +60,7 @@ public class Bot extends GameInit {
                 Card cardToPlay = getCard(card);
 
                 createTransition(card, 100, -200);
-                playSound("card-sound");
+                Sound.play("card-sound");
 
                 /* add card to table */
                 gameObjects.getTableBox().getChildren().add(card);

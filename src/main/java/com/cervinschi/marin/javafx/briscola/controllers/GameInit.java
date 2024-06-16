@@ -2,6 +2,7 @@ package com.cervinschi.marin.javafx.briscola.controllers;
 
 import com.cervinschi.marin.javafx.briscola.models.Card;
 import com.cervinschi.marin.javafx.briscola.models.Hand;
+import com.cervinschi.marin.javafx.briscola.utils.Sound;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
@@ -9,12 +10,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -138,7 +136,7 @@ public class GameInit {
         playerHand.addCard(card, cardObject);
 
         createTransition(cardObject, -300, -200);
-        playSound("card-sound");
+        Sound.play("card-sound");
 
         gameObjects.getPlayerHandBox().getChildren().add(cardObject);
 
@@ -152,7 +150,7 @@ public class GameInit {
         Rectangle backCard = gameObjects.createCardObject(new Card("1", "back", 0, false));
 
         createTransition(backCard, -300, 200);
-        playSound("card-sound");
+        Sound.play("card-sound");
 
         gameObjects.getBotHandBox().getChildren().add(backCard);
     }
@@ -178,7 +176,7 @@ public class GameInit {
             card.setOnMouseExited(null);
 
             createTransition(card, 100, 200);
-            playSound(selectedCard.toString().equals("1 of denara 11") ? "eagle" : "card-sound");
+            Sound.play(selectedCard.toString().equals("1 of denara 11") ? "eagle" : "card-sound");
 
             /* Add the card to the table box*/
             gameObjects.getTableBox().getChildren().add(card);
@@ -296,7 +294,7 @@ public class GameInit {
                 updatePoints(gameObjects.getBotPoints(), pointsBot);
 
                 setTurnStyle(botWon);
-                playSound(pointsPlayer > 10 ? "cry" : pointsBot > 10 ? "laugh" : "");
+                Sound.play(pointsPlayer > 10 ? "cry" : pointsBot > 10 ? "laugh" : "");
 
                 resetGame(botWon);
             }
@@ -355,15 +353,15 @@ public class GameInit {
         switch (victory) {
             case "You won!":
                 endGameMessage.getStyleClass().add("victory");
-                playSound("won");
+                Sound.play("won");
                 break;
             case "You lost!":
                 endGameMessage.getStyleClass().add("defeat");
-                playSound("lost");
+                Sound.play("lost");
                 break;
             default:
                 endGameMessage.getStyleClass().add("draw");
-                playSound("draw");
+                Sound.play("draw");
                 break;
         }
         return endGameMessage;
@@ -389,15 +387,6 @@ public class GameInit {
             card.setTranslateY(0);
             card.setCursor(Cursor.DEFAULT);
         });
-    }
-
-    protected void playSound(String name) {
-        if (name.isEmpty()) return;
-        URL url = getClass().getResource("/com/cervinschi/marin/javafx/briscola/sounds/" + name + ".mp3");
-        Media musicCard = new Media(Objects.requireNonNull(url).toExternalForm());
-        MediaPlayer mediaPlayer = new MediaPlayer(musicCard);
-
-        mediaPlayer.play();
     }
 
     protected void createTransition(Rectangle card, int x, int y) {
