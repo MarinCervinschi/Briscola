@@ -1,6 +1,12 @@
 # Briscola Game
-This is a simple implementation of the Italian card game Briscola. The game is played between two players, one of which is the computer. The game is played in rounds, and the player with the most points at the end of the game wins.
+This is a simple implementation of the Italian card game Briscola. The game is played between two players, one of which is the computer. There are three difficulty levels: Easy, Medium, and Hard. The game is played in rounds, and the player with the most points at the end of the game wins.
 For more information about the game, see the [Game Description and Rules](#game-description-and-rules) section below.
+
+Usually this game is played with friends and family, but this implementation allows you to play against the computer. 
+The scope of the project is to learn and practice object-oriented programming concepts, Java programming, and JavaFX development. 
+The project includes a graphical user interface (GUI) that allows players to interact with the game and make decisions. 
+JavaFX is used for the graphical user interface in the game, which is written in Java. 
+IntelliJ IDEA or any other IDE that supports Maven can easily import the project as it is structured as a Maven project.
 ## Overview
 - **Project Type:** JavaFX Application, Maven Project
 - **Scope:** [Object-Oriented Programming Course](#scope)
