@@ -1,3 +1,7 @@
+<div align="left">
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=MarinCervinschi.Briscola.&"  />
+</div>
+
 # Briscola Game
 This is a simple implementation of the Italian card game Briscola. The game is played between two players, one of which is the computer. There are three difficulty levels: Easy, Medium, and Hard. The game is played in rounds, and the player with the most points at the end of the game wins.
 For more information about the game, see the [Game Description and Rules](#game-description-and-rules) section below.
