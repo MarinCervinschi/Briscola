@@ -20,7 +20,7 @@ import java.util.Objects;
 
 public class GameInit {
     private static List<Card> playedCards;
-    private final GameObjects gameObjects;
+    protected final GameObjects gameObjects;
     private final Hand playerHand;
     private Bot bot;
     private boolean canFill = true;

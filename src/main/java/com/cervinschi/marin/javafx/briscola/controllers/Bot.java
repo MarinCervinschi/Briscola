@@ -12,7 +12,6 @@ import javafx.util.Pair;
 import java.util.*;
 
 public class Bot extends GameInit {
-    private final GameObjects gameObjects;
     private final String mode;
 
     private final Hand hand;
@@ -22,7 +21,6 @@ public class Bot extends GameInit {
     public Bot(GameObjects gameObjects, String mode) {
         super(gameObjects);
         this.mode = mode;
-        this.gameObjects = gameObjects;
         this.hand = gameObjects.getBoard().getBotHand();
     }
 
@@ -31,12 +29,12 @@ public class Bot extends GameInit {
         return hand;
     }
 
-    public void setHasPlayed(boolean hasPlayed) {
-        this.hasPlayed = hasPlayed;
-    }
-
     public boolean isHasPlayed() {
         return hasPlayed;
+    }
+
+    public void setHasPlayed(boolean hasPlayed) {
+        this.hasPlayed = hasPlayed;
     }
 
     /* ------------------ Move Methods ------------------ */
@@ -189,6 +187,7 @@ public class Bot extends GameInit {
 
         return complementaryProbability(probabilityToBriscolaInGame, playerCardsCount);
     }
+
     private double probabilityToHaveHigherCardSameSeed(List<Card> playedCards, int playerCardsCount, Card tableCard) {
         long playedHigherCardCount = playedCards.stream().filter(card -> card.getSeed().equals(tableCard.getSeed()) && card.getValue() > tableCard.getValue()).count();
 
@@ -225,6 +224,7 @@ public class Bot extends GameInit {
 
         return getRectangle(minCard);
     }
+
     private Rectangle findMaxCardName(String seed, boolean isBriscola) {
         Card maxCard = Arrays.stream(hand.getCards())
                 .filter(Objects::nonNull)
